@@ -21,7 +21,7 @@ Une session Claude Code par branche. Coller la consigne telle quelle.
 ### 1. Branche `agents`
 
 ```
-Travaille sur la branche agents. Lis CLAUDE.md, docs/contexte.md et tools/verifier_cles.py (un agent Strands qui marche avec notre clé). Les clés sont dans .env, chargées par tools.env.charger_env().
+Travaille sur la branche agents. Commence par te mettre à jour : git fetch origin && git merge origin/main. Lis CLAUDE.md, docs/contexte.md et tools/verifier_cles.py (un agent Strands qui marche avec notre clé). Les clés sont dans .env, chargées par tools.env.charger_env().
 
 Étape 1. Écris le schéma du profil (champs de CLAUDE.md) et les trois scénarios de tests/scenarios/ (Amira, Mateo, Robert) avec, pour chacun, la demande piège et le comportement attendu.
 
@@ -35,7 +35,7 @@ Vocabulaire : « portefeuille simulé », « assistant », jamais « conseil ».
 ### 2. Branche `outils`
 
 ```
-Travaille sur la branche outils. Lis CLAUDE.md et docs/contexte.md. Les fonctions de la première étape existent déjà dans tools/ : garde leurs conventions (résultat avec référence d'appel, valeur brute non arrondie).
+Travaille sur la branche outils. Commence par te mettre à jour : git fetch origin && git merge origin/main. Lis CLAUDE.md et docs/contexte.md. Les fonctions de la première étape existent déjà dans tools/ : garde leurs conventions (résultat avec référence d'appel, valeur brute non arrondie).
 
 Écris, avec des tests pytest sur les vrais CSV : correlations, stats_portefeuille(poids), parts_du_risque(poids), sensibilite_taux(symbole, serie_taux), pente_courbe(pays), gain_de_rattrapage(perte), rendement_en_cad, verifier_contraintes(portefeuille, profil). Les séries macro se lisent dans data/base/series.csv et data/base/panel_quotidien.csv. Tes résultats doivent retrouver les exemples chiffrés de docs/contexte.md (par exemple : 60 % SPY, 30 % AGG, 10 % BTC donne 25,7 % du risque pour le Bitcoin).
 
@@ -45,7 +45,7 @@ Ne modifie pas tools/ingestion.py, tools/env.py ni tools/verifier_cles.py. Petit
 ### 3. Branche `interface`
 
 ```
-Travaille sur la branche interface. Lis CLAUDE.md et docs/contexte.md. Construis dans web/ le site en Next.js, conçu à 390 px de large d'abord, sans aucun défilement dans un écran.
+Travaille sur la branche interface. Commence par te mettre à jour : git fetch origin && git merge origin/main. Lis CLAUDE.md et docs/contexte.md. Construis dans web/ le site en Next.js, conçu à 390 px de large d'abord, sans aucun défilement dans un écran.
 
 Étape 1. L'écran d'appel (l'assistant en haut, une carte en dessous, la saisie en bas), les six cartes (profil, répartition, risque, pourquoi, limites, vérifications), la barre d'étapes et le bouton « tout voir ». Données d'exemple dans un fichier JSON, avec les chiffres réels de docs/contexte.md. Accueil en texte, pas de voix.
 
