@@ -15,7 +15,16 @@ def sans_cles(monkeypatch):
 def test_env_absent(tmp_path, monkeypatch, sans_cles):
     monkeypatch.setattr(verifier_cles, "RACINE", tmp_path)
     ok, message = verifier_cles.verifier_env()
-    assert not ok and ".env.example" in message
+    assert not ok and ".env.example" in message and "environnement cloud" in message
+
+
+def test_env_sans_fichier_mais_variables_presentes(tmp_path, monkeypatch):
+    """Cas d'une session cloud : pas de fichier .env, les clés sont dans l'environnement."""
+    monkeypatch.setattr(verifier_cles, "RACINE", tmp_path)
+    monkeypatch.setenv("FRED_API_KEY", "cle-fred-secrete")
+    monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "cle-bedrock-secrete")
+    ok, message = verifier_cles.verifier_env()
+    assert ok and "variables d'environnement" in message and "secrete" not in message
 
 
 def test_env_avec_une_cle_vide(tmp_path, monkeypatch, sans_cles):

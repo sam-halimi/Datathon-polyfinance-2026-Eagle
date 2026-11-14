@@ -1,6 +1,6 @@
 """Vérifie les clés du fichier `.env` en une commande : `python -m tools.verifier_cles`
 
-1. `.env` : le fichier existe et les deux clés sont lues (seuls les noms s'affichent).
+1. Clés : les deux sont lues, dans `.env` ou dans les variables d'environnement (seuls les noms s'affichent).
 2. FRED : une vraie requête à l'API officielle, avec les dates de publication.
 3. Bedrock : un agent Strands avec un seul outil (la volatilité) répond à une question.
 
@@ -30,13 +30,18 @@ def masquer(texte: str) -> str:
 
 
 def verifier_env() -> tuple[bool, str]:
-    if not (RACINE / ".env").is_file():
-        return False, "fichier .env absent à la racine du dépôt : cp .env.example .env, puis coller les clés"
-    charger_env()
+    """Les clés viennent du fichier `.env` (machine à soi) ou des variables de l'environnement cloud."""
+    fichier = (RACINE / ".env").is_file()
+    if fichier:
+        charger_env()
     manquantes = [nom for nom in CLES if not os.environ.get(nom, "").strip()]
+    if manquantes and not fichier:
+        return False, (f"clé(s) absente(s) : {', '.join(manquantes)}. Session cloud : les ajouter aux variables "
+                       "de l'environnement cloud. Machine à soi : cp .env.example .env, puis coller les clés")
     if manquantes:
         return False, f"clé(s) vide(s) ou absente(s) dans .env : {', '.join(manquantes)}"
-    return True, "clés lues : " + ", ".join(CLES)
+    origine = "fichier .env" if fichier else "variables d'environnement"
+    return True, f"clés lues ({origine}) : " + ", ".join(CLES)
 
 
 def verifier_fred() -> tuple[bool, str]:
@@ -92,7 +97,7 @@ def verifier_bedrock() -> tuple[bool, str]:
 
 
 def main() -> int:
-    etapes = [(".env", verifier_env), ("FRED", verifier_fred), ("Bedrock", verifier_bedrock)]
+    etapes = [("Clés", verifier_env), ("FRED", verifier_fred), ("Bedrock", verifier_bedrock)]
     tout_bon = True
     for nom, verifier in etapes:
         ok, message = verifier()
