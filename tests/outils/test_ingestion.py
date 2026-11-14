@@ -126,3 +126,92 @@ def test_catalogue_avec_identifiant_en_double(data):
 def test_panel_vide():
     vide = pd.DataFrame(columns=["date", "series_id", "value", "date_disponible"])
     assert panel_quotidien(vide).empty
+
+
+# --- API officielle de FRED (réponses simulées, aucun appel réseau) ---------
+
+def _ajouter_serie_fred(data):
+    cat = pd.read_csv(data / "catalogue.csv", dtype=str, keep_default_na=False)
+    cat.loc[len(cat)] = ["VIXCLS", "fred", "VIXCLS", "", "Indice VIX", "indice", "quotidienne", "1", "", ""]
+    cat.to_csv(data / "catalogue.csv", index=False)
+
+
+def _faux_fred(publication_en_panne=False):
+    import json
+
+    valeurs = [{"realtime_start": "2026-11-14", "realtime_end": "2026-11-14", "date": d, "value": v}
+               for d, v in [("2026-11-09", "17.5"), ("2026-11-10", "18.25"), ("2026-11-11", "."), ("2026-11-12", "19.0")]]
+    sorties = [{"realtime_start": s, "realtime_end": "9999-12-31", "date": d, "value": "0"}
+               for d, s in [("2026-11-09", "2026-11-10"), ("2026-11-10", "2026-11-12"), ("2026-11-12", "2026-11-13")]]
+    appels = []
+
+    def telecharger(url):
+        appels.append(url)
+        if "output_type=4" in url:
+            if publication_en_panne:
+                raise OSError("panne simulée")
+            return json.dumps({"observations": sorties}).encode()
+        return json.dumps({"observations": valeurs}).encode()
+
+    return telecharger, appels
+
+
+def test_fred_avec_cle_utilise_les_dates_de_publication_reelles(data, monkeypatch):
+    _ajouter_serie_fred(data)
+    telecharger, appels = _faux_fred()
+    monkeypatch.setenv("FRED_API_KEY", "cle-secrete-de-test")
+    monkeypatch.setattr("tools.ingestion._telecharger", telecharger)
+    r = executer(data)
+    assert r.erreurs == {}
+    vix = r.series[r.series["series_id"] == "VIXCLS"].set_index("date")
+    assert len(vix) == 3  # la valeur "." est rejetée
+    # Publiée le 12 et non le 11 : la date réelle remplace le délai d'un jour du catalogue.
+    assert vix.at[pd.Timestamp("2026-11-10"), "date_disponible"] == pd.Timestamp("2026-11-12")
+    assert vix.at[pd.Timestamp("2026-11-09"), "value"] == 17.5
+    assert all("api.stlouisfed.org" in u for u in appels) and len(appels) == 2
+    # La clé ne sort ni dans le rapport ni dans les fichiers écrits.
+    assert "cle-secrete-de-test" not in "\n".join(r.rapport)
+    for f in (data / "base").rglob("*"):
+        if f.is_file():
+            assert "cle-secrete-de-test" not in f.read_text(encoding="utf-8")
+    assert (data / "base" / "brut" / "VIXCLS.csv").exists()  # copie locale pour le mode hors ligne
+    assert executer(data, hors_ligne=True).erreurs == {}
+
+
+def test_fred_avec_cle_sans_dates_de_publication_retombe_sur_le_delai(data, monkeypatch):
+    _ajouter_serie_fred(data)
+    telecharger, _ = _faux_fred(publication_en_panne=True)
+    monkeypatch.setenv("FRED_API_KEY", "cle-secrete-de-test")
+    monkeypatch.setattr("tools.ingestion._telecharger", telecharger)
+    r = executer(data, ecrire=False)
+    vix = r.series[r.series["series_id"] == "VIXCLS"]
+    assert ((vix["date_disponible"] - vix["date"]).dt.days == 1).all()
+
+
+def test_fred_sans_cle_utilise_l_export_csv(data, monkeypatch):
+    _ajouter_serie_fred(data)
+    appels = []
+
+    def telecharger(url):
+        appels.append(url)
+        return b"observation_date,VIXCLS\n2026-11-09,17.5\n2026-11-10,18.25\n"
+
+    monkeypatch.delenv("FRED_API_KEY", raising=False)
+    monkeypatch.setattr("tools.ingestion._telecharger", telecharger)
+    r = executer(data, ecrire=False)
+    assert r.erreurs == {}
+    assert (r.series["series_id"] == "VIXCLS").sum() == 2
+    assert "fredgraph.csv" in appels[0]
+
+
+def test_fred_cle_refusee_est_signalee(data, monkeypatch):
+    import json
+
+    _ajouter_serie_fred(data)
+    monkeypatch.setenv("FRED_API_KEY", "mauvaise-cle")
+    monkeypatch.setattr("tools.ingestion._telecharger",
+                        lambda url: json.dumps({"error_code": 400, "error_message": "Bad Request."}).encode())
+    r = executer(data, ecrire=False)
+    assert "VIXCLS" in r.erreurs and "Bad Request" in r.erreurs["VIXCLS"]
+    assert "mauvaise-cle" not in r.erreurs["VIXCLS"]
+    assert r.series["series_id"].nunique() == 10

@@ -26,6 +26,21 @@ VIXCLS,fred,VIXCLS,,Indice de volatilité VIX,indice,quotidienne,1,,
 
 Le code est celui de la page de la série sur fred.stlouisfed.org. Si le code n'existe pas, l'ingestion le dit et continue avec les autres.
 
+#### Avec une clé FRED (recommandé)
+
+Créer une clé gratuite sur fred.stlouisfed.org (compte, puis « API Keys ») et la mettre dans la variable d'environnement `FRED_API_KEY`. Jamais dans un fichier du dépôt : `.env` est ignoré par git.
+
+```bash
+export FRED_API_KEY=ta_cle
+python -m tools.ingestion
+```
+
+Avec la clé, l'ingestion passe par l'API officielle et récupère la date de première publication de chaque observation. `date_disponible` devient alors la vraie date de sortie, et non plus `date + délai`. Le rapport indique pour combien d'observations. Sans clé, l'export public de FRED est utilisé et le délai du catalogue s'applique.
+
+FRED n'est pas du temps réel au sens d'un flux en direct : les séries les plus rapides sont quotidiennes. « À jour » veut dire relancer l'ingestion, à la main ou par une tâche planifiée.
+
+Pour mettre à jour les cinq séries américaines de départ au lieu de lire le fichier des organisateurs, remplacer dans le catalogue `fichier` par `fred` et `macro_rates.csv` par le code de la série (`DFF`, `DGS2`, `DGS10`, `CPIAUCSL`, `UNRATE`).
+
 ### 3. Une série de la Banque du Canada
 
 Même principe, fournisseur `banque_du_canada`, avec le code de l'API Valet.

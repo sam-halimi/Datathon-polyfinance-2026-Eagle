@@ -26,7 +26,9 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import os
 import sys
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from datetime import date
@@ -36,6 +38,8 @@ import pandas as pd
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 DEBUT = "2021-11-12"
+FRED_API = "https://api.stlouisfed.org/fred/series/observations"
+VARIABLE_CLE_FRED = "FRED_API_KEY"
 A_COMPLETER = "À COMPLÉTER"
 COLONNES_CATALOGUE = [
     "series_id", "fournisseur", "code", "colonne", "libelle", "unite",
@@ -77,12 +81,43 @@ def _telecharger(url: str) -> bytes:
         return reponse.read()
 
 
+def _fred_api(code: str, debut: str, fin: str, cle: str, premiere_publication: bool = False) -> list[dict]:
+    """Observations d'une série par l'API officielle de FRED (clé gratuite requise).
+
+    Avec `premiere_publication`, FRED renvoie pour chaque observation sa première
+    publication : `realtime_start` est alors la date où la valeur est sortie.
+    """
+    params = {"series_id": code, "api_key": cle, "file_type": "json",
+              "observation_start": debut, "observation_end": fin}
+    if premiere_publication:
+        params |= {"realtime_start": "1776-07-04", "realtime_end": "9999-12-31", "output_type": "4"}
+    donnees = json.loads(_telecharger(f"{FRED_API}?{urllib.parse.urlencode(params)}"))
+    if "observations" not in donnees:
+        raise ErreurIngestion(f"FRED : {donnees.get('error_message', 'réponse inattendue')}")
+    return donnees["observations"]
+
+
 def lire_fred(code: str, debut: str, fin: str) -> pd.DataFrame:
-    url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}&cosd={debut}&coed={fin}"
-    df = pd.read_csv(io.BytesIO(_telecharger(url)))
-    if df.shape[1] != 2:
-        raise ErreurIngestion(f"FRED n'a pas renvoyé de série pour le code {code!r}.")
-    df.columns = ["date", "value"]
+    """Série FRED. Avec la variable d'environnement FRED_API_KEY : API officielle et
+    dates de publication réelles. Sans clé : export CSV public, sans dates de publication.
+    """
+    cle = os.environ.get(VARIABLE_CLE_FRED, "").strip()
+    if not cle:
+        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={code}&cosd={debut}&coed={fin}"
+        df = pd.read_csv(io.BytesIO(_telecharger(url)))
+        if df.shape[1] != 2:
+            raise ErreurIngestion(f"FRED n'a pas renvoyé de série pour le code {code!r}.")
+        df.columns = ["date", "value"]
+        return df
+    obs = _fred_api(code, debut, fin, cle)
+    if not obs:
+        raise ErreurIngestion(f"FRED n'a renvoyé aucune observation pour le code {code!r}.")
+    df = pd.DataFrame({"date": [o["date"] for o in obs], "value": [o["value"] for o in obs]})
+    try:
+        sorties = {o["date"]: o["realtime_start"] for o in _fred_api(code, debut, fin, cle, True)}
+        df["date_publication"] = df["date"].map(sorties)
+    except Exception:
+        pass  # sans dates de publication, le délai du catalogue s'applique
     return df
 
 
@@ -133,8 +168,10 @@ def nettoyer(brut: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, int]]:
         "date": pd.to_datetime(brut["date"], errors="coerce"),
         "value": pd.to_numeric(brut["value"], errors="coerce"),
     })
+    if "date_publication" in brut.columns:
+        df["date_publication"] = pd.to_datetime(brut["date_publication"], errors="coerce").values
     avant = len(df)
-    df = df.dropna()
+    df = df.dropna(subset=["date", "value"])
     rejetees = avant - len(df)
     doublons = int(df.duplicated("date").sum())
     df = df.drop_duplicates("date", keep="last").sort_values("date").reset_index(drop=True)
@@ -309,11 +346,19 @@ def executer(data: Path = DATA, hors_ligne: bool = False, fin: str | None = None
             continue
         df["series_id"] = sid
         df["date_disponible"] = df["date"] + pd.Timedelta(days=delai)
+        reelles = 0
+        if "date_publication" in df.columns:
+            # Date de publication réelle quand FRED la donne et qu'elle est cohérente.
+            ok = df["date_publication"].notna() & (df["date_publication"] >= df["date"])
+            df.loc[ok, "date_disponible"] = df.loc[ok, "date_publication"]
+            reelles = int(ok.sum())
         for champ in ("unite", "frequence", "libelle", "source"):
             df[champ] = ligne[champ]
         morceaux.append(df)
 
         alertes = [note] if note else []
+        if reelles:
+            alertes.append(f"dates de publication réelles pour {reelles} observations sur {len(df)}")
         if stats["rejetees"]:
             alertes.append(f"{stats['rejetees']} lignes rejetées (date ou nombre illisible)")
         if stats["doublons"]:
