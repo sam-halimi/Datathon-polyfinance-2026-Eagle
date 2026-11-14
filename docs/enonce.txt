@@ -1,0 +1,353 @@
+Polyfinances crest logo POLYFINANCES
+
+Datathon 2026
+
+ÉNONCÉ DU DÉFI
+
+AlphaForge AI
+
+L'intelligence artificielle au service de la décision d'investissement.
+
+Imaginez une solution agentique auto-explicative qui exploite des données financières publiques pour éclairer les décisions d'investissement et rendre ses résultats compréhensibles, selon différents contextes et profils.
+
+Banque Nationale logo BANQUE NATIONALE aws logo aws
+
+SOMMAIRE
+
+L’esprit du défi
+
+Le défi privilégie une solution agentique auto-explicative (self-explaining). Trois profils d’investisseurs servent de situations de référence. Les équipes choisissent librement les actifs, le cas d’usage et l’architecture. L’enjeu : produire des résultats utiles et en expliquer les sources, les hypothèses et les limites.
+
+L1 L2 Value 1. Challenge  03 Contexte 03 Description 03 Personas d’investisseurs 04 Démarche proposée (guide) 08 Conseils 08 2. Données  10 Exemples d’actifs et de classes d’actifs 10 Familles de données exploitables 11 Structures possibles des jeux de données 12 Sources publiques et ressources utiles 13 Période, qualité et règles d’utilisation 14 3. Livrables attendus  15 Prototype et code source 15 Vidéo de démonstration 15 Documentation technique 15 One pager 16 4. Appréciation Générale  17 Encadrement responsable 17 Performance historique et risque 17
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+Contexte
+
+Les investisseurs disposent d'une abondance d'informations : cours de marché, publications d'entreprises, conditions macroéconomiques, nouvelles financières et indicateurs de risque. Leur difficulté ne consiste pas seulement à accéder à ces données, mais à les sélectionner , les mettre en relation et en tirer des conclusions compréhensibles dans des contextes personnels différents.
+
+Les outils d'intelligence artificielle ouvrent des possibilités pour renouveler l'analyse et la prise de décision. Mais leur pertinence dépend de la qualité des données, de la démarche employée et de la capacité à reconnaître les incertitudes et les limites des résultats.
+
+Description
+
+Votre défi : concevoir une solution agentique auto-explicative (self-explainable) qui exploite des données financières publiques pour éclairer la décision d'investissement selon différents profils. La solution explique ses résultats ; les actifs, les outils et l'architecture restent au choix des équipes.
+
+L'orientation recherchée est agentique : un ou plusieurs agents peuvent mobiliser des données et des outils, coordonner des tâches et adapter leur analyse au contexte. L'outil peut comparer des actifs, analyser des scénarios, expliquer des risques ou proposer une allocation fictive. Ces pistes laissent aux équipes le choix du cas d'usage, de la méthode et de la forme de la solution.
+
+L'objectif n'est pas de sélectionner le portefeuille ayant affiché le meilleur rendement. Les équipes sont invitées à démontrer une démarche crédible, innovante et utile, adaptée au problème qu'elles choisissent de résoudre.
+
+.03
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE aws logo aws
+
+1. CHALLENGE
+
+Decorative white circuit-board line pattern in upper right
+
+Personas d'investisseurs
+
+Trois profils fictifs servent de situations de référence pour concevoir et tester la solution. Ils illustrent des objectifs, des horizons et des préférences différents. Les équipes sont invitées à expliquer comment leur approche tient compte de chaque contexte et de ses limites.
+
+AMIRA : Risque élevé et diversification MATEO : Équilibre financier et préférences ESG ROBERT : Cohérence entre demande et profil
+
+Decorative white circuit-board line pattern in lower left
+
+.04
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+PERSONA 01
+
+AMIRA
+
+26 ans • Ingénieure logicielle
+
+Profil de risque Horizon de placement Élevé 15 ans ou plus
+
+Profil
+
+Célibataire, sans enfant. Expérience en investissement : intermédiaire.
+
+Objectif d'investissement
+
+Faire croître son capital à long terme.
+
+Préférences et contraintes
+
+Très intéressée par l'intelligence artificielle et les technologies émergentes. Ouverte aux entreprises en forte croissance et à une volatilité importante. Intéressée par les cryptoactifs. Souhaite maintenir une certaine diversification et éviter de miser exclusivement sur les technologies.
+
+CE QUE LE PERSONA TESTE
+
+Jusqu'où le système accepte-t-il le risque ? Il doit tenir compte de son profil offensif sans interpréter « risque élevé » comme « tout est acceptable ». Garder une diversification cohérente avec ses préférences demeure important.
+
+.05
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+PERSONA 02
+
+MATEO
+
+41 ans • Gestionnaire des opérations
+
+Profil de risque Horizon de placement Modéré 8 à 12 ans
+
+Profil
+
+En couple, père de deux enfants.  Expérience en investissement : intermédiaire.
+
+Objectif d'investissement
+
+Faire croître son capital de façon équilibrée à moyen et à long terme.
+
+Préférences et contraintes
+
+Accorde une grande importance aux facteurs ESG. Souhaite éviter les entreprises liées à des controverses environnementales ou sociales importantes. Recherche un équilibre entre potentiel de croissance et stabilité. Ouvert aux technologies émergentes si elles correspondent à son profil de risque. Peu intéressé par les placements hautement spéculatifs.
+
+CE QUE LE PERSONA TESTE
+
+Le système sait-il intégrer autre chose que le rendement et le risque ? Il doit tenir compte à la fois des critères financiers et des préférences personnelles, plutôt que de retenir uniquement le potentiel de rendement.
+
+.06
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+PERSONA 03
+
+ROBERT
+
+59 ans • Professionnel de la santé
+
+Profil de risque Horizon de placement Faible à modéré 3 à 5 ans
+
+Profil
+
+Marié, père d’enfants adultes. Il envisage la retraite dans les prochaines années. Expérience en investissement : avancée.
+
+Objectif d’investissement
+
+Préserver son capital tout en maintenant un potentiel de croissance.
+
+Préférences et contraintes
+
+Préfère les entreprises établies et les placements dont il comprend bien le modèle d’affaires. Accorde de l’importance à la stabilité et à la qualité des entreprises. Peu intéressé par les cryptoactifs. Suit activement les marchés et s’intéresse aux nouvelles occasions d’investissement. Peut être tenté par une entreprise très médiatisée, même si elle est plus risquée que ce qu’il recherche habituellement.
+
+CE QUE LE PERSONA TESTE
+
+Le système sait-il remettre en question une demande incohérente avec le profil ? Il doit relever la tension entre l’intérêt ponctuel de Robert et ses objectifs, expliquer les risques et éviter d’acquiescer automatiquement.
+
+.07
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+Démarche proposée (guide)
+
+Voici quelques pistes pour explorer une approche agentique, sans ordre ni architecture imposés :
+
+Formuler une question utile : identifier le besoin financier ou la décision que l'outil cherche à éclairer. Concevoir une démarche agentique : préciser le rôle du ou des agents, les données et les outils qu'ils mobilisent, ainsi que leur coordination et leurs points de contrôle. Tenir compte du contexte : considérer les personas et, au besoin, d'autres objectifs, préférences ou contraintes explicites. Mettre les résultats à l'épreuve : étudier leur sensibilité à des hypothèses, données ou scénarios différents lorsque cela est pertinent. Rendre la solution auto-explicative : relier les résultats aux sources, aux hypothèses, aux étapes observables et aux limites. L'utilisateur doit pouvoir comprendre et vérifier ce qui soutient une conclusion.
+
+CONSEILS
+
+Une approche agentique simple, focalisée et vérifiable est encouragée. La sophistication technique et le nombre d'agents ne sont pas des fins en soi. Les équipes restent libres de présenter un portefeuille simulé, une analyse comparative, une aide à la décision ou un autre résultat défendable. Une comparaison de deux situations d'investisseurs contrastées peut illustrer l'adaptabilité de l'approche, sans imposer une sortie uniforme.
+
+.08
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+1. CHALLENGE
+
+PISTES
+
+Decorative white circuit-line graphic in upper right
+
+01. Un agent d'explicabilité
+
+Un agent dédié pourrait synthétiser les éléments qui soutiennent le résultat, citer les données utilisées, expliciter les hypothèses et signaler les incertitudes. Cette fonction peut aussi être intégrée à un agent existant ou à un autre mécanisme. La capacité d'explication est recherchée ; le composant et l'architecture restent libres.
+
+02. Un agent de gouvernance
+
+Les équipes sont encouragées à réfléchir aux moyens de vérifier que les actions ou résultats proposés respectent les contraintes de l'investisseur et les limites du défi en simulation, de signaler les conflits ou les informations manquantes et de rendre les contrôles visibles. Un agent de gouvernance dédié est une possibilité ; un autre agent ou mécanisme peut aussi assumer ces fonctions. Aucun agent supplémentaire ni architecture particulière n'est imposé.
+
+Decorative white circuit-line graphic in lower left
+
+.09
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+2. DONNÉES
+
+Un jeu de données de départ sera mis à la disposition des équipes pour faciliter le démarrage. Elles pourront aussi utiliser d'autres données publiques pertinentes pour leur approche.
+
+PRINCIPE DE TRAVAIL
+
+Le jeu de départ est facultatif. Les équipes peuvent le compléter ou le remplacer par d'autres données publiques. Aucun actif ni aucune classe d'actifs n'est obligatoire. Les sources, dates, traitements et conditions d'utilisation doivent être documentés.
+
+EXEMPLES D'ACTIFS ET DE CLASSES D'ACTIFS
+
+Le tableau présente des exemples purement indicatifs de titres canadiens et américains, de fonds diversifiés, d'instruments obligataires et d'actifs plus volatils. Cette sélection ne constitue ni un univers fermé ni une liste minimale à couvrir. Les symboles servent uniquement de repères.
+
+Classe / marché Exemples d'instruments (symboles indicatifs) Actions canadiennes RY.TO, TD.TO, BMO.TO, CNR.TO, CP.TO, ENB.TO, CNQ.TO, FTS.TO, SHOP.TO, CSU.TO, ATD.TO, MFC.TO Actions américaines AAPL, MSFT, NVDA, GOOGL, AMZN, META, JPM, JNJ, XOM, PG, COST, TSLA FNB d'actions SPY, QQQ, VTI, XLF, XLK, XLV, XIU.TO, XIC.TO, ZSP.TO FNB obligataires AGG, BND, IEF, TLT, XBB.TO, ZAG.TO FNB liés à l'or GLD, IAU Cryptoactifs BTC-USD (Bitcoin), ETH-USD (Ether)
+
+Aucun des actifs cités, ni aucune catégorie du tableau, ne doit obligatoirement figurer dans une solution. Une équipe peut analyser un seul instrument, constituer son propre sous-ensemble ou choisir des actifs différents de ces exemples, à condition d'en expliquer la pertinence et les sources. Les dérivés ou stratégies de marge ne sont pas exigés; aucune transaction réelle n'est permise.
+
+.10
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+2. DONNÉES
+
+FAMILLES DE DONNÉES EXPLOITABLES
+
+Voici différentes familles de données que vous pouvez combiner. Leur disponibilité, leur couverture historique et leurs conditions de réutilisation varient d'une source à l'autre.
+
+Famille Données disponibles Utilisations possibles Prix et transactions Cours d'ouverture et de clôture, haut/bas, volume, historique ajusté, fréquence quotidienne. Tendances, risques, fluctuations, comparaisons dans le temps. Opérations sur titres Dividendes, fractionnements, changements de symbole, dates des événements. Comparabilité des séries et analyse du rendement ajusté. Données des sociétés Revenus, bénéfices, dette, liquidités, flux de trésorerie et ratios financiers. Analyse fondamentale, santé financière, comparaison sectorielle. Fonds négociés en bourse (FNB) Titres détenus, pondérations, secteur, pays, frais, actif sous gestion, méthode de réplication. Diversification, transparence, expositions sous-jacentes. Obligations et taux Rendements obligataires, échéance, taux de référence, courbes de taux accessibles. Sensibilité aux taux et rôle des actifs défensifs. Données macroéconomiques Inflation, taux directeurs, chômage, croissance, indicateurs économiques et dates de publication. Contexte selon les différents régimes économiques. Devises CAD/USD et autres paires pertinentes, taux au comptant. Comparaison entre marchés et cohérence des valeurs exprimées. Nouvelles et textes Communiqués publics, résultats trimestriels, nouvelles datées et documents réglementaires. Information qualitative, événements et mise en contexte. Durabilité et secteurs Secteurs, émissions ou information ESG publiée, et méthodologie de collecte disponible. Préférences, exclusions et risques non financiers. Cryptoactifs Prix, volumes et volatilité des actifs numériques, si cette catégorie est pertinente. Étude d'actifs plus volatils et de leurs limites. Profils et scénarios Persona, objectif, horizon, tolérance au risque, préférences, capital fictif, contraintes. Études de cas cohérentes et simulations sans données personnelles.
+
+.11
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+2. DONNÉES
+
+STRUCTURE DU JEU DE DONNÉES DE DÉPART
+
+Le jeu de départ fournit une base commune pour explorer le défi. Son utilisation est facultative : les équipes peuvent le compléter ou utiliser d'autres données publiques, selon les besoins de leur solution.
+
+assets_universe.csv - 31 actifs : 10 actions canadiennes, 10 actions américaines, 9 FNB (actions, obligations, or et un FNB filtré ESG), Bitcoin et Ether. Champs : identifiant, symbole, nom, classe d'actifs, marché, devise et secteur. prices_daily.csv - Environ 40 000 lignes de prix quotidiens : date, symbole, ouverture, haut, bas, clôture, clôture ajustée (dividendes et fractionnements), volume et devise de cotation. corporate_actions.csv, fx_usdcad_daily.csv et macro_rates.csv - Dividendes et fractionnements par date ex; taux de change USD/CAD quotidien (Banque du Canada); 9 séries macro : taux directeurs, rendements 2 et 10 ans et IPC du Canada et des États-Unis, chômage américain (Banque du Canada et FRED). sources_metadata.csv, build_dataset.py et README.md - Source, date, traitement, limites et conditions de chaque fichier, et script qui régénère les données. Aucune cote ESG, nouvelle ni donnée fondamentale n'est incluse : les équipes qui en ont besoin les ajoutent et documentent leurs sources.
+
+.12
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE aws logo
+
+2. DONNÉES
+
+Pour aller plus loin
+
+Les équipes peuvent ajouter, par exemple, des données ESG, des actualités, des données fondamentales ou d'autres actifs si ces informations servent leur approche. Pour chaque source utilisée, elles expliquent sa pertinence, son origine, sa date, ses traitements et ses limites, ainsi que les conditions d'accès et de réutilisation applicables.
+
+SOURCES PUBLIQUES ET RESSOURCES UTILES
+
+Selon les besoins et les conditions d'accès en vigueur, plusieurs sources peuvent être consultées :
+
+Publications des sociétés : rapports annuels, documents d'information continue, communiqués de résultats, pages de relations avec les investisseurs. Dépôts réglementaires : SEC EDGAR et SEDAR+, pour les dépôts accessibles pertinents. Données macroéconomiques et de taux : Banque du Canada, FRED et Statistique Canada. Données sur les fonds : sites des émetteurs de FNB, fiches produits, listes de titres détenus et documents publiés. Cours et séries de marché : fournisseurs de données librement consultables, sous réserve des licences et limites d'API applicables.
+
+.13
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE aws logo aws
+
+2. DONNÉES
+
+PÉRIODE, QUALITÉ ET RÈGLES D'UTILISATION
+
+Le jeu de départ couvre cinq années de données , du 12 novembre 2021 au 12 novembre 2026 , ce qui inclut 2022, quand actions et obligations ont reculé en même temps. Les équipes qui ajoutent d'autres données préciseront les dates et fréquences utilisées.
+
+Traçabilité : identifier la source, la date, la devise et, au besoin, les traitements appliqués aux données. Cohérence temporelle : distinguer date de l'observation et date de publication; éviter d'utiliser dans une simulation une information qui n'était pas encore accessible. Comparabilité : tenir compte, si pertinent, des dividendes, fractionnements, biais de sélection, données manquantes et conversions CAD/USD. Licences : respecter les conditions d'accès, de conservation et de redistribution des données publiques ou gratuites. Protection des renseignements : ne pas utiliser de comptes clients réels ni de renseignements bancaires confidentiels. Les portefeuilles et les profils peuvent être entièrement fictifs.
+
+Exemples de mises en situation, non obligatoires: profil prudent préparant un achat prochain; profil équilibré poursuivant plusieurs objectifs; profil audacieux visant une croissance à long terme. Les équipes restent libres de définir leurs propres scénarios fictifs.
+
+.14
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+3. LIVRABLES ATTENDUS
+
+Le jury doit pouvoir découvrir la proposition de valeur, observer la solution en action et comprendre sa démarche agentique ainsi que les éléments qui soutiennent ses résultats. Les formats ci-dessous sont inspirés de l'édition 2025 du Datathon.
+
+1. Prototype et code source
+
+Un prototype démontrable présentant un cas d'utilisation complet et une explication accessible du résultat : sources, hypothèses, principaux facteurs et limites. Un dépôt de code et un fichier README résumant les dépendances, les sources de données, la configuration et les instructions de démarrage ou de reproduction.
+
+2. Vidéo de démonstration
+
+Une courte vidéo, d'environ cinq minutes à titre indicatif, montrant un exemple de bout en bout : problème choisi, rôle du ou des agents, données et outils mobilisés, résultat et explication fournie à l'utilisateur. Deux situations d'investisseurs distinctes peuvent illustrer l'adaptation au contexte, sans imposer de format de sortie.
+
+3. Documentation technique
+
+Un document synthétique présentant :
+
+les méthodes, modèles ou technologies utilisés ainsi que leur justification ; les sources, les actifs retenus, les traitements de données et les hypothèses ; le mécanisme d'explicabilité et un exemple reliant une conclusion aux données ou aux traces d'exécution observables ; les validations des résultats et des explications, les limites et les améliorations envisagées.
+
+Les outils, infrastructures, modèles et services demeurent au choix de l'équipe, sauf indication contraire dans les règles techniques officielles.
+
+.15
+
+PolyFinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE AWS logo aws
+
+3. LIVRABLES ATTENDUS
+
+4. One pager
+
+Une page maximum résumant la problématique, l'approche agentique, l'originalité, les sources de données, la capacité d'explication et les bénéfices concrets pour l'utilisateur.
+
+À retenir
+
+Le jury doit comprendre ce que fait la solution et ce qui justifie ses résultats. L'orientation agentique et l'auto-explicabilité sont recherchées. Les personas et les actifs proposés laissent libres le cas d'usage, l'architecture, l'allocation fictive et la forme du résultat.
+
+Les dates limites, plateformes de dépôt, formats et éventuelles exigences d'infrastructure seront confirmés dans les consignes logistiques officielles du Datathon.
+
+.16
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE aws logo aws
+
+4. APPRÉCIATION GÉNÉRALE
+
+L'évaluation visera à reconnaître la valeur globale de chaque projet, plutôt qu'à comparer uniquement des rendements simulés, des portefeuilles types ou le nombre de modèles employés.
+
+Le jury portera un regard d'ensemble sur la pertinence du problème traité, la solidité de l'approche, la créativité, la qualité de réalisation et l'utilité des résultats. Il valorisera la pertinence de la démarche agentique et la capacité de la solution à expliquer ses propres résultats, en s'appuyant sur les données, les hypothèses et les limites.
+
+Les équipes restent libres de l'architecture, du nombre d'agents, des modèles, des outils et de la présentation des résultats. Un agent d'explicabilité est une piste possible. Une démonstration convaincante et des explications fidèles aux données et aux actions observables comptent davantage que la complexité ou la performance passée des actifs.
+
+Encadrement responsable
+
+Le défi se déroule uniquement en simulation. Les prototypes ne doivent exécuter aucune transaction réelle ni se présenter comme fournissant un conseil financier personnalisé. Les équipes doivent distinguer faits, hypothèses et scénarios fictifs et présenter les incertitudes importantes de façon compréhensible. Les explications doivent rester synthétiques, vérifiables et fidèles aux sources et aux actions observables, sans inventer de justification ni exposer les raisonnements internes détaillés des modèles.
+
+.17
+
+POLYFINANCES crest logo POLYFINANCES Banque Nationale logo BANQUE NATIONALE aws logo aws
+
+4. APPRÉCIATION GÉNÉRALE
+
+Performance historique et risque
+
+Les données historiques servent à décrire les actifs et à éclairer leur adéquation avec les personas, par exemple en calculant les rendements et la volatilité sur une période explicitée. La volatilité est un indicateur de risque parmi d’autres : l’horizon, la diversification et les préférences de l’investisseur comptent aussi.
+
+Le défi ne demande pas de prédire les rendements futurs à partir des performances passées. Celles-ci ne garantissent pas les résultats futurs. Les équipes doivent expliquer leurs indicateurs, leurs limites et les incertitudes, plutôt que d’assimiler un profil à un actif de façon automatique.
+
+Bon succès. Que les meilleurs gagnent !
+
+L’équipe
+
+Banque Nationale logo
+
+BANQUE NATIONALE
+
+aws logo
+
+aws
+
+POLYFINANCES crest logo
+
+POLYFINANCES
+
+.18
+
+Polyfinances crest logo POLYFINANCES Banque Nationale logo: BANQUE NATIONALE aws logo
+
+ANNEXE 01
+
+GRILLE D'ÉVALUATION SIMPLIFIÉE
+
+Critère Poids 1. Qualité, pertinence et innovation de la solution 20 % 2. Intelligence agentique et explicabilité 20 % 3. Capacité d'analyse et traitement des données 20 % 4. Expérience utilisateur UX/UI 10 % 5. Qualité de l'intégration AWS 15 % 6. Présentation, valeur business et marketing 15 %
+
+Cette grille est une version simplifiée, présentée à titre de synthèse. Elle reprend uniquement les six critères principaux et leurs pondérations. La grille d'évaluation complète n'est pas disponible : elle est réservée au jury.
+
+.19
