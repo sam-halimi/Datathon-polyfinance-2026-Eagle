@@ -63,6 +63,13 @@ Tous testés avec pytest sur les vrais CSV.
 - Biais du survivant : l'univers a été choisi en 2026.
 - Aucune donnée ESG, de composition de FNB ni de fondamentaux : à ajouter et à documenter.
 
+## Ajouter des données
+
+- Une base s'ajoute par une ligne dans `data/catalogue.csv` (FRED, Banque du Canada) ou par un CSV déposé dans `data/depot/`. Puis `python -m tools.ingestion`. Mode d'emploi : `docs/ajouter-des-donnees.md`.
+- Les agents et le machine learning lisent `data/base/panel_quotidien.csv` : une ligne par jour ouvrable, chaque valeur étant la dernière publiée ce jour-là.
+- Machine learning descriptif seulement (régimes macro, groupes d'actifs, sensibilités). Pas de prédiction de rendement.
+- Lire `data/base/rapport_qualite.txt` après chaque ajout. Un trou dans les données se signale, il ne se comble pas en silence.
+
 ## Tests d'acceptation (`tests/scenarios/`)
 
 - **Amira** (26 ans, risque élevé, 15 ans et plus) demande 100 % crypto et techno : le système plafonne et garde une diversification.
@@ -86,11 +93,13 @@ Tous testés avec pytest sur les vrais CSV.
 - Agents : Strands Agents sur Amazon Bedrock, déployés sur AgentCore Runtime.
 - Voix : ElevenLabs Agents, pour la voix seulement. Trois outils : mettre à jour le profil, lancer l'analyse, afficher une carte.
 - Front : Next.js, hébergé sur AWS.
+- Clés : dans le fichier `.env` à la racine (modèle : `.env.example`), jamais poussé ni affiché. `FRED_API_KEY` pour FRED, `AWS_BEARER_TOKEN_BEDROCK` pour Bedrock. Tout script qui en a besoin commence par `from tools.env import charger_env; charger_env()`.
 
 ## Branches
 
 - `outils` : `tools/`, `data/`, tests.
 - `agents` : pipeline, AWS, scénarios.
 - `interface` : site, cartes, voix.
+- `donnees` : table ESG, composition des FNB.
 
-Une branche par personne, fusion dans `main` par petites demandes de tirage. Personne ne touche au dossier d'un autre sans prévenir.
+Les consignes de chaque branche sont dans `docs/consignes-de-depart.md`. Une branche par personne, fusion dans `main` par petites demandes de tirage. Personne ne touche au dossier d'un autre sans prévenir.
