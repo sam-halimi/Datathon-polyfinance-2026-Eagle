@@ -1,18 +1,48 @@
 # Consignes de départ
 
-## Avant de lancer les sessions, une fois par machine
+## Avant de lancer les sessions
+
+Les clés ne vont jamais dans un fichier du dépôt ni sur GitHub. Deux cas.
+
+### Sessions cloud (Claude Code sur le dépôt GitHub)
+
+Dans les réglages de l'environnement cloud utilisé par les sessions :
+
+1. Variables d'environnement, au format `.env` :
+
+   ```
+   FRED_API_KEY=ta_cle_fred
+   AWS_BEARER_TOKEN_BEDROCK=ta_cle_bedrock
+   ```
+
+2. Accès réseau « Limited », avec ces domaines autorisés en plus (un par ligne), ou « Full » :
+
+   ```
+   api.stlouisfed.org
+   fred.stlouisfed.org
+   www.bankofcanada.ca
+   *.amazonaws.com
+   ```
+
+3. Démarrer une nouvelle session et lui demander :
+
+   ```
+   Lance pip install -r tools/requirements.txt strands-agents, puis python -m tools.verifier_cles et python -m tools.ingestion. Montre-moi les sorties sans rien corriger.
+   ```
+
+### Machine à soi (VPS ou portable)
 
 ```bash
 git pull
 pip install -r tools/requirements.txt strands-agents
 cp .env.example .env          # puis coller les deux clés dans .env
-python -m tools.verifier_cles # doit afficher trois fois [OK]
-python -m tools.ingestion     # met à jour data/base/ avec les vraies dates de publication FRED
+python -m tools.verifier_cles
+python -m tools.ingestion
 ```
 
-Si `Bedrock` affiche ÉCHEC, montrer l'erreur exacte à l'équipe AWS sur place avant d'aller plus loin. La région et le modèle se règlent dans `.env` (`AWS_REGION`, `BEDROCK_MODEL_ID`).
+### Résultat attendu
 
-Les sessions qui ont besoin d'une clé (agents, ingestion) tournent sur une machine où `.env` existe. Le fichier ne passe jamais par GitHub.
+`verifier_cles` affiche trois fois `[OK]` : les clés, FRED, puis Bedrock avec un agent qui répond 51,9 % pour la volatilité de NVDA. Si Bedrock affiche ÉCHEC, montrer l'erreur exacte à l'équipe AWS sur place. La région et le modèle se règlent avec `AWS_REGION` et `BEDROCK_MODEL_ID`, au même endroit que les clés.
 
 ## Les quatre consignes
 
