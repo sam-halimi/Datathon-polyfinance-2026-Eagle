@@ -100,5 +100,6 @@ Tous testés avec pytest sur les vrais CSV.
 - `outils` : `tools/`, `data/`, tests.
 - `agents` : pipeline, AWS, scénarios.
 - `interface` : site, cartes, voix.
+- `donnees` : table ESG, composition des FNB.
 
-Une branche par personne, fusion dans `main` par petites demandes de tirage. Personne ne touche au dossier d'un autre sans prévenir.
+Les consignes de chaque branche sont dans `docs/consignes-de-depart.md`. Une branche par personne, fusion dans `main` par petites demandes de tirage. Personne ne touche au dossier d'un autre sans prévenir.
