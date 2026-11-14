@@ -92,10 +92,32 @@ Par ordre de priorité, chacune liée à un persona :
 
 Chaque ajout a sa ligne dans `data/sources_metadata.csv`.
 
+## Compte AWS de l'équipe
+
+Source : courriel d'AWS du 13 novembre et aide-mémoire de l'atelier AWS. Le code d'accès n'est pas dans le dépôt.
+
+- Un seul compte pour l'équipe 37, partagé à trois, ouvert depuis le samedi 14 novembre à 11 h 30.
+- Tous les services sont inclus, sauf l'achat de noms de domaine Route 53 et les instances avec gros GPU.
+- Le compte expire lundi 16 novembre en fin de journée, puis il est supprimé avec toutes ses données. Le code reste sur GitHub, et la vidéo de démonstration s'enregistre pendant que le compte tourne.
+- Une seule personne déploie, pour ne pas s'écraser.
+- Démarrage conseillé par AWS : `pip install strands-agents` et une clé API Bedrock dans `AWS_BEARER_TOKEN_BEDROCK`.
+- Services présentés à l'atelier : Bedrock, Knowledge Bases, Guardrails, AgentCore, AgentCore Code Interpreter, Strands Agents, Kiro. Guardrails peut servir à bloquer ce qui ressemble à du conseil, Knowledge Bases aux documents ESG.
+- Rappel de l'atelier, identique à notre règle : le code calcule, le modèle explique, chaque chiffre cite sa source.
+
+Paliers d'intégration AWS, du minimum au plus complet :
+
+1. Les agents appellent leur modèle par Bedrock.
+2. Les agents sont déployés sur AWS (AgentCore).
+3. Le site et les données sont aussi sur AWS, avec Guardrails.
+
+## Clés
+
+Dans `.env` à la racine (modèle : `.env.example`), jamais poussé. Vérification en une commande : `python -m tools.verifier_cles`.
+
 ## Questions ouvertes
 
 - Heure limite exacte de remise.
-- Comptes ou crédits AWS fournis par les organisateurs.
+- Comment le jury évalue l'intégration AWS, et s'il teste le prototype après l'expiration du compte.
 - Règles techniques officielles : imposent-elles une infrastructure ?
 - Français pris en charge par la solution de voix retenue.
 
