@@ -93,6 +93,7 @@ Tous testés avec pytest sur les vrais CSV.
 - Agents : Strands Agents sur Amazon Bedrock, déployés sur AgentCore Runtime.
 - Voix : ElevenLabs Agents, pour la voix seulement. Trois outils : mettre à jour le profil, lancer l'analyse, afficher une carte.
 - Front : Next.js, hébergé sur AWS.
+- Clés : dans le fichier `.env` à la racine (modèle : `.env.example`), jamais poussé ni affiché. `FRED_API_KEY` pour FRED, `AWS_BEARER_TOKEN_BEDROCK` pour Bedrock. Tout script qui en a besoin commence par `from tools.env import charger_env; charger_env()`.
 
 ## Branches
 

@@ -36,6 +36,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from tools.env import charger_env
+
 DATA = Path(__file__).resolve().parent.parent / "data"
 DEBUT = "2021-11-12"
 FRED_API = "https://api.stlouisfed.org/fred/series/observations"
@@ -399,6 +401,7 @@ def main() -> int:
                            help="ne rien télécharger : fichiers locaux et copies déjà enregistrées")
     analyseur.add_argument("--fin", default=None, help="dernière date demandée, AAAA-MM-JJ (défaut : aujourd'hui)")
     args = analyseur.parse_args()
+    charger_env()  # clés du fichier .env à la racine, s'il existe
     try:
         resultat = executer(hors_ligne=args.hors_ligne, fin=args.fin)
     except ErreurIngestion as e:
