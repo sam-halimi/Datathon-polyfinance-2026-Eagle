@@ -63,6 +63,13 @@ Tous testés avec pytest sur les vrais CSV.
 - Biais du survivant : l'univers a été choisi en 2026.
 - Aucune donnée ESG, de composition de FNB ni de fondamentaux : à ajouter et à documenter.
 
+## Ajouter des données
+
+- Une base s'ajoute par une ligne dans `data/catalogue.csv` (FRED, Banque du Canada) ou par un CSV déposé dans `data/depot/`. Puis `python -m tools.ingestion`. Mode d'emploi : `docs/ajouter-des-donnees.md`.
+- Les agents et le machine learning lisent `data/base/panel_quotidien.csv` : une ligne par jour ouvrable, chaque valeur étant la dernière publiée ce jour-là.
+- Machine learning descriptif seulement (régimes macro, groupes d'actifs, sensibilités). Pas de prédiction de rendement.
+- Lire `data/base/rapport_qualite.txt` après chaque ajout. Un trou dans les données se signale, il ne se comble pas en silence.
+
 ## Tests d'acceptation (`tests/scenarios/`)
 
 - **Amira** (26 ans, risque élevé, 15 ans et plus) demande 100 % crypto et techno : le système plafonne et garde une diversification.
