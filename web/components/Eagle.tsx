@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Aigle } from "./Aigle";
+import { Voix } from "./Voix";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
 import { analyser, ADRESSE_API, verifierActif, type VerdictActif } from "@/lib/api";
@@ -214,7 +215,12 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
       if (champ === "prenom") setPrenom(String(valeur));
       else if (champ === "demande") setDemande(String(valeur));
       else repondre(champ, valeur);
-      return `Noté : ${champ}.`;
+      // La voix apprend ce qui manque encore, dans l'ordre des questions.
+      const apres = noter(profil, champ, valeur);
+      const manque = QUESTIONS.filter((q) => q.champ !== champ && (apres[q.champ] === undefined || apres[q.champ] === ""));
+      return manque.length
+        ? `Noté : ${champ}. Question suivante (${manque[0].champ}) : ${manque[0].texte} Choix : ${manque[0].options.map((o) => `${o.titre} = ${o.valeur}`).join(" ; ")}.`
+        : `Noté : ${champ}. Le profil est complet : demande le prénom et la demande en ses mots, puis appelle lancer_analyse.`;
     },
     lancerAnalyse: lancer,
     afficherDiapositive: afficher,
@@ -338,6 +344,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
               <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
             </div>
           </div>
+          <Voix api={api} dire={dire} />
           <div className="transcription" aria-live="polite" aria-label="Transcription">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>

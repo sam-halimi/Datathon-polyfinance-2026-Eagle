@@ -1,4 +1,4 @@
-/* AlphaForge : conçu à 390 px de large, puis adapté au bureau.
+/* Eagle. Les règles mobiles plus bas datent de la première version ; l'écran pour ordinateur est en fin de fichier.
    Aucun défilement dans un écran : chaque zone a sa place fixe. */
 
 :root {
@@ -737,3 +737,7 @@ ul, ol { list-style: none; }
   .eagle .choix__bouton { min-height: 64px; padding: 10px 16px; }
   .aigle { width: 96px; height: 96px; }
 }
+
+.voix { display: grid; gap: 4px; }
+.voix .bouton { min-height: 48px; border-radius: 999px; }
+.voix__etat { font-size: 13px; color: var(--encre-douce); text-align: center; }
