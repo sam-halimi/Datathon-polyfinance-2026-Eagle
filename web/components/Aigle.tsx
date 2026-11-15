@@ -1,7 +1,16 @@
 // L'avatar d'Eagle : une tête d'aigle de profil, dessinée pour le projet.
 // Quand Eagle parle ou travaille, un anneau s'anime autour.
 
-export function Aigle({ taille = 140, actif = false }: { taille?: number; actif?: boolean }) {
+export function Aigle({ taille = 140, actif = false, image = null }: { taille?: number; actif?: boolean; image?: string | null }) {
+  // Avatar de la direction artistique (web/public/da/), s'il a été déposé.
+  if (image) {
+    return (
+      <span className={actif ? "aigle aigle--image aigle--actif" : "aigle aigle--image"} style={{ width: taille, height: taille }}>
+        <img src={image} alt="Eagle, l'assistant" width={taille} height={taille} />
+        <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" className="aigle__anneau" /></svg>
+      </span>
+    );
+  }
   return (
     <svg className={actif ? "aigle aigle--actif" : "aigle"} width={taille} height={taille} viewBox="0 0 200 200" role="img" aria-label="Eagle, l'assistant">
       <circle cx="100" cy="100" r="96" className="aigle__anneau" />

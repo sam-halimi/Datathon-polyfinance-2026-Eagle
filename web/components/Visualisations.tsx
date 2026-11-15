@@ -18,6 +18,17 @@ import type { Part, Portefeuille, SortiePipeline } from "@/lib/types";
 
 export const SERIES = Array.from({ length: 8 }, (_, i) => `var(--serie-${i + 1})`);
 
+/** Durée des animations de graphique, lue dans --duree-longue (app/tokens.css). */
+function useDuree(): number {
+  const [d, setD] = useState(700);
+  useEffect(() => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue("--duree-longue").trim();
+    const ms = v.endsWith("ms") ? parseFloat(v) : v.endsWith("s") ? parseFloat(v) * 1000 : NaN;
+    if (Number.isFinite(ms)) setD(window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : ms);
+  }, []);
+  return d;
+}
+
 const pct = new Intl.NumberFormat("fr-CA", { style: "percent", maximumFractionDigits: 0 });
 const compact = new Intl.NumberFormat("fr-CA", { notation: "compact", maximumFractionDigits: 1 });
 
@@ -38,12 +49,13 @@ function etiquette(props: { cx?: number; cy?: number; midAngle?: number; innerRa
   return (
     <text x={cx + r * Math.cos(-midAngle * RADIAN)} y={cy + r * Math.sin(-midAngle * RADIAN)} className="anneau__etiquette"
       textAnchor="middle" dominantBaseline="central" pointerEvents="none"
-      style={fill === "var(--serie-4)" ? { fill: "#0b0b0b" } : undefined}>{pct.format(value)}</text>
+      style={fill === "var(--serie-4)" ? { fill: "var(--texte-sur-serie-claire)" } : undefined}>{pct.format(value)}</text>
   );
 }
 
 export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
   const { chiffres } = useChiffres();
+  const duree = useDuree();
   const [actif, setActif] = useState<string | null>(null);
   // La couleur suit l'entité dans l'ordre reçu (le pipeline trie déjà par poids) ;
   // la légende est triée par valeur décroissante.
@@ -61,7 +73,7 @@ export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
           <PieChart>
             <Pie data={tranches} dataKey="valeur" nameKey="libelle" innerRadius="60%" outerRadius="84%" startAngle={90} endAngle={-270}
               paddingAngle={tranches.length > 1 ? 1.5 : 0} stroke="var(--surface)" strokeWidth={2} isAnimationActive
-              animationDuration={600} onMouseEnter={(_, i) => setActif(tranches[i]?.id ?? null)}
+              animationDuration={duree} onMouseEnter={(_, i) => setActif(tranches[i]?.id ?? null)}
               labelLine={false} label={etiquette}>
               {tranches.map((t) => (
                 <Cell key={t.id} fill={t.couleur} className="anneau__part"
@@ -138,6 +150,7 @@ function proche(points: { date: string; prix: number }[], date: string | null) {
 }
 
 export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuille }) {
+  const duree = useDuree();
   const [univers, setUnivers] = useState<Univers | null>(null);
   useEffect(() => { chargerUnivers().then((u) => setUnivers(u.actifs)); }, []);
   const demande = s.graphiques?.cours?.symbole ?? s.demande_analysee?.symboles?.[0]?.symbole;
@@ -184,7 +197,7 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
                   ) : null;
                 }} />
                 <Line type="monotone" dataKey="prix" stroke="var(--serie-1)" strokeWidth={2} dot={false} activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
-                  isAnimationActive animationDuration={700} />
+                  isAnimationActive animationDuration={duree} />
                 {pic ? <ReferenceDot x={pic.date} y={pic.prix} r={5} fill="var(--encre)" stroke="var(--surface)" strokeWidth={2}
                   label={{ value: "Sommet", position: "top", fill: "var(--encre)", fontSize: 12, fontWeight: 700 }} /> : null}
                 {creux ? <ReferenceDot x={creux.date} y={creux.prix} r={5} fill="var(--echec)" stroke="var(--surface)" strokeWidth={2}
@@ -213,6 +226,7 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
 // ---------- Éventail de scénarios ----------
 
 export function EventailGraphique({ ev }: { ev: Eventail }) {
+  const duree = useDuree();
   const donnees = ev.annees.map((a, i) => ({
     annee: a, large: [ev.p10[i], ev.p90[i]], central: [ev.p25[i], ev.p75[i]], p50: ev.p50[i],
     p10: ev.p10[i], p25: ev.p25[i], p75: ev.p75[i], p90: ev.p90[i],
@@ -242,10 +256,10 @@ export function EventailGraphique({ ev }: { ev: Eventail }) {
                 </div>
               ) : null;
             }} />
-            <Area dataKey="large" stroke="none" fill="var(--serie-1)" fillOpacity={0.12} isAnimationActive animationDuration={700} activeDot={false} />
-            <Area dataKey="central" stroke="none" fill="var(--serie-1)" fillOpacity={0.26} isAnimationActive animationDuration={700} activeDot={false} />
+            <Area dataKey="large" stroke="none" fill="var(--serie-1)" fillOpacity={0.12} isAnimationActive animationDuration={duree} activeDot={false} />
+            <Area dataKey="central" stroke="none" fill="var(--serie-1)" fillOpacity={0.26} isAnimationActive animationDuration={duree} activeDot={false} />
             <Line dataKey="p50" stroke="var(--serie-1)" strokeWidth={2} dot={false} activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
-              isAnimationActive animationDuration={700} />
+              isAnimationActive animationDuration={duree} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

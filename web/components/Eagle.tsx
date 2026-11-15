@@ -42,7 +42,7 @@ export type EagleApi = {
   afficherDiapositive: (id: string) => string;
 };
 
-export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
+export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: EagleApi) => void; avatar?: string | null; logo?: string | null }) {
   const [phase, setPhase] = useState<Phase>("accueil");
   const [question, setQuestion] = useState(0);
   const [profil, setProfil] = useState<Partial<Profil>>(PROFIL_VIDE);
@@ -365,9 +365,9 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
       <div className="eagle">
         <aside className="eagle__gauche">
           <div className="eagle__identite">
-            <Aigle taille={120} actif={enCours} />
+            <Aigle taille={120} actif={enCours} image={avatar} />
             <div>
-              <h1 className="eagle__nom">Eagle</h1>
+              <h1 className="eagle__nom">{logo ? <img className="eagle__logo" src={logo} alt="" aria-hidden="true" /> : null}Eagle</h1>
               <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
             </div>
           </div>
