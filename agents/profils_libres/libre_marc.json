@@ -1,0 +1,26 @@
+{
+  "id": "libre_marc",
+  "persona": {
+    "nom": "Marc",
+    "description": "Profil libre : retraité, revenu, sans crypto."
+  },
+  "profil": {
+    "horizon_annees": 6,
+    "objectif": "revenu",
+    "tolerance_risque": "faible",
+    "connaissance_niveau": 3,
+    "preferences": [
+      "ESG"
+    ],
+    "exclusions": [
+      "crypto",
+      "énergies fossiles"
+    ],
+    "centres_interet": [
+      "les banques canadiennes"
+    ],
+    "capital_fictif": 400000,
+    "devise": "CAD"
+  },
+  "demande": "Je voudrais des revenus réguliers sans prendre de gros risques, et mettre un quart en Royal Bank."
+}
