@@ -1,112 +1,86 @@
-/* Eagle : toutes les variables de la direction artistique, dans ce seul fichier.
-   Couleurs, polices, rayons, durées, ombres. Le reste de la CSS ne contient que des var(--…).
+/* Eagle : les rôles de l'interface, branchés sur la direction artistique.
 
-   Direction artistique définitive : elle arrive d'une autre conversation (docs/da-eagle.md et
-   web/public/da/). Quand web/public/da/tokens.css existe, il est chargé APRÈS ce fichier
-   (app/layout.tsx) : ses variables remplacent celles-ci, sans toucher au reste.
-   web/public/da/avatar.svg (ou .png) remplace l'aigle dessiné ; web/public/da/logo.svg
-   s'affiche à côté du nom. Aucune image n'est inventée en attendant. */
+   Les valeurs viennent de web/public/da/tokens.css (charte « Graphite », docs/da-eagle.md),
+   importé avant ce fichier dans app/layout.tsx. Ce fichier ne contient aucune couleur ni
+   durée propre : il dit seulement quel token de la charte joue quel rôle. Pour changer
+   l'apparence, on change la charte (tokens.json puis tokens.css), pas ce fichier.
+
+   Thème unique : graphite. Pas de mode clair (la charte n'en définit pas). */
 
 :root {
-  /* ----- Couleurs de l'interface ----- */
-  --fond: #f6f4ef;
-  --surface: #ffffff;
-  --encre: #1b1f24;
-  --encre-douce: #565d66;
-  --trait: #e3dfd6;
-  --accent: #1f4fa3;
-  --accent-fond: #e6edf9;
-  --accent-encre: #ffffff;
-  --ok: #1d7a4c;
-  --ok-fond: #e3f3ea;
-  --alerte: #9a5600;
-  --alerte-fond: #fcefd9;
-  --echec: #b3261e;
-  --echec-fond: #fbe4e2;
-  --capital: #9aa3ad;
-  --survol-ligne: rgb(31 79 163 / 5%);
-  --voile: rgb(10 12 15 / 45%);
+  /* ----- Surfaces et texte ----- */
+  --fond: var(--bg);
+  --surface: var(--surface-1);
+  --encre: var(--text);
+  --encre-douce: var(--text-muted);
+  --encre-discrete: var(--text-subtle);
+  --trait: var(--border);
+  --survol-ligne: var(--surface-2);
+  --voile: color-mix(in srgb, var(--bg) 72%, transparent);
 
-  /* ----- Graphiques : palette catégorielle validée (dataviz, validate_palette.js,
-     surface #ffffff), ordre fixe ; grille, axes, texte dans les marques ----- */
-  --serie-1: #2a78d6;
-  --serie-2: #eb6834;
-  --serie-3: #1baf7a;
-  --serie-4: #eda100;
-  --serie-5: #e87ba4;
-  --serie-6: #008300;
-  --serie-7: #6250d6;
-  --serie-8: #e34948;
-  --grille: #e8e6e0;
-  --axe: #c3c2b7;
-  --encre-discrete: #6f6e69;
-  --texte-sur-serie: #ffffff;
-  --texte-sur-serie-claire: #0b0b0b;
+  /* ----- Accent (action, curseur, focus ; environ 10 % de l'écran au plus) ----- */
+  /* --accent est défini par la charte, sous le même nom. */
+  --accent-fond: var(--surface-2);
+  --accent-encre: var(--on-accent);
 
-  /* ----- Polices ----- */
-  --police: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --police-titres: var(--police);
-  --police-chiffres: var(--police);
+  /* ----- États : toujours avec icône et libellé ----- */
+  --ok: var(--success);
+  --ok-fond: var(--success-bg);
+  --alerte: var(--warning);
+  --alerte-fond: var(--warning-bg);
+  --echec: var(--danger);
+  --echec-fond: var(--danger-bg);
+
+  /* ----- Graphiques : chart-1 à chart-8, vérifiées sur surface-1 par la charte ----- */
+  --serie-1: var(--chart-1);
+  --serie-2: var(--chart-2);
+  --serie-3: var(--chart-3);
+  --serie-4: var(--chart-4);
+  --serie-5: var(--chart-5);
+  --serie-6: var(--chart-6);
+  --serie-7: var(--chart-7);
+  --serie-8: var(--chart-8);
+  --grille: var(--border);
+  --axe: var(--border-strong);
+  --capital: var(--text-subtle);
+  /* Texte posé dans une part colorée : les huit couleurs sont claires sur fond graphite. */
+  --texte-sur-serie: var(--bg);
+  --texte-sur-serie-claire: var(--bg);
+  /* Région de la carte sans exposition (docs/da-eagle.md, « Carte du monde »). */
+  --region-vide: var(--border-strong);
+
+  /* ----- Polices : IBM Plex (next/font, app/layout.tsx) ----- */
+  --police: var(--font-sans);
+  --police-titres: var(--font-display);
+  --police-chiffres: var(--font-sans);
   --police-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --taille-base: 17px;
+  --taille-base: 16px;
 
-  /* ----- Rayons ----- */
-  --rayon-xs: 3px;
-  --rayon-marque: 4px;
-  --rayon-s: 6px;
-  --rayon-m: 10px;
-  --rayon-l: 14px;
-  --rayon-xl: 16px;
-  --rayon: 20px;
-  --rayon-carte: 22px;
-  --rayon-pilule: 999px;
+  /* ----- Rayons : sm 6, md 10 (boutons, bandeaux), lg 20 (cartes), full ----- */
+  --rayon-xs: 3px; /* pastilles de légende, comme .eg-legend__swatch */
+  --rayon-marque: 4px; /* extrémité des marques de graphique */
+  --rayon-s: var(--radius-sm);
+  --rayon-m: var(--radius-md);
+  --rayon-l: var(--radius-md);
+  --rayon-xl: var(--radius-lg);
+  --rayon: var(--radius-lg);
+  --rayon-carte: var(--radius-lg);
+  --rayon-pilule: var(--radius-full);
 
-  /* ----- Durées et courbes ----- */
-  --duree-courte: 160ms;
-  --duree-moyenne: 320ms;
-  --duree-longue: 700ms;
+  /* ----- Mouvement : calme, sans rebond ----- */
+  --duree-courte: var(--duration-fast);
+  --duree-moyenne: var(--duration-slow);
+  --duree-longue: var(--duration-reveal);
+  --duree-cascade: var(--duration-stagger);
   --duree-boucle: 2.4s;
-  --courbe: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --courbe: var(--ease-enter);
+  --courbe-sortie: var(--ease-exit);
+  --courbe-calme: var(--ease-calm);
 
-  /* ----- Ombres ----- */
-  --ombre: 0 1px 2px rgb(27 31 36 / 6%), 0 6px 24px rgb(27 31 36 / 6%);
-  --ombre-survol: 0 6px 18px rgb(27 31 36 / 12%);
+  /* ----- Ombres : réservées au survol et aux fenêtres ----- */
+  --ombre: none;
+  --ombre-survol: var(--shadow-raised);
+  --ombre-fenetre: var(--shadow-overlay);
 
-  color-scheme: light;
-}
-
-/* Mode sombre : mêmes rôles, pas choisis pour la surface sombre (palette validée sur #1c1f24). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --fond: #121417;
-    --surface: #1c1f24;
-    --encre: #f1f2f4;
-    --encre-douce: #a9b0b9;
-    --trait: #2e333a;
-    --accent: #7ea6f2;
-    --accent-fond: #1f2a40;
-    --accent-encre: #0d1420;
-    --ok: #5cc98f;
-    --ok-fond: #17301f;
-    --alerte: #f0b357;
-    --alerte-fond: #3a2a12;
-    --echec: #f08b84;
-    --echec-fond: #3d1c1a;
-    --serie-1: #3987e5;
-    --serie-2: #d95926;
-    --serie-3: #199e70;
-    --serie-4: #c98500;
-    --serie-5: #d55181;
-    --serie-6: #0ca30c;
-    --serie-7: #9085e9;
-    --serie-8: #e66767;
-    --grille: #2c2f35;
-    --axe: #3a3e45;
-    --encre-discrete: #9a9fa6;
-    --capital: #6b737d;
-    --survol-ligne: rgb(126 166 242 / 8%);
-    --ombre: none;
-    --ombre-survol: 0 6px 18px rgb(0 0 0 / 40%);
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }

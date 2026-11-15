@@ -6,6 +6,7 @@ import {
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { Chiffre, Texte, useChiffres } from "./Chiffres";
+import { CarteMonde } from "./Da";
 import { formaterChiffre, formaterDate, formaterMontant } from "@/lib/format";
 import { chargerUnivers } from "@/lib/repartition";
 import type { Eventail } from "@/lib/scenarios";
@@ -57,11 +58,14 @@ export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
   const { chiffres } = useChiffres();
   const duree = useDuree();
   const [actif, setActif] = useState<string | null>(null);
-  // La couleur suit l'entité dans l'ordre reçu (le pipeline trie déjà par poids) ;
+  // Charte : couleur fixe pour une classe d'actif ou une région, sinon chart-1, 2, 3…
+  // par poids décroissant. La légende suit le même ordre.
   // la légende est triée par valeur décroissante.
   const tranches: Tranche[] = parts
-    .map((p, i) => ({ ...p, valeur: chiffres[p.id]?.valeur ?? 0, couleur: SERIES[i % SERIES.length] }))
-    .filter((t) => t.valeur > 0);
+    .map((p) => ({ ...p, valeur: chiffres[p.id]?.valeur ?? 0 }))
+    .filter((t) => t.valeur > 0)
+    .sort((a, b) => b.valeur - a.valeur)
+    .map((t, i) => ({ ...t, couleur: t.couleur ?? SERIES[i % SERIES.length] }));
   const legende = [...tranches].sort((a, b) => b.valeur - a.valeur);
   const survol = tranches.find((t) => t.id === actif);
   if (!tranches.length) return <figure className="anneau"><figcaption>{titre}</figcaption><p className="manque">Information manquante</p></figure>;
@@ -71,8 +75,8 @@ export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
       <div className="anneau__graphique">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={tranches} dataKey="valeur" nameKey="libelle" innerRadius="60%" outerRadius="84%" startAngle={90} endAngle={-270}
-              paddingAngle={tranches.length > 1 ? 1.5 : 0} stroke="var(--surface)" strokeWidth={2} isAnimationActive
+            <Pie data={tranches} dataKey="valeur" nameKey="libelle" innerRadius="66%" outerRadius="88%" startAngle={90} endAngle={-270}
+              paddingAngle={0} stroke="var(--surface)" strokeWidth={tranches.length > 1 ? 4 : 0} isAnimationActive
               animationDuration={duree} onMouseEnter={(_, i) => setActif(tranches[i]?.id ?? null)}
               labelLine={false} label={etiquette}>
               {tranches.map((t) => (
@@ -119,7 +123,7 @@ export function TroisAnneaux({ s, ptf }: { s: SortiePipeline; ptf: Portefeuille 
     <div className="anneaux">
       <Anneau titre="Par classe d'actif" parts={reps.classe ?? []} />
       <Anneau titre="Par secteur" parts={reps.secteur ?? []} />
-      <Anneau titre="Par zone géographique" parts={reps.zone ?? []} />
+      <CarteMonde titre="Par région" parts={reps.region ?? []} />
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Aigle } from "./Aigle";
+import { Avatar, FournisseurDa } from "./Da";
+import type { DirectionArtistique } from "@/lib/da";
 import { Voix } from "./Voix";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
@@ -42,7 +44,8 @@ export type EagleApi = {
   afficherDiapositive: (id: string) => string;
 };
 
-export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: EagleApi) => void; avatar?: string | null; logo?: string | null }) {
+export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; da?: DirectionArtistique | null }) {
+  const [voixParle, setVoixParle] = useState(false);
   const [phase, setPhase] = useState<Phase>("accueil");
   const [question, setQuestion] = useState(0);
   const [profil, setProfil] = useState<Partial<Profil>>(PROFIL_VIDE);
@@ -350,6 +353,9 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
   }
 
   const enCours = phase === "analyse" || Boolean(actif && !actif.verdict && !actif.erreur);
+  // État de l'avatar (docs/da-eagle.md) : réfléchit pendant un calcul, parle quand la voix émet, écoute sinon.
+  const etatAvatar = enCours ? "reflechit" : voixParle ? "parle" : "ecoute";
+  const resultat = phase === "presentation" || Boolean(actif?.verdict);
   const lignesProfil: [string, string, string | undefined][] = [
     ["prenom", "Prénom", prenom || undefined],
     ["horizon_annees", "Horizon", profil.horizon_annees ? formaterHorizon(profil.horizon_annees) : undefined],
@@ -366,17 +372,18 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
   ];
 
   return (
+    <FournisseurDa da={da}>
     <FournisseurChiffres valeur={ctx}>
       <div className="eagle">
         <aside className="eagle__gauche">
+          {da?.logoHorizontal ? (
+            <h1 className="eagle__logo-ligne"><img className="eagle__logo" src={da.logoHorizontal} alt="Eagle" /></h1>
+          ) : <h1 className="eagle__nom">Eagle</h1>}
           <div className="eagle__identite">
-            <Aigle taille={120} actif={enCours} image={avatar} />
-            <div>
-              <h1 className="eagle__nom">{logo ? <img className="eagle__logo" src={logo} alt="" aria-hidden="true" /> : null}Eagle</h1>
-              <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
-            </div>
+            <Avatar etat={etatAvatar} taille={132} repli={<Aigle taille={120} actif={enCours} />} />
+            <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
           </div>
-          <Voix api={api} dire={dire} />
+          <Voix api={api} dire={dire} surParole={setVoixParle} />
           <div className="transcription" aria-live="polite" aria-label="Transcription">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>
@@ -385,7 +392,9 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
               </p>
             ))}
           </div>
-          <p className="eagle__mention">Simulation seulement : aucune transaction réelle.</p>
+          <p className={resultat ? "eagle__mention eagle__mention--resultat" : "eagle__mention"}>
+            {resultat ? "Simulation, pas un conseil financier. Aucune transaction réelle." : "Simulation seulement : aucune transaction réelle."}
+          </p>
         </aside>
 
         <main className="eagle__centre">
@@ -406,7 +415,7 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
             </div>
           ) : null}
           <section className={`diapo diapo--${sens}`} key={actif ? `actif-${actif.symbole}` : `${phase}-${question}-${diapo}`}>
-            {titre ? <h2 className="diapo__titre">{typo(titre)}</h2> : null}
+            {titre ? <h2 className={phase === "accueil" && !actif ? "diapo__titre eg-title-question" : "diapo__titre eg-title-2"}>{typo(titre)}</h2> : null}
             {justification ? <p className="diapo__justification">{typeof justification === "string" ? typo(justification) : justification}</p> : null}
             <div className="diapo__contenu">{contenu}</div>
           </section>
@@ -446,5 +455,6 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
         {fiche ? <FicheReference id={fiche} fermer={() => setFiche(null)} /> : null}
       </div>
     </FournisseurChiffres>
+    </FournisseurDa>
   );
 }

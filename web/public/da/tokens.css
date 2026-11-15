@@ -1,0 +1,89 @@
+/* Eagle — tokens de la charte (généré depuis tokens.json). Importer une fois dans app/layout.tsx. */
+:root {
+  --bg: #111417;
+  --surface-1: #191D22;
+  --surface-2: #232930;
+  --surface-3: #2C333B;
+  --border: #2C333B;
+  --border-strong: #3A434D;
+  --text: #E8ECF0;
+  --text-muted: #9AA4AF;
+  --text-subtle: #808B97;
+  --accent: #8DB4D9;
+  --accent-hover: #A9C8E6;
+  --accent-pressed: #7299C0;
+  --on-accent: #111417;
+  --focus: #A9C8E6;
+  --signature: #D9A15B;
+  --signature-light: #F0C27F;
+  --signature-dark: #B98238;
+  --success: #3FB884;
+  --success-bg: #1E302E;
+  --warning: #F2994A;
+  --warning-bg: #332C27;
+  --danger: #EF6461;
+  --danger-bg: #33262A;
+  --chart-1: #3787D6;
+  --chart-2: #E69F00;
+  --chart-3: #2BB38A;
+  --chart-4: #C65A9C;
+  --chart-5: #F4D875;
+  --chart-6: #A8D4F7;
+  --chart-7: #B5552E;
+  --chart-8: #DDE2E7;
+  --steel-050: #EEF2F6;
+  --steel-100: #DCE5EE;
+  --steel-200: #C9D7E6;
+  --steel-300: #AFC3D8;
+  --steel-400: #7FA3C8;
+  --steel-500: #4C6F9A;
+  --steel-600: #3E5F85;
+  --steel-700: #33506F;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 56px;
+  --space-9: 72px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+  --shadow-raised: 0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-overlay: 0 24px 64px rgba(0,0,0,0.55);
+  --shadow-focus: 0 0 0 3px #111417, 0 0 0 6px #A9C8E6;
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 400ms;
+  --duration-reveal: 600ms;
+  --duration-stagger: 60ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --ease-calm: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Polices : next/font expose --font-plex-serif et --font-plex-sans (voir da-eagle.md) */
+  --font-display: var(--font-plex-serif, "IBM Plex Serif"), Georgia, serif;
+  --font-sans: var(--font-plex-sans, "IBM Plex Sans"), system-ui, sans-serif;
+}
+.eg-display { font-family: var(--font-display); font-size: 56px; line-height: 60px; font-weight: 500; letter-spacing: -0.01em; }
+.eg-title-1 { font-family: var(--font-display); font-size: 40px; line-height: 48px; font-weight: 500; letter-spacing: -0.005em; }
+.eg-title-question { font-family: var(--font-display); font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: 0; }
+.eg-title-2 { font-family: var(--font-display); font-size: 24px; line-height: 32px; font-weight: 500; letter-spacing: 0; }
+.eg-title-3 { font-family: var(--font-display); font-size: 20px; line-height: 28px; font-weight: 500; letter-spacing: 0; }
+.eg-text-lg { font-family: var(--font-sans); font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
+.eg-text { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 400; letter-spacing: 0; }
+.eg-text-sm { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: 0; }
+.eg-caption { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; letter-spacing: 0; }
+.eg-label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.eg-button { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: 0; }
+.eg-num-xl { font-family: var(--font-sans); font-size: 48px; line-height: 52px; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.eg-num-lg { font-family: var(--font-sans); font-size: 28px; line-height: 34px; font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.eg-num { font-family: var(--font-sans); font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.eg-num-sm { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-slow: 1ms; --duration-reveal: 1ms; --duration-stagger: 0ms; }
+}
