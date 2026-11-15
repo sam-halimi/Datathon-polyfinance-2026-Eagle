@@ -22,6 +22,9 @@ import pandas as pd
 from agents.journal import Journal, cle
 from agents.profil import Profil
 from tools import esg as esg_outils
+from tools import activites as act
+from tools import repartition
+from tools.dividendes import rendement_dividende
 from tools.donnees import univers
 from tools.gouvernance import SEUILS_PAR_TOLERANCE
 
@@ -50,8 +53,9 @@ MOTS_CLES_SECTEUR: dict[str, tuple[str, ...]] = {
     "Utilities": ("services publics", "electricite", "utilites"),
     "Consumer Staples": ("consommation de base", "alimentation", "epicerie", "depanneur", "biens de consommation"),
     "Consumer Discretionary": ("automobile", "voiture", "voitures", "vehicule electrique", "vehicules electriques",
-                               "commerce en ligne"),
-    "Communication Services": ("internet", "moteur de recherche", "reseaux sociaux", "publicite en ligne"),
+                               "commerce en ligne", "consommation discretionnaire"),
+    "Communication Services": ("internet", "moteur de recherche", "reseaux sociaux", "publicite en ligne",
+                               "communication", "telecommunications"),
     "Industrials": ("rail", "chemin de fer", "transport", "industrie", "industriel"),
 }
 MOTS_CLES_CRYPTO = ("crypto", "cryptos", "cryptomonnaie", "cryptomonnaies", "cryptoactif", "cryptoactifs",
@@ -61,6 +65,108 @@ MOTS_CONTROVERSE = ("controverse", "controverses", "esg", "responsable", "durabl
 MOTS_REVENU = ("dividende", "dividendes", "revenu", "revenus", "rente")
 MOTS_CANADA = ("canada", "canadien", "canadienne", "canadiens", "canadiennes", "quebec")
 MOTS_DIVERSIFICATION = ("diversification", "diversifie", "diversifier")
+MOTS_ETATS_UNIS = ("etats unis", "usa", "americain", "americaine", "americains", "americaines", "amerique",
+                   "wall street")
+MOTS_FAIBLE_VOL = ("faible volatilite", "peu volatil", "peu volatile", "volatilite faible", "basse volatilite",
+                   "stabilite", "stable", "stables")
+MOTS_FNB = ("fnb", "etf", "fnb indiciels", "fnb indiciel", "indiciel", "indiciels", "fonds indiciels", "gestion passive")
+MOTS_ETABLIES = ("societes etablies", "entreprises etablies", "etablies", "etablie", "grandes societes",
+                 "valeurs sures", "blue chip", "blue chips")
+MOTS_OR = ("or", "l or", "or physique", "lingot", "lingots", "metaux precieux")
+MOTS_ACTIVITES: dict[str, tuple[str, ...]] = {
+    "tabac": ("tabac", "cigarette", "cigarettes", "tobacco", "cigare", "cigares"),
+    "armement": ("armement", "armements", "arme", "armes", "armes a feu", "militaire", "weapons", "industrie militaire"),
+    "jeux_argent": ("jeux d argent", "jeu d argent", "casino", "casinos", "paris sportifs", "loterie", "loteries",
+                    "gambling", "pari", "paris"),
+    "alcool": ("alcool", "alcools", "boissons alcoolisees", "biere", "bieres", "vin", "vins", "spiritueux"),
+}
+
+# Critères connus, et seulement eux : l'orchestrateur relie un texte libre à l'un d'eux ou répond
+# « non couvert ». Il ne crée jamais de critère.
+CRITERES_PREFERENCES = ("ESG", "dividendes", "Canada", "États-Unis", "FNB indiciels", "sociétés établies",
+                        "faible volatilité", "diversification")
+CRITERES_EXCLUSIONS = ("énergies fossiles", "controverses", "crypto", "or", "tabac", "armement", "jeux d'argent",
+                       "alcool", "finance", "technologie", "énergie", "santé", "services publics", "industrie",
+                       "consommation de base", "consommation discrétionnaire", "communication")
+
+
+def critere_connu(texte: str, genre: str) -> str | None:
+    """Le critère connu qu'un texte désigne par mots-clés, ou None (à relier par l'orchestrateur)."""
+    if genre == "preference":
+        for nom, mots in (("ESG", MOTS_CONTROVERSE), ("dividendes", MOTS_REVENU), ("États-Unis", MOTS_ETATS_UNIS),
+                          ("Canada", MOTS_CANADA), ("faible volatilité", MOTS_FAIBLE_VOL), ("FNB indiciels", MOTS_FNB),
+                          ("sociétés établies", MOTS_ETABLIES), ("diversification", MOTS_DIVERSIFICATION)):
+            if contient(texte, mots):
+                return nom
+        return None
+    if contient(texte, MOTS_FOSSILE):
+        return "énergies fossiles"
+    if contient(texte, MOTS_CONTROVERSE):
+        return "controverses"
+    if contient(texte, MOTS_CLES_CRYPTO):
+        return "crypto"
+    if contient(texte, MOTS_OR):
+        return "or"
+    for a, mots in MOTS_ACTIVITES.items():
+        if contient(texte, mots):
+            return act.LIBELLES[a]
+    for secteur, mots in MOTS_CLES_SECTEUR.items():
+        if contient(texte, mots):
+            return secteur
+    t = univers(etendu=True)
+    if texte.strip().upper() in t.index or _symbole_par_nom(texte):
+        return "symbole"
+    return None
+
+
+def _symbole_par_nom(texte: str) -> str | None:
+    """Symbole dont le nom contient tous les mots du texte (mots entiers : « or » n'est pas « Toronto »)."""
+    mots = normaliser(texte).split()
+    if not mots:
+        return None
+    t = univers(etendu=True)
+    for s in t.index:
+        nom = normaliser(t.at[s, "name"]).split()
+        if all(m in nom for m in mots):
+            return s
+    return None
+
+
+def activite_de(texte: str) -> str | None:
+    for a, mots in MOTS_ACTIVITES.items():
+        if contient(texte, mots):
+            return a
+    return None
+
+
+PART_PREFERENCE = 0.5
+"""Une préférence de marché ou de FNB est respectée si au moins la moitié du capital y est (hypothèse de l'équipe)."""
+
+
+def consignes_preferences(profil: Profil) -> list[str]:
+    """Ce que le constructeur doit viser pour chaque préférence vérifiable : la même règle que `evaluer`."""
+    seuils = SEUILS_PAR_TOLERANCE
+    sortie = []
+    for pref in profil.preferences:
+        if contient(pref, MOTS_ETATS_UNIS):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital coté aux États-Unis "
+                          "(colonne marché : NASDAQ, NYSE, NYSE Arca, Cboe BZX).")
+        elif contient(pref, MOTS_CANADA):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital coté au Canada (TSX).")
+        elif contient(pref, MOTS_FAIBLE_VOL):
+            sortie.append(f"Préférence « {pref} » : volatilité du portefeuille au plus "
+                          f"{seuils['faible']['volatilite']:.0%} (seuil de la tolérance faible), vérifiée avec essayer.")
+        elif contient(pref, MOTS_FNB):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital en FNB.")
+        elif contient(pref, MOTS_ETABLIES):
+            sortie.append(f"Préférence « {pref} » : actions détenues en direct cotées depuis au moins "
+                          f"{repartition.ANNEES_ETABLIE} ans (colonne ancienneté) ; une action d'ancienneté inconnue "
+                          "ne compte pas comme établie.")
+    return [x.replace("%", " %") for x in sortie]
+
+
+REFERENCE_REVENU = "XIU.TO"
+"""Repère de la règle « revenu » : le FNB large du marché canadien de l'univers (hypothèse de l'équipe)."""
 
 
 def normaliser(texte: str) -> str:
@@ -122,6 +228,44 @@ def relier_interet(interet: str) -> dict[str, Any]:
 
 # --- chiffres ---------------------------------------------------------------------------------
 
+def veut_revenu(profil: Profil) -> bool:
+    return profil.objectif == "revenu" or any(contient(p, MOTS_REVENU) for p in profil.preferences)
+
+
+def dividende_actif(j: Journal, symbole: str) -> str | None:
+    """Rendement en dividendes d'un actif (tools.dividendes), ou None si « information manquante »."""
+    ident = cle("div", symbole)
+    if ident in j.chiffres:
+        return ident
+    if rendement_dividende(symbole)["valeur"] is None:
+        return None
+    return j.mesurer("rendement_dividende", ident, symbole=symbole)["valeur"]
+
+
+def dividende_reference(j: Journal) -> str:
+    return dividende_actif(j, REFERENCE_REVENU)
+
+
+def revenu(j: Journal, ident: str, poids: dict[str, float]) -> tuple[str, str, str, dict[str, Any]]:
+    """(rendement pondéré, part inconnue, repère XIU.TO, détails) ; chiffres de tools.dividendes."""
+    rid = j.mesurer("rendement_dividende_portefeuille", cle("div", "ptf", ident), poids=poids)["valeur"]
+    d = j.chiffres[rid]["details"]
+    inc = j.enregistrer(cle("div", "ptf", ident, "inconnu"), {
+        **{k: j.chiffres[rid][k] for k in ("outil", "parametres", "periode", "formule", "sources", "details")},
+        "valeur": d["part_inconnue"], "champ": "part_inconnue",
+        "unite": "fraction du capital sans donnée de dividendes"})
+    return rid, inc, dividende_reference(j), d
+
+
+def _verdict_revenu(j: Journal, rid: str, inc: str, ref: str) -> str:
+    ok = j.chiffres[rid]["valeur"] >= j.chiffres[ref]["valeur"] - 1e-12 and j.chiffres[inc]["valeur"] <= 1e-9
+    return RESPECTE if ok else PARTIEL
+
+
+REGLE_REVENU = (f"respecté si le rendement en dividendes pondéré des 12 derniers mois atteint au moins celui de "
+                f"{REFERENCE_REVENU} (FNB large du marché canadien, hypothèse de l'équipe) et qu'aucune ligne n'est "
+                "sans donnée ; tools/dividendes.py, data/corporate_actions.csv")
+
 def _ref(outil: str, parametres: dict[str, Any], valeur: float, unite: str, formule: str, sources: list[str],
          nature: str, periode: dict[str, Any] | None = None, **details: Any) -> dict[str, Any]:
     return {"outil": outil, "parametres": parametres,
@@ -173,8 +317,13 @@ def _entree(critere: str, element: str | None, attente: str, reponse: str, statu
 # --- critères ---------------------------------------------------------------------------------
 
 def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
-            ids_limites: dict[str, str] | None = None) -> list[dict[str, Any]]:
-    """Adéquation d'un portefeuille simulé (`poids`) au profil. Écrit ses chiffres dans `j`."""
+            ids_limites: dict[str, str] | None = None,
+            liens: dict[str, dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """Adéquation d'un portefeuille simulé (`poids`) au profil. Écrit ses chiffres dans `j`.
+
+    `liens` : pour une préférence ou une exclusion en texte libre, le critère connu auquel
+    l'orchestrateur l'a reliée ({"critere": ..., "raison": ...}), ou critere None avec la raison.
+    """
     table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
@@ -199,11 +348,12 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         "Σ poids des actions, FNB d'actions et cryptoactifs", [f"{SOURCE_UNIVERS} (asset_class)"],
         "calcul sur les poids décidés par le constructeur"))
     if profil.objectif == "revenu":
-        from agents.lignes import statut_fondamentaux
-        raison = f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
-        entrees.append(_entree("objectif", None, "Tirer un revenu régulier du capital.",
-                               f"Le rendement en revenu des lignes n'est pas mesurable. Part risquée : {{{rid}}}.",
-                               NON_COUVERT, [rid], "revenu mesuré par les dividendes", raison))
+        did, inc, ref, _ = revenu(j, ident, poids)
+        entrees.append(_entree(
+            "objectif", None, "Tirer un revenu régulier du capital.",
+            f"Rendement en dividendes du portefeuille simulé sur la dernière année : {{{did}}}, contre {{{ref}}} "
+            f"pour {REFERENCE_REVENU} ; part sans donnée : {{{inc}}}. Part risquée : {{{rid}}}.",
+            _verdict_revenu(j, did, inc, ref), [did, ref, inc, rid], REGLE_REVENU))
     else:
         bas, haut = BANDES_OBJECTIF[profil.objectif]
         dans_bande = bas - 1e-9 <= risquee <= haut + 1e-9
@@ -240,8 +390,8 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         f"Sur la fenêtre, la pire baisse aurait représenté {{{montant}}} {profil.devise} pour ce capital.",
         RESPECTE, [montant, pb], "le capital fixe l'échelle ; la perte en dollars est montrée telle quelle"))
 
-    entrees += _preferences(profil, poids, j, ident, m)
-    entrees += _exclusions(profil, poids, j, ident)
+    entrees += _preferences(profil, poids, j, ident, m, liens or {})
+    entrees += _exclusions(profil, poids, j, ident, liens or {})
     entrees += _interets(profil, poids, j, ident, m)
     return entrees
 
@@ -264,19 +414,35 @@ def _verdict_transparence(d: dict, valeur: float) -> str:
     return RESPECTE
 
 
-def _raison_fondamentaux() -> str:
-    from agents.lignes import statut_fondamentaux
-    return f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
+def _cible(texte: str, genre: str, liens: dict[str, dict[str, Any]]) -> tuple[str, str]:
+    """(texte à interpréter, note) : le texte lui-même s'il désigne un critère connu, sinon le critère
+    auquel l'orchestrateur l'a relié."""
+    if critere_connu(texte, genre):
+        return texte, ""
+    lien = liens.get(texte) or {}
+    if lien.get("critere"):
+        return lien["critere"], f" Relié par l'orchestrateur au critère « {lien['critere']} » : {lien.get('raison', '')}"
+    return texte, ""
 
 
-def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict) -> list[dict[str, Any]]:
+def _raison_non_couvert(texte: str, genre: str, liens: dict[str, dict[str, Any]]) -> str:
+    connus = CRITERES_PREFERENCES if genre == "preference" else CRITERES_EXCLUSIONS
+    lien = liens.get(texte) or {}
+    pourquoi = lien.get("raison") or "l'orchestrateur ne l'a relié à aucun critère"
+    return (f"« {texte} » ne correspond à aucun critère vérifiable de l'assistant ({', '.join(connus)}) : {pourquoi}")
+
+
+def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict,
+                 liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.preferences:
         return [_entree("preferences", None, "Aucune préférence déclarée.",
                         f"Rien à vérifier. Volatilité du portefeuille : {{{m['stats']['volatilite']}}}.",
                         RESPECTE, [m["stats"]["volatilite"]], "aucune")]
     sortie = []
-    for pref in profil.preferences:
+    for texte in profil.preferences:
+        pref, note = _cible(texte, "preference", liens)
+        avant = len(sortie)
         if contient(pref, MOTS_CONTROVERSE):
             v, inc, d = _transparence(j, ident, poids, "controverse")
             sortie.append(_entree(
@@ -285,19 +451,60 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
                 f"statut inconnu : {{{inc}}}.", _verdict_transparence(d, j.chiffres[v]["valeur"]), [v, inc],
                 "respecté si aucune exposition et aucune part inconnue (data/esg_actions.csv, data/fnb_composition.csv)"))
         elif contient(pref, MOTS_REVENU):
-            sortie.append(_entree("preferences", pref, f"« {pref} ».", "Les dividendes ne sont pas mesurés.", NON_COUVERT,
-                                  [], "revenu mesuré par les dividendes",
-                                  _raison_fondamentaux()))
-        elif contient(pref, MOTS_CANADA):
-            cad = sum(w for s, w in poids.items() if table.at[s, "currency"] == "CAD")
-            cid = j.enregistrer(cle("expo_cad", ident), _ref(
-                "agents.adequation.exposition_devise", {"portefeuille": ident, "devise": "CAD"}, cad,
-                "fraction du capital", "Σ poids des lignes cotées en CAD", [f"{SOURCE_UNIVERS} (currency)"],
-                "calcul sur les poids décidés par le constructeur"))
-            sortie.append(_entree("preferences", pref, f"« {pref} » : privilégier le Canada.",
-                                  f"Part du capital cotée en dollars canadiens : {{{cid}}}.",
-                                  RESPECTE if cad >= 0.5 else PARTIEL, [cid],
-                                  "respecté si au moins la moitié du capital est cotée au Canada"))
+            did, inc, ref, _ = revenu(j, ident, poids)
+            sortie.append(_entree(
+                "preferences", pref, f"« {pref} » : des lignes qui versent des dividendes.",
+                f"Rendement en dividendes pondéré sur la dernière année : {{{did}}}, contre {{{ref}}} pour {REFERENCE_REVENU} ; "
+                f"part sans donnée : {{{inc}}}.", _verdict_revenu(j, did, inc, ref), [did, ref, inc], REGLE_REVENU))
+        elif contient(pref, MOTS_CANADA) or contient(pref, MOTS_ETATS_UNIS):
+            pays = "États-Unis" if contient(pref, MOTS_ETATS_UNIS) else "Canada"
+            cid = j.mesurer("part_par_marche", cle("marche", ident, pays), poids=poids, pays=pays)["valeur"]
+            part = j.chiffres[cid]["valeur"]
+            sortie.append(_entree("preferences", pref, f"« {pref} » : privilégier les titres cotés {('aux ' if pays == 'États-Unis' else 'au ') + pays}.",
+                                  f"Part du capital cotée {('aux ' if pays == 'États-Unis' else 'au ') + pays} : {{{cid}}}.",
+                                  RESPECTE if part >= PART_PREFERENCE - 1e-9 else PARTIEL, [cid],
+                                  "respecté si au moins la moitié du capital est cotée sur ce marché "
+                                  "(colonne market ; hypothèse de l'équipe)"))
+        elif contient(pref, MOTS_FAIBLE_VOL):
+            vol = m["stats"]["volatilite"]
+            sid = j.enregistrer(cle("seuil", "volatilite", "faible"), _ref(
+                "tools.gouvernance.SEUILS_PAR_TOLERANCE", {"tolerance": "faible", "seuil": "volatilite"},
+                SEUILS_PAR_TOLERANCE["faible"]["volatilite"], "fraction",
+                "seuil de volatilité de la tolérance « faible »", ["tools/gouvernance.py (SEUILS_PAR_TOLERANCE)"],
+                "hypothèse du projet, pas une norme réglementaire"))
+            pid = j.enregistrer(cle("seuil", "volatilite", "profil"), _ref(
+                "tools.gouvernance.SEUILS_PAR_TOLERANCE", {"tolerance": profil.tolerance_risque, "seuil": "volatilite"},
+                SEUILS_PAR_TOLERANCE[profil.tolerance_risque]["volatilite"], "fraction",
+                f"seuil de volatilité de la tolérance « {profil.tolerance_risque} »",
+                ["tools/gouvernance.py (SEUILS_PAR_TOLERANCE)"], "hypothèse du projet, pas une norme réglementaire"))
+            v = j.chiffres[vol]["valeur"]
+            statut = RESPECTE if v <= j.chiffres[sid]["valeur"] + 1e-12 else PARTIEL
+            sortie.append(_entree("preferences", pref, f"« {pref} » : un portefeuille simulé peu volatil.",
+                                  f"Volatilité du portefeuille {{{vol}}}, pour {{{sid}}} au seuil de la tolérance faible "
+                                  f"et {{{pid}}} au seuil de votre profil.", statut, [vol, sid, pid],
+                                  "respecté si la volatilité est au plus le seuil de la tolérance faible ; partiel si "
+                                  "elle n'est que sous le seuil du profil (tools/gouvernance.py)"))
+        elif contient(pref, MOTS_FNB):
+            fid = j.mesurer("part_fnb", cle("fnb", ident), poids=poids)["valeur"]
+            sortie.append(_entree("preferences", pref, f"« {pref} » : passer surtout par des FNB.",
+                                  f"Part du capital en FNB : {{{fid}}}.",
+                                  RESPECTE if j.chiffres[fid]["valeur"] >= PART_PREFERENCE - 1e-9 else PARTIEL, [fid],
+                                  "respecté si au moins la moitié du capital est en FNB (asset_class etf_*)"))
+        elif contient(pref, MOTS_ETABLIES):
+            eid = j.mesurer("part_societes_etablies", cle("etablies", ident), poids=poids)["valeur"]
+            d = j.chiffres[eid]["details"]
+            if not d["lignes"]:
+                sortie.append(_entree("preferences", pref, f"« {pref} ».",
+                                      f"Aucune action détenue en direct : rien de récent ni d'inconnu ({{{eid}}}).",
+                                      RESPECTE, [eid], d["regle"]))
+            else:
+                inconnues = [s for s, x in d["lignes"].items() if x["annees"] is None]
+                sortie.append(_entree(
+                    "preferences", pref, f"« {pref} » : des sociétés cotées depuis longtemps.",
+                    f"Part du capital en actions cotées depuis moins de {repartition.ANNEES_ETABLIE} ans ou "
+                    f"d'ancienneté inconnue : {{{eid}}}" + (f" ; ancienneté inconnue pour {', '.join(inconnues)}" if inconnues else "")
+                    + ".", RESPECTE if j.chiffres[eid]["valeur"] <= 1e-9 else PARTIEL, [eid],
+                    d["regle"] + " ; date d'introduction des fiches Finnhub"))
         elif contient(pref, MOTS_DIVERSIFICATION):
             sans = j.enregistrer(cle("ptf", ident, "vol_sans_diversification"), {
                 **{k: j.chiffres[m["stats"]["volatilite"]][k] for k in ("outil", "parametres", "periode", "sources")},
@@ -310,22 +517,69 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
                                   "bougeaient ensemble.", RESPECTE if gain and len(poids) >= 5 else PARTIEL,
                                   [m["stats"]["volatilite"], sans], "les corrélations réduisent la volatilité, cinq lignes au moins"))
         else:
-            sortie.append(_entree("preferences", pref, f"« {pref} ».", "Cette préférence n'est pas vérifiable.",
-                                  NON_COUVERT, [], "aucune",
-                                  f"aucune donnée de data/ ne permet de vérifier « {pref} »"))
+            sortie.append(_entree("preferences", texte, f"« {texte} ».", "Cette préférence n'est pas vérifiable.",
+                                  NON_COUVERT, [], "aucune", _raison_non_couvert(texte, "preference", liens)))
+        for e in sortie[avant:]:
+            e["element"] = texte
+            if note:
+                e["regle"] += note
     return sortie
 
 
-def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str) -> list[dict[str, Any]]:
+def _activite(j: Journal, ident: str, poids: dict[str, float], terme: str, a: str) -> dict[str, Any]:
+    res = act.exposition_activite(poids, a)
+    base = {k: res[k] for k in ("outil", "parametres", "periode", "unite", "formule", "sources", "details")}
+    v = j.enregistrer(cle("activite", ident, a), {**base, "valeur": res["valeur"]})
+    inc = j.enregistrer(cle("activite", ident, a, "inconnu"), {
+        **base, "valeur": res["details"]["part_inconnue"], "champ": "part_inconnue",
+        "unite": "fraction du capital dont le statut n'est pas connu"})
+    d = res["details"]
+    oui = [s for s, x in d["lignes"].items() if x.get("valeur") == "oui"] + [
+        f"{s} (via {', '.join(x['titres_oui'])})" for s, x in d["lignes"].items() if x.get("titres_oui")]
+    return _entree(
+        "exclusions", terme, f"Écarter « {terme} » ({act.LIBELLES[a]}).",
+        f"Exposition au {act.LIBELLES[a]}, en direct et à travers les FNB : {{{v}}} du capital"
+        + (f" ({', '.join(oui)})" if oui else "") + f" ; statut inconnu : {{{inc}}}.",
+        _verdict_transparence(d, res["valeur"]), [v, inc],
+        f"respecté si aucune exposition, directe ou via un FNB, et aucune part inconnue ({act.FICHIER}, "
+        "data/fnb_composition.csv)")
+
+
+def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
+                liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.exclusions:
         return [_entree("exclusions", None, "Aucune exclusion déclarée.", "Rien à écarter.", RESPECTE, [], "aucune")]
     sortie = []
-    noms = {normaliser(table.at[s, "name"]): s for s in table.index}
-    for terme in profil.exclusions:
-        symbole = terme.strip().upper() if terme.strip().upper() in table.index else next(
-            (s for n, s in noms.items() if normaliser(terme) and normaliser(terme) in n), None)
-        if contient(terme, MOTS_FOSSILE) or contient(terme, MOTS_CONTROVERSE) and not symbole:
+    for texte in profil.exclusions:
+        terme, note = _cible(texte, "exclusion", liens)
+        avant = len(sortie)
+        sortie += _une_exclusion(terme, texte, poids, j, ident, table, liens)
+        for e in sortie[avant:]:
+            e["element"] = texte
+            if note:
+                e["regle"] += note
+    return sortie
+
+
+def _une_exclusion(terme: str, texte: str, poids: dict[str, float], j: Journal, ident: str, table,
+                   liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    sortie = []
+    if True:
+        symbole = terme.strip().upper() if terme.strip().upper() in table.index else _symbole_par_nom(terme)
+        a = activite_de(terme)
+        if a and not symbole:
+            sortie.append(_activite(j, ident, poids, terme, a))
+        elif contient(terme, MOTS_OR) and not symbole:
+            gid = j.enregistrer(cle("or", ident), _ref(
+                "agents.adequation.part_classe", {"portefeuille": ident, "classe": "etf_commodity"},
+                sum(w for s, w in poids.items() if table.at[s, "asset_class"] == "etf_commodity"), "fraction du capital",
+                "Σ poids des FNB d'or (asset_class etf_commodity)", [f"{SOURCE_UNIVERS} (asset_class)"],
+                "calcul sur les poids décidés"))
+            sortie.append(_entree("exclusions", terme, f"Écarter « {terme} ».", f"FNB d'or : {{{gid}}} du capital.",
+                                  RESPECTE if j.chiffres[gid]["valeur"] == 0 else PARTIEL, [gid],
+                                  "respecté si aucun FNB d'or (GLD, asset_class etf_commodity)"))
+        elif contient(terme, MOTS_FOSSILE) or contient(terme, MOTS_CONTROVERSE) and not symbole:
             critere = "activite_fossile" if contient(terme, MOTS_FOSSILE) else "controverse"
             v, inc, d = _transparence(j, ident, poids, critere)
             libelle = "activité fossile" if critere == "activite_fossile" else "controverse documentée"
@@ -352,10 +606,9 @@ def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str)
         else:
             secteur = next((s for s, mots in MOTS_CLES_SECTEUR.items() if contient(terme, mots)), None)
             if secteur is None:
-                sortie.append(_entree("exclusions", terme, f"Écarter « {terme} ».", "Exclusion non vérifiable.",
-                                      NON_COUVERT, [], "aucune",
-                                      f"aucune donnée de data/ ne dit quels actifs relèvent de « {terme} »"))
-                continue
+                sortie.append(_entree("exclusions", texte, f"Écarter « {texte} ».", "Exclusion non vérifiable.",
+                                      NON_COUVERT, [], "aucune", _raison_non_couvert(texte, "exclusion", liens)))
+                return sortie
             direct = sum(w for s, w in poids.items() if table.at[s, "sector"] == secteur and table.at[s, "asset_class"] == "equity")
             fnb = [s for s in poids if table.at[s, "asset_class"] == "etf_equity"]
             sid = j.enregistrer(cle("secteur", ident, secteur), _ref(

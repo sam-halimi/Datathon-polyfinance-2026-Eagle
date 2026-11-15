@@ -284,7 +284,7 @@ def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: 
             f = esg_outils.fiche_esg(s)
             if f["statut"] != "connu" or f.get("controverse") == "inconnu":
                 manque.append("controverse inconnue dans data/esg_actions.csv")
-            manque.append(f"fondamentaux (bénéfices, dette, dividendes) : {statut_fondamentaux()} (data/fondamentaux.csv)")
+            manque.append(f"fondamentaux (bénéfices, dette ; les dividendes sont mesurés par tools/dividendes.py) : {statut_fondamentaux()} (data/fondamentaux.csv)")
         elif classe == "etf_equity":
             if s not in connus:
                 manque.append("composition absente de data/fnb_composition.csv")

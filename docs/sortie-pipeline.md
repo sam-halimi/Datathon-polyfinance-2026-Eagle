@@ -39,7 +39,8 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `chiffres` | {id: Reference} | Table des chiffres |
 | `contraintes` | objet | **nouveau** : `limites`, `origine` de chaque limite, `exclusions`, `nature`, `seuils_risque` |
 | `specialistes` | objet | **nouveau** : `marche_et_risque` et `macro` (constats, string[]), `esg` : {`criteres`, `fiches` (une par action : valeurs, résumé, `source_url`, `source_date`, ou `statut` « information manquante »), `expositions_fnb`, `constats`} |
-| `theme` | objet ou null | **nouveau** : `nom`, `secteur`, `symboles`, `source` |
+| `theme` | objet ou null | **nouveau** : `nom`, `secteur`, `symboles`, `source`. Premier thème de `themes`, gardé pour compatibilité |
+| `themes` | objet[] | Tous les thèmes couverts, un par centre d'intérêt : `nom`, `secteur`, `symboles`, `source`, `plafond`. Le plafond global (`contraintes.limites.plafond_theme`) est partagé à parts égales ; le contrôle `plafond_par_theme` le vérifie pour chaque thème |
 | `exclus` | {symbole: raison} | **nouveau** : candidats écartés avant construction |
 | `journal` | objet | **nouveau** : `appels` (chaque appel d'outil : `agent`, `id`, `outil`, `parametres`) et `textes_retires` |
 | `meta` | objet | **nouveau** : `modele`, `duree_secondes`, `date` |
@@ -65,7 +66,7 @@ Champs de `agents/profil.py`, plus `demande` et `prenom`.
 | `parts_du_risque` | {symbole: id} | Somme des valeurs = 1 |
 | `pires_baisses` | {symbole: id} | Pire baisse de chaque actif, dans sa devise de cotation |
 | `volatilites` | {symbole: id} | **nouveau** |
-| `theme` | {`nom`, `symboles`} ou null | **nouveau** : lignes du thème plafonné |
+| `theme` | {`nom`, `symboles`} ou null | **nouveau** : toutes les lignes de rôle `theme` ; `nom` joint les thèmes présents par « + » |
 | `essai` | 1 ou 2 | **nouveau** : essai où la gouvernance l'a accepté |
 | `controles` | Controle[] | **nouveau** : contrôles de ce portefeuille |
 | `adequation` | Adequation[] | **v2** : même vérification que `adequation` à la racine, pour ce portefeuille |

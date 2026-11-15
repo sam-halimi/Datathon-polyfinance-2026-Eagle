@@ -41,9 +41,10 @@ from agents.journal import Journal, cle
 from agents.modele import creer_agent
 from agents.profil import Profil
 from tools.bedrock import modele_bedrock
+from tools import activites as act_outils
 from tools import esg as esg_outils
 from tools.donnees import univers
-from tools.gouvernance import SECTEURS
+from tools.gouvernance import CLASSES, SECTEURS
 from tools.portefeuille import parts_du_risque, stats_portefeuille
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -82,6 +83,18 @@ class DemandeAnalysee(BaseModel):
         default_factory=list, description="Classes d'actifs demandées en bloc (par exemple « la crypto »)")
     part_risquee: float | None = Field(None, description="Part demandée en actions et crypto ensemble, en fraction, sinon null")
     resume: str = Field(description="La demande reformulée en une phrase, sans aucun chiffre")
+
+
+class LienLibre(BaseModel):
+    texte: str = Field(description="La préférence ou l'exclusion telle que l'utilisateur l'a écrite")
+    genre: Literal["preference", "exclusion"]
+    critere: str | None = Field(None, description=(
+        "Le critère connu, copié exactement de la liste fournie, qui vérifie ce texte ; null si aucun ne convient"))
+    raison: str = Field(description="Pourquoi ce critère, ou pourquoi aucun ne convient. Sans aucun chiffre")
+
+
+class LiensLibres(BaseModel):
+    liens: list[LienLibre] = Field(default_factory=list)
 
 
 class Constats(BaseModel):
@@ -151,6 +164,32 @@ def _lignes_univers(symboles) -> str:
                      for s in symboles)
 
 
+def construire_themes(profil: Profil, plafond_theme: float, table) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Tous les centres d'intérêt couverts deviennent des thèmes ; le plafond global est partagé.
+
+    Un symbole n'appartient qu'au premier thème qui le cite. Un centre d'intérêt crypto n'est pas un
+    thème (la crypto a son propre plafond). Renvoie (thèmes, intérêts non couverts avec leur raison).
+    """
+    themes: list[dict[str, Any]] = []
+    non_couverts: list[dict[str, str]] = []
+    deja: set[str] = set()
+    for interet in profil.centres_interet:
+        lien = adq.relier_interet(interet)
+        if lien["type"] == "non couvert":
+            non_couverts.append({"interet": interet, "raison": lien["raison"]})
+        elif lien["type"] in ("secteur", "table_themes") and plafond_theme > 0:
+            membres = [s for s in lien["symboles"] if table.at[s, "asset_class"] in ("equity", "etf_equity")
+                       and s not in deja]
+            if membres:
+                deja.update(membres)
+                themes.append({"nom": interet, "secteur": lien.get("secteur"), "symboles": membres,
+                               "source": lien["source"], "theme_table": lien.get("theme"),
+                               "source_url": lien.get("source_url")})
+    for t in themes:
+        t["plafond"] = plafond_theme / len(themes)
+    return themes, non_couverts
+
+
 class Session:
     """Un passage du pipeline pour un profil et une demande."""
 
@@ -213,35 +252,91 @@ class Session:
 
         # Thème : un centre d'intérêt devient un secteur de la table sourcée, plafonné.
         # Texte libre : relié à un secteur de la table par agents.adequation.relier_interet.
-        self.theme = None
-        self.interets_non_couverts = []
-        for interet in self.profil.centres_interet:
-            lien = adq.relier_interet(interet)
-            if lien["type"] == "non couvert":
-                self.interets_non_couverts.append({"interet": interet, "raison": lien["raison"]})
-            elif lien["type"] in ("secteur", "table_themes") and self.c["limites"]["plafond_theme"] > 0 and not self.theme:
-                membres = [s for s in lien["symboles"] if table.at[s, "asset_class"] in ("equity", "etf_equity")]
-                if membres:
-                    self.theme = {"nom": interet, "secteur": lien.get("secteur"), "symboles": membres,
-                                  "source": lien["source"], "theme_table": lien.get("theme"),
-                                  "source_url": lien.get("source_url")}
+        self.liens_libres = self.relier_textes_libres(agent)
+
+        self.themes, self.interets_non_couverts = construire_themes(
+            self.profil, self.c["limites"]["plafond_theme"], table)
+        self.theme = self.themes[0] if self.themes else None  # compatibilité du format v2
 
         # Univers des candidats : la table, moins les exclusions et les classes plafonnées à zéro.
         exclus: dict[str, str] = {}
         for s in table.index:
             if table.at[s, "asset_class"] == "crypto" and self.c["limites"]["max_crypto"] == 0:
                 exclus[s] = f"crypto plafonnée à zéro ({self.c['origine']['max_crypto']})"
-            for terme in self.profil.exclusions:
+            for texte in self.profil.exclusions:
+                terme = self._critere(texte, "exclusion")
                 n = _normaliser(terme)
-                if n == _normaliser(s) or SECTEURS.get(n) == table.at[s, "sector"]:
-                    exclus[s] = f"exclusion « {terme} » du profil"
+                if n == _normaliser(s) or SECTEURS.get(n) == table.at[s, "sector"] or CLASSES.get(n) == table.at[s, "asset_class"]:
+                    exclus[s] = f"exclusion « {texte} » du profil"
+                a = adq.activite_de(terme)
+                if a and table.at[s, "asset_class"] == "equity":
+                    f = act_outils.fiche_activites(s)
+                    if f["statut"] == "connu" and f[a]["valeur"] == "oui":
+                        exclus[s] = (f"{act_outils.LIBELLES[a]} selon {act_outils.FICHIER} "
+                                     f"(source : {f[a]['source_url']}, {f[a]['source_date']})")
         self.exclus = exclus
         self.candidats = [s for s in table.index if s not in exclus]
         self.ids_limites = gv.enregistrer_limites(self.journal, self.c)
 
-        theme = (f" Thème « {self.theme['nom']} » ({self.theme['secteur'] or self.theme['source']}), plafonné."
-                 if self.theme else "")
+        theme = "".join(f" Thème « {t['nom']} » ({t['secteur'] or t['source']}), plafonné." for t in self.themes)
         self.journal.etape("Orchestrateur", f"Lit votre profil et votre demande, fixe les plafonds du profil.{theme}")
+
+    def _critere(self, texte: str, genre: str) -> str:
+        """Le texte s'il désigne un critère connu, sinon le critère relié par l'orchestrateur, sinon le texte."""
+        if adq.critere_connu(texte, genre):
+            return texte
+        return (self.liens_libres.get(texte) or {}).get("critere") or texte
+
+    def relier_textes_libres(self, agent) -> dict[str, dict[str, Any]]:
+        """Relie chaque préférence ou exclusion en texte libre à un critère connu, ou « non couvert ».
+
+        Le modèle choisit dans une liste fermée ; un critère hors liste est refusé par le code. Il ne crée
+        jamais de critère. Seuls les textes que les mots-clés ne reconnaissent pas lui sont soumis.
+        """
+        libres = ([("preference", t) for t in self.profil.preferences if not adq.critere_connu(t, "preference")]
+                  + [("exclusion", t) for t in self.profil.exclusions if not adq.critere_connu(t, "exclusion")])
+        if not libres:
+            return {}
+        connus = {"preference": adq.CRITERES_PREFERENCES, "exclusion": adq.CRITERES_EXCLUSIONS}
+        o = self._demander(agent, (
+            "Relie chacun de ces textes du profil à UN critère connu de l'assistant, seulement si ce critère "
+            "vérifie vraiment ce que la personne demande. Sinon critere = null et explique pourquoi aucun critère "
+            "connu ne le vérifie. N'invente jamais de critère.\n"
+            f"Critères connus pour une préférence : {list(adq.CRITERES_PREFERENCES)}\n"
+            f"Critères connus pour une exclusion : {list(adq.CRITERES_EXCLUSIONS)}\n"
+            + "\n".join(f"- {g} : « {t} »" for g, t in libres)), LiensLibres,
+            lambda o: [x.raison for x in o.liens],
+            lambda o: [f"critère « {x.critere} » hors de la liste {list(connus[x.genre])}" for x in o.liens
+                       if x.critere and x.critere not in connus[x.genre]])
+        liens = {}
+        for g, t in libres:
+            x = next((l for l in o.liens if l.texte == t), None)
+            critere = x.critere if x and x.critere in connus[g] else None
+            raison = (self._propre(x.raison, f"liens.{t}") if x else None) or "le modèle n'a pas répondu pour ce texte"
+            liens[t] = {"genre": g, "critere": critere, "raison": raison}
+        return liens
+
+    def controles_activites(self, ptf: dict[str, Any]) -> list[dict[str, Any]]:
+        """Exclusions tabac, armement, jeux d'argent, alcool : en direct (bloquant) et à travers les FNB."""
+        controles = []
+        for texte in self.profil.exclusions:
+            a = adq.activite_de(self._critere(texte, "exclusion"))
+            if not a:
+                continue
+            res = act_outils.exposition_activite(ptf["poids"], a)
+            d = res["details"]
+            directs = [s for s, x in d["lignes"].items() if x.get("valeur") == "oui"]
+            via = {s: x["titres_oui"] for s, x in d["lignes"].items() if x.get("titres_oui")}
+            statut = "non conforme" if directs else ("à signaler" if via or d["part_inconnue"] > 1e-9 else "conforme")
+            msg = (f"Actions détenues en direct liées au {act_outils.LIBELLES[a]} : {directs}." if directs else
+                   f"Aucune action détenue en direct liée au {act_outils.LIBELLES[a]} selon {act_outils.FICHIER}."
+                   + (f" À travers les FNB : {via}." if via else "")
+                   + (f" Part du capital au statut inconnu : {d['part_inconnue'] * 100:.1f} %.".replace(".", ",", 1)
+                      if d["part_inconnue"] > 1e-9 else ""))
+            controles.append({"controle": "exclusion_activite", "statut": statut, "bloquant": statut == "non conforme",
+                              "message": msg, "actifs": directs or list(via), "source": act_outils.FICHIER,
+                              "critere": a})
+        return controles
 
     # -- 2. Spécialiste marché et risque ---------------------------------------
 
@@ -251,12 +346,13 @@ class Session:
         self.mesures: dict[str, dict[str, str]] = {}
         for s in sorted(set(self.candidats) | {d["symbole"] for d in self.demande["symboles"]}):
             self.mesures[s] = {"vol": j.mesurer("volatilite", cle("vol", s), symbole=s)["valeur"],
-                               "pb": j.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"]}
+                               "pb": j.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"],
+                               "div": adq.dividende_actif(j, s)}
 
         # Point faible du thème : sa corrélation avec la techno déjà présente dans un FNB large.
         self.corr_theme: dict[str, str] = {}
-        if self.theme and "QQQ" in table_index(self.table):
-            for m in self.theme["symboles"]:
+        if self.themes and "QQQ" in table_index(self.table):
+            for m in [x for t in self.themes for x in t["symboles"] if x != "QQQ"]:
                 self.corr_theme[m] = j.mesurer("correlations", cle("corr", m, "QQQ"), symboles=[m, "QQQ"])["valeur"]
 
         @tool
@@ -290,8 +386,8 @@ class Session:
     # -- 2 bis. Spécialiste ESG et qualité ---------------------------------------
 
     def _criteres_esg(self) -> list[str]:
-        prefs = [_normaliser(x) for x in self.profil.preferences]
-        excl = [_normaliser(x) for x in self.profil.exclusions]
+        prefs = [_normaliser(self._critere(x, "preference")) for x in self.profil.preferences]
+        excl = [_normaliser(self._critere(x, "exclusion")) for x in self.profil.exclusions]
         criteres = []
         if any("fossil" in x or "petrol" in x for x in excl):
             criteres.append("activite_fossile")
@@ -367,10 +463,15 @@ class Session:
                 "date": res["details"]["date_composition"]}
 
     def exclusions_traitees(self) -> list[str]:
-        """Exclusions du profil vérifiées par le spécialiste ESG (et non par l'outil, qui ne les connaît pas)."""
-        if "activite_fossile" not in self.criteres_esg:
-            return []
-        return [t for t in self.profil.exclusions if "fossil" in _normaliser(t) or "petrol" in _normaliser(t)]
+        """Exclusions vérifiées par un contrôle de l'assistant (ESG, activités sensibles) et non par l'outil,
+        qui ne les connaît pas : le contrôle « exclusion » de l'outil est alors retiré."""
+        traitees = []
+        for t in self.profil.exclusions:
+            c = _normaliser(self._critere(t, "exclusion"))
+            if (("fossil" in c or "petrol" in c) and "activite_fossile" in self.criteres_esg) or (
+                    "controvers" in c and "controverse" in self.criteres_esg) or adq.activite_de(c):
+                traitees.append(t)
+        return traitees
 
     def controles_esg(self, ptf: dict[str, Any]) -> list[dict[str, Any]]:
         """Contrôles ajoutés à la gouvernance quand le profil a des critères ESG."""
@@ -455,8 +556,9 @@ class Session:
                     f"parts du risque : {parts}")
 
         self.journal.agent_courant = "Constructeur"
-        theme = (f"Thème plafonné « {self.theme['nom']} » : symboles {self.theme['symboles']}, rôle « theme », "
-                 f"total au plus {lim['plafond_theme']:.0%}." if self.theme else "Aucun thème.")
+        theme = (" ".join(f"Thème plafonné « {t['nom']} » : symboles {t['symboles']}, rôle « theme », au plus "
+                          f"{t['plafond']:.1%} pour ce thème." for t in self.themes)
+                 + f" Total des lignes de thème au plus {lim['plafond_theme']:.0%}." if self.themes else "Aucun thème.")
         consignes = (
             f"Limites du profil (hypothèses de l'équipe) : un titre (action) au plus {lim['max_titre_individuel']:.0%} ; "
             f"crypto au plus {lim['max_crypto']:.0%} ; actions, FNB d'actions et crypto ensemble au plus "
@@ -464,8 +566,18 @@ class Session:
             f"au moins {lim['min_lignes']} lignes. Volatilité historique au plus "
             f"{self.c['seuils_outil'][self.c['tolerance']]['volatilite']:.0%}, pire baisse pas pire que "
             f"{self.c['seuils_outil'][self.c['tolerance']]['pire_baisse']:.0%}. {theme}")
+        anciennete = {}
+        if any(adq.contient(p, adq.MOTS_ETABLIES) for p in self.profil.preferences):
+            from tools.repartition import anciennete_cotation
+            for s in self.candidats:
+                if table.at[s, "asset_class"] == "equity":
+                    a = anciennete_cotation(s)
+                    anciennete[s] = ("ancienneté inconnue" if a["valeur"] is None
+                                     else f"cotée depuis {a['details']['ipo']}")
         catalogue = "\n".join(f"{s} | {table.at[s, 'name']} | {table.at[s, 'asset_class']} | {table.at[s, 'sector']} | "
-                              f"{j.apercu(m['vol'])} | {j.apercu(m['pb'])}"
+                              f"marché {table.at[s, 'market']} | " + (f"{anciennete[s]} | " if s in anciennete else "") +
+                              f"{j.apercu(m['vol'])} | {j.apercu(m['pb'])} | "
+                              + (j.apercu(m["div"]) if m.get("div") else "dividendes : information manquante")
                               for s, m in self.mesures.items() if s in self.candidats)
         agent = creer_agent("Constructeur", (
             "Tu es le constructeur. Tu proposes deux ou trois portefeuilles simulés, différents entre eux, qui "
@@ -481,10 +593,16 @@ class Session:
             "jamais {id_qqq}, jamais un symbole entre accolades comme {QQQ}. Une ligne mal justifiée fait "
             "rejeter le portefeuille par la gouvernance. " + REGLE_CHIFFRES + " " + VOCABULAIRE), [essayer])
         demande = []
-        if self.theme:
-            demande.append("Au moins un portefeuille contient le thème (rôle « theme »), au plafond ou en dessous.")
+        if self.themes:
+            demande.append("Chaque thème est présent (rôle « theme ») dans au moins un portefeuille, sous son plafond.")
         if "crypto" in self.demande["classes"] and lim["max_crypto"] > 0:
             demande.append("La crypto est demandée et permise : au moins un portefeuille en contient, sous son plafond.")
+        demande += adq.consignes_preferences(self.profil)
+        if adq.veut_revenu(self.profil):
+            ref = adq.dividende_reference(j)
+            demande.append(f"Revenu ou dividendes demandés : le rendement en dividendes pondéré du portefeuille "
+                           f"(Σ poids × rendement de la ligne, colonne dividendes) devrait atteindre au moins celui de "
+                           f"{adq.REFERENCE_REVENU}, {j.apercu(ref)}, sans dépasser les limites de risque.")
         if self.criteres_esg:
             demande.append("Profil ESG : un FNB large peut contenir des sociétés exclues (voir les constats ESG) ; "
                            "préfère le FNB filtré ESGV aux FNB larges quand c'est possible.")
@@ -493,7 +611,8 @@ class Session:
                   f"Constats du spécialiste marché et risque : {self.constats_marche}\n"
                   f"Constats du spécialiste macro et taux : {self.constats_macro}\n"
                   f"Constats du spécialiste ESG : {self.esg['constats']}\n"
-                  f"Candidats (symbole | nom | classe | secteur | volatilité | pire baisse) :\n{catalogue}")
+                  f"Candidats (symbole | nom | classe | secteur | volatilité | pire baisse | rendement en dividendes "
+                  f"sur 12 mois, passé) :\n{catalogue}")
         self.historique: list[dict[str, Any]] = []
         acceptes: dict[str, dict[str, Any]] = {}
         for essai in range(1, gv.ESSAIS_MAX + 1):
@@ -504,7 +623,9 @@ class Session:
             for p in props.portefeuilles[:3]:
                 ptf = self._normaliser_ptf(p)
                 justif = lg.controle_justifications(p.lignes, self.profil, self.demande, self.candidats, self.journal)
-                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf) + [justif],
+                verdict = gv.controler(ptf, self.profil, self.c,
+                                       self.controles_esg(ptf) + self.controles_activites(ptf)
+                                       + gv.plafonds_par_theme(ptf, self.themes) + [justif],
                                        self.exclusions_traitees())
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
@@ -534,9 +655,10 @@ class Session:
         roles = {l.symbole: l.role for l in p.lignes}
         justifications = {l.symbole: l for l in p.lignes}
         membres = [s for s, r in roles.items() if r == "theme"]
-        theme = {"nom": self.theme["nom"], "symboles": membres} if self.theme and membres else (
-            {"nom": "thème", "symboles": membres} if membres else None)
-        return {"poids": poids, "roles": roles, "theme": theme, "justifications": justifications}
+        noms = [t["nom"] for t in self.themes if set(t["symboles"]) & set(membres)]
+        theme = {"nom": " + ".join(noms) or "thème", "symboles": membres} if membres else None
+        par_theme = {t["nom"]: [s for s in membres if s in t["symboles"]] for t in self.themes}
+        return {"poids": poids, "roles": roles, "theme": theme, "themes": par_theme, "justifications": justifications}
 
     # -- mesures des portefeuilles retenus --------------------------------------
 
@@ -574,7 +696,7 @@ class Session:
                 "volatilites": {s: self.mesures[s]["vol"] for s in ptf["poids"]},
                 "theme": ptf["theme"], "essai": a["essai"],
                 "controles": [gv.pour_interface(x) for x in a["verdict"]["controles"]],
-                "adequation": adq.evaluer(self.profil, ptf["poids"], j, p.id, self.ids_limites),
+                "adequation": adq.evaluer(self.profil, ptf["poids"], j, p.id, self.ids_limites, self.liens_libres),
             })
         return sortie
 
@@ -761,6 +883,8 @@ class Session:
                             "seuils_risque": {k: self.c["seuils_outil"][self.c["tolerance"]][k] for k in ("volatilite", "pire_baisse")}},
             "specialistes": {"marche_et_risque": self.constats_marche, "macro": self.constats_macro, "esg": self.esg},
             "theme": self.theme,
+            "themes": self.themes,
+            "liens_libres": self.liens_libres,
             "exclus": self.exclus,
             "journal": {"appels": self.journal.appels, "textes_retires": self.textes_retires},
             "adequation": retenu["adequation"],

@@ -113,7 +113,7 @@ def sources_ligne(symbole: str, devise_profil: str) -> list[dict[str, Any]]:
                             "objet": "ESG : information manquante"})
         fd = fondamentaux(symbole)
         sources.append({"fichier": fd["fichier"], "url": None, "date": None,
-                        "objet": f"fondamentaux (bénéfices, dette, dividendes) : {fd['statut']}"
+                        "objet": f"fondamentaux (bénéfices, dette) : {fd['statut']} ; dividendes : data/corporate_actions.csv"
                                  + (f" ; data/base/couverture.csv : {fd['couverture']}" if fd["couverture"] else "")})
     if classe == "etf_equity":
         c = esg_outils.composition()

@@ -55,7 +55,7 @@ def fiche_societe(symbole: str, session: Any = None) -> dict[str, Any]:
         formule="réponse de GET /stock/profile2",
         sources=[f"{SOURCE}, appelé le {rep['appele_le']}"],
         details={k: d.get(k) for k in ("name", "ticker", "exchange", "country", "currency",
-                                       "finnhubIndustry", "ipo", "weburl")}
+                                       "finnhubIndustry", "ipo", "weburl", "marketCapitalization")}
         | {"depuis_cache": rep["depuis_cache"]})
 
 
