@@ -4,12 +4,9 @@
 2. FRED : une vraie requête à l'API officielle, avec les dates de publication.
 3. Bedrock : un agent Strands avec un seul outil (la volatilité) répond à une question.
 
-Bedrock s'authentifie de deux façons :
-- jeton : `AWS_BEARER_TOKEN_BEDROCK` est dans `.env` ou dans l'environnement ;
-- proxy : session cloud sans jeton local, dont le proxy réseau (`HTTPS_PROXY`) ajoute lui-même
-  l'en-tête `Authorization: Bearer` aux requêtes vers `bedrock-runtime.<région>.amazonaws.com`.
-  boto3 refuse de partir sans identifiants : on lui donne un jeton factice, le temps de l'appel,
-  que le proxy remplace par le vrai.
+Bedrock s'authentifie par un jeton ou par le proxy réseau d'une session cloud : le mécanisme est
+partagé avec les agents dans `tools/bedrock.py`. Ici, le jeton factice n'est posé que le temps de
+l'appel (`jeton_temporaire`).
 
 Chaque étape affiche OK ou ÉCHEC avec l'erreur exacte. Aucune clé n'est affichée.
 """
@@ -19,15 +16,14 @@ from __future__ import annotations
 import json
 import os
 import sys
-from contextlib import contextmanager, nullcontext
 from datetime import date, timedelta
 
+from tools.bedrock import JETON_FACTICE, VARIABLES_PROXY  # noqa: F401  (réexportés : tests, scripts)
+from tools.bedrock import aide_proxy, jeton_temporaire, mode_bedrock, modele_bedrock
 from tools.env import RACINE, charger_env
 
 CLES = ("FRED_API_KEY", "AWS_BEARER_TOKEN_BEDROCK")
 SECRETS = CLES + ("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN")
-VARIABLES_PROXY = ("HTTPS_PROXY", "https_proxy")
-JETON_FACTICE = "jeton-factice-remplace-par-le-proxy"
 SYMBOLE_TEST = "NVDA"
 
 
@@ -38,26 +34,6 @@ def masquer(texte: str) -> str:
         if valeur:
             texte = texte.replace(valeur, "***")
     return texte
-
-
-def mode_bedrock() -> str | None:
-    """« jeton » si `AWS_BEARER_TOKEN_BEDROCK` est présente, « proxy » si un proxy réseau peut
-    authentifier à notre place, None sinon."""
-    if os.environ.get("AWS_BEARER_TOKEN_BEDROCK", "").strip():
-        return "jeton"
-    if any(os.environ.get(nom, "").strip() for nom in VARIABLES_PROXY):
-        return "proxy"
-    return None
-
-
-@contextmanager
-def _jeton_factice():
-    """Pose un jeton factice le temps de l'appel (le proxy le remplace), puis le retire."""
-    os.environ["AWS_BEARER_TOKEN_BEDROCK"] = JETON_FACTICE
-    try:
-        yield
-    finally:
-        os.environ.pop("AWS_BEARER_TOKEN_BEDROCK", None)
 
 
 def verifier_env() -> tuple[bool, str]:
@@ -117,20 +93,18 @@ def verifier_bedrock() -> tuple[bool, str]:
 
     attendu = volatilite(SYMBOLE_TEST)["valeur"] * 100
     reglages = {"tools": [volatilite_actif]}
-    if os.environ.get("BEDROCK_MODEL_ID", "").strip():
-        reglages["model"] = os.environ["BEDROCK_MODEL_ID"].strip()
+    if modele_bedrock():
+        reglages["model"] = modele_bedrock()
     auth = "jeton AWS_BEARER_TOKEN_BEDROCK" if mode == "jeton" else "proxy réseau, sans jeton local"
     try:
-        with _jeton_factice() if mode == "proxy" else nullcontext():
+        with jeton_temporaire():
             reponse = str(Agent(**reglages)(
                 f"Quelle est la volatilité annualisée de {SYMBOLE_TEST} ? Utilise l'outil. "
                 "Réponds en une phrase, en pourcentage avec une décimale, et donne la période."))
     except Exception as e:
         message = masquer(f"{type(e).__name__} : {e}")
         if mode == "proxy":
-            region = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION") or "non définie"
-            message += (f" (authentification par le proxy : son secret réseau doit viser "
-                        f"bedrock-runtime.{region}.amazonaws.com, région lue dans AWS_REGION)")
+            message += f" ({aide_proxy()})"
         return False, message
     print()  # la réponse de l'agent s'affiche au fil de l'eau, on revient à la ligne
     chiffre = f"{attendu:.1f}"
