@@ -1,0 +1,24 @@
+{
+  "id": "libre_paul",
+  "persona": {
+    "nom": "Paul",
+    "description": "Profil libre : retraite dans deux ans, revenu, sans tabac."
+  },
+  "profil": {
+    "horizon_annees": 2,
+    "objectif": "revenu",
+    "tolerance_risque": "faible",
+    "connaissance_niveau": 5,
+    "preferences": [
+      "dividendes",
+      "Canada"
+    ],
+    "exclusions": [
+      "tabac"
+    ],
+    "centres_interet": [],
+    "capital_fictif": 500000,
+    "devise": "CAD"
+  },
+  "demande": "Je pars à la retraite dans deux ans, je veux des revenus réguliers."
+}
