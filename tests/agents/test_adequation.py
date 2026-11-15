@@ -78,7 +78,9 @@ def test_l_exclusion_voit_a_travers_les_fnb():
 
 
 def test_centres_interet_en_texte_libre():
-    assert relier_interet("j'adore l'IA et les puces")["secteur"] == "Information Technology"
+    ia = relier_interet("j'adore l'IA et les puces")  # data/themes.csv : FNB ARTY et ses titres
+    assert ia["theme"] == "intelligence artificielle" and "ARTY" in ia["symboles"]
+    assert relier_interet("les semi-conducteurs")["secteur"] == "Information Technology"
     assert relier_interet("le bitcoin")["type"] == "crypto"
     lien = relier_interet("la pêche à la mouche")
     assert lien["type"] == NON_COUVERT and "themes.csv" in lien["raison"] and not lien["symboles"]
