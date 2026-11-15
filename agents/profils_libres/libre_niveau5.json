@@ -1,0 +1,27 @@
+{
+  "id": "libre_niveau5",
+  "persona": {
+    "nom": "Léa",
+    "description": "Profil libre, même profil au niveau 5 sur 5."
+  },
+  "profil": {
+    "horizon_annees": 10,
+    "objectif": "équilibre",
+    "tolerance_risque": "modéré",
+    "preferences": [
+      "Canada",
+      "dividendes"
+    ],
+    "exclusions": [
+      "tabac"
+    ],
+    "centres_interet": [
+      "les jeux vidéo",
+      "l'intelligence artificielle"
+    ],
+    "capital_fictif": 25000,
+    "devise": "CAD",
+    "connaissance_niveau": 5
+  },
+  "demande": "Je veux un portefeuille qui me ressemble : un peu d'intelligence artificielle, surtout du Canada."
+}

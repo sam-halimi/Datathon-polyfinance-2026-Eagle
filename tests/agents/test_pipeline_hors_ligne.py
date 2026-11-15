@@ -137,3 +137,36 @@ def test_limites_et_hypotheses_propres_au_portefeuille(sortie):
     for h in hyp:
         assert REPERE.findall(h["si_elle_tombe"]) or h["type"] == "plafonds", h
     assert lim["methode"] and lim["limites"][: len(spec)] == [x["texte"] for x in spec]
+
+
+def test_post_analyse_par_le_serveur_http(monkeypatch):
+    """POST /analyse sur un vrai serveur HTTP local, agents simulés : format v2 et éventail de scénarios."""
+    import threading
+    import urllib.request
+    from http.server import ThreadingHTTPServer
+
+    from agents import serveur
+
+    monkeypatch.setattr(pipeline, "creer_agent", FauxAgent)
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), serveur.Gestionnaire)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        corps = json.dumps({"profil": {**ROBERT["profil"], "connaissance_niveau": 2},
+                            "demande": ROBERT["demande"], "prenom": "Robert"}).encode()
+        req = urllib.request.Request(f"http://127.0.0.1:{srv.server_port}/analyse", data=corps, method="POST",
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            assert r.status == 200
+            s = json.loads(r.read())
+        mauvais = urllib.request.Request(f"http://127.0.0.1:{srv.server_port}/analyse",
+                                         data=json.dumps({"profil": {"inconnu": 1}, "demande": "x"}).encode(), method="POST")
+        try:
+            urllib.request.urlopen(mauvais, timeout=10)
+            assert False, "un profil invalide doit donner 400"
+        except urllib.error.HTTPError as e:
+            assert e.code == 400
+    finally:
+        srv.shutdown()
+    assert s["meta"]["version_format"] == 2 and s["scenarios"]["outil"] == "eventail_scenarios"
+    assert s["adequation"] and s["limites"]["limites_specifiques"] and s["explication"]["lexique"]
+    assert s["portefeuilles"][0]["lignes"][0]["sources"]
