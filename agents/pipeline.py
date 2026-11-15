@@ -482,7 +482,16 @@ class Session:
             f"au moins {lim['min_lignes']} lignes. Volatilité historique au plus "
             f"{self.c['seuils_outil'][self.c['tolerance']]['volatilite']:.0%}, pire baisse pas pire que "
             f"{self.c['seuils_outil'][self.c['tolerance']]['pire_baisse']:.0%}. {theme}")
+        anciennete = {}
+        if any(adq.contient(p, adq.MOTS_ETABLIES) for p in self.profil.preferences):
+            from tools.repartition import anciennete_cotation
+            for s in self.candidats:
+                if table.at[s, "asset_class"] == "equity":
+                    a = anciennete_cotation(s)
+                    anciennete[s] = ("ancienneté inconnue" if a["valeur"] is None
+                                     else f"cotée depuis {a['details']['ipo']}")
         catalogue = "\n".join(f"{s} | {table.at[s, 'name']} | {table.at[s, 'asset_class']} | {table.at[s, 'sector']} | "
+                              f"marché {table.at[s, 'market']} | " + (f"{anciennete[s]} | " if s in anciennete else "") +
                               f"{j.apercu(m['vol'])} | {j.apercu(m['pb'])} | "
                               + (j.apercu(m["div"]) if m.get("div") else "dividendes : information manquante")
                               for s, m in self.mesures.items() if s in self.candidats)
@@ -504,6 +513,7 @@ class Session:
             demande.append("Chaque thème est présent (rôle « theme ») dans au moins un portefeuille, sous son plafond.")
         if "crypto" in self.demande["classes"] and lim["max_crypto"] > 0:
             demande.append("La crypto est demandée et permise : au moins un portefeuille en contient, sous son plafond.")
+        demande += adq.consignes_preferences(self.profil)
         if adq.veut_revenu(self.profil):
             ref = adq.dividende_reference(j)
             demande.append(f"Revenu ou dividendes demandés : le rendement en dividendes pondéré du portefeuille "

@@ -22,6 +22,7 @@ import pandas as pd
 from agents.journal import Journal, cle
 from agents.profil import Profil
 from tools import esg as esg_outils
+from tools import repartition
 from tools.dividendes import rendement_dividende
 from tools.donnees import univers
 from tools.gouvernance import SEUILS_PAR_TOLERANCE
@@ -62,6 +63,37 @@ MOTS_CONTROVERSE = ("controverse", "controverses", "esg", "responsable", "durabl
 MOTS_REVENU = ("dividende", "dividendes", "revenu", "revenus", "rente")
 MOTS_CANADA = ("canada", "canadien", "canadienne", "canadiens", "canadiennes", "quebec")
 MOTS_DIVERSIFICATION = ("diversification", "diversifie", "diversifier")
+MOTS_ETATS_UNIS = ("etats unis", "usa", "americain", "americaine", "americains", "americaines", "amerique",
+                   "wall street")
+MOTS_FAIBLE_VOL = ("faible volatilite", "peu volatil", "peu volatile", "volatilite faible", "basse volatilite",
+                   "stabilite", "stable", "stables")
+MOTS_FNB = ("fnb", "etf", "fnb indiciels", "fnb indiciel", "indiciel", "indiciels", "fonds indiciels", "gestion passive")
+MOTS_ETABLIES = ("societes etablies", "entreprises etablies", "etablies", "etablie", "grandes societes",
+                 "valeurs sures", "blue chip", "blue chips")
+PART_PREFERENCE = 0.5
+"""Une préférence de marché ou de FNB est respectée si au moins la moitié du capital y est (hypothèse de l'équipe)."""
+
+
+def consignes_preferences(profil: Profil) -> list[str]:
+    """Ce que le constructeur doit viser pour chaque préférence vérifiable : la même règle que `evaluer`."""
+    seuils = SEUILS_PAR_TOLERANCE
+    sortie = []
+    for pref in profil.preferences:
+        if contient(pref, MOTS_ETATS_UNIS):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital coté aux États-Unis "
+                          "(colonne marché : NASDAQ, NYSE, NYSE Arca, Cboe BZX).")
+        elif contient(pref, MOTS_CANADA):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital coté au Canada (TSX).")
+        elif contient(pref, MOTS_FAIBLE_VOL):
+            sortie.append(f"Préférence « {pref} » : volatilité du portefeuille au plus "
+                          f"{seuils['faible']['volatilite']:.0%} (seuil de la tolérance faible), vérifiée avec essayer.")
+        elif contient(pref, MOTS_FNB):
+            sortie.append(f"Préférence « {pref} » : au moins {PART_PREFERENCE:.0%} du capital en FNB.")
+        elif contient(pref, MOTS_ETABLIES):
+            sortie.append(f"Préférence « {pref} » : actions détenues en direct cotées depuis au moins "
+                          f"{repartition.ANNEES_ETABLIE} ans (colonne ancienneté) ; une action d'ancienneté inconnue "
+                          "ne compte pas comme établie.")
+    return [x.replace("%", " %") for x in sortie]
 
 
 REFERENCE_REVENU = "XIU.TO"
@@ -329,16 +361,55 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
                 "preferences", pref, f"« {pref} » : des lignes qui versent des dividendes.",
                 f"Rendement en dividendes pondéré sur la dernière année : {{{did}}}, contre {{{ref}}} pour {REFERENCE_REVENU} ; "
                 f"part sans donnée : {{{inc}}}.", _verdict_revenu(j, did, inc, ref), [did, ref, inc], REGLE_REVENU))
-        elif contient(pref, MOTS_CANADA):
-            cad = sum(w for s, w in poids.items() if table.at[s, "currency"] == "CAD")
-            cid = j.enregistrer(cle("expo_cad", ident), _ref(
-                "agents.adequation.exposition_devise", {"portefeuille": ident, "devise": "CAD"}, cad,
-                "fraction du capital", "Σ poids des lignes cotées en CAD", [f"{SOURCE_UNIVERS} (currency)"],
-                "calcul sur les poids décidés par le constructeur"))
-            sortie.append(_entree("preferences", pref, f"« {pref} » : privilégier le Canada.",
-                                  f"Part du capital cotée en dollars canadiens : {{{cid}}}.",
-                                  RESPECTE if cad >= 0.5 else PARTIEL, [cid],
-                                  "respecté si au moins la moitié du capital est cotée au Canada"))
+        elif contient(pref, MOTS_CANADA) or contient(pref, MOTS_ETATS_UNIS):
+            pays = "États-Unis" if contient(pref, MOTS_ETATS_UNIS) else "Canada"
+            cid = j.mesurer("part_par_marche", cle("marche", ident, pays), poids=poids, pays=pays)["valeur"]
+            part = j.chiffres[cid]["valeur"]
+            sortie.append(_entree("preferences", pref, f"« {pref} » : privilégier les titres cotés {('aux ' if pays == 'États-Unis' else 'au ') + pays}.",
+                                  f"Part du capital cotée {('aux ' if pays == 'États-Unis' else 'au ') + pays} : {{{cid}}}.",
+                                  RESPECTE if part >= PART_PREFERENCE - 1e-9 else PARTIEL, [cid],
+                                  "respecté si au moins la moitié du capital est cotée sur ce marché "
+                                  "(colonne market ; hypothèse de l'équipe)"))
+        elif contient(pref, MOTS_FAIBLE_VOL):
+            vol = m["stats"]["volatilite"]
+            sid = j.enregistrer(cle("seuil", "volatilite", "faible"), _ref(
+                "tools.gouvernance.SEUILS_PAR_TOLERANCE", {"tolerance": "faible", "seuil": "volatilite"},
+                SEUILS_PAR_TOLERANCE["faible"]["volatilite"], "fraction",
+                "seuil de volatilité de la tolérance « faible »", ["tools/gouvernance.py (SEUILS_PAR_TOLERANCE)"],
+                "hypothèse du projet, pas une norme réglementaire"))
+            pid = j.enregistrer(cle("seuil", "volatilite", "profil"), _ref(
+                "tools.gouvernance.SEUILS_PAR_TOLERANCE", {"tolerance": profil.tolerance_risque, "seuil": "volatilite"},
+                SEUILS_PAR_TOLERANCE[profil.tolerance_risque]["volatilite"], "fraction",
+                f"seuil de volatilité de la tolérance « {profil.tolerance_risque} »",
+                ["tools/gouvernance.py (SEUILS_PAR_TOLERANCE)"], "hypothèse du projet, pas une norme réglementaire"))
+            v = j.chiffres[vol]["valeur"]
+            statut = RESPECTE if v <= j.chiffres[sid]["valeur"] + 1e-12 else PARTIEL
+            sortie.append(_entree("preferences", pref, f"« {pref} » : un portefeuille simulé peu volatil.",
+                                  f"Volatilité du portefeuille {{{vol}}}, pour {{{sid}}} au seuil de la tolérance faible "
+                                  f"et {{{pid}}} au seuil de votre profil.", statut, [vol, sid, pid],
+                                  "respecté si la volatilité est au plus le seuil de la tolérance faible ; partiel si "
+                                  "elle n'est que sous le seuil du profil (tools/gouvernance.py)"))
+        elif contient(pref, MOTS_FNB):
+            fid = j.mesurer("part_fnb", cle("fnb", ident), poids=poids)["valeur"]
+            sortie.append(_entree("preferences", pref, f"« {pref} » : passer surtout par des FNB.",
+                                  f"Part du capital en FNB : {{{fid}}}.",
+                                  RESPECTE if j.chiffres[fid]["valeur"] >= PART_PREFERENCE - 1e-9 else PARTIEL, [fid],
+                                  "respecté si au moins la moitié du capital est en FNB (asset_class etf_*)"))
+        elif contient(pref, MOTS_ETABLIES):
+            eid = j.mesurer("part_societes_etablies", cle("etablies", ident), poids=poids)["valeur"]
+            d = j.chiffres[eid]["details"]
+            if not d["lignes"]:
+                sortie.append(_entree("preferences", pref, f"« {pref} ».",
+                                      f"Aucune action détenue en direct : rien de récent ni d'inconnu ({{{eid}}}).",
+                                      RESPECTE, [eid], d["regle"]))
+            else:
+                inconnues = [s for s, x in d["lignes"].items() if x["annees"] is None]
+                sortie.append(_entree(
+                    "preferences", pref, f"« {pref} » : des sociétés cotées depuis longtemps.",
+                    f"Part du capital en actions cotées depuis moins de {repartition.ANNEES_ETABLIE} ans ou "
+                    f"d'ancienneté inconnue : {{{eid}}}" + (f" ; ancienneté inconnue pour {', '.join(inconnues)}" if inconnues else "")
+                    + ".", RESPECTE if j.chiffres[eid]["valeur"] <= 1e-9 else PARTIEL, [eid],
+                    d["regle"] + " ; date d'introduction des fiches Finnhub"))
         elif contient(pref, MOTS_DIVERSIFICATION):
             sans = j.enregistrer(cle("ptf", ident, "vol_sans_diversification"), {
                 **{k: j.chiffres[m["stats"]["volatilite"]][k] for k in ("outil", "parametres", "periode", "sources")},
