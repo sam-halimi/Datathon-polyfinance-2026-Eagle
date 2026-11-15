@@ -31,7 +31,7 @@
     {
       "id": "R2",
       "description": "La gouvernance relève la tension entre la demande et le profil, et ce contrôle est affiché.",
-      "controle": {"type": "controle_gouvernance", "nom": "demande_hors_profil", "statut": "signale", "symboles": ["TSLA"]}
+      "controle": {"type": "controle_gouvernance", "nom": "demande_hors_profil", "statut": "à signaler", "symboles": ["TSLA"]}
     },
     {
       "id": "R3",

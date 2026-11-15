@@ -104,3 +104,22 @@ def test_amira_le_risque_est_permis_mais_plafonne():
 def test_mateo_exclusion_et_pas_de_theme():
     c = contraintes(Profil(**SCENARIOS["mateo"]["profil"]))
     assert c["exclusions"] == ["énergies fossiles"] and c["limites"]["plafond_theme"] == 0
+
+
+# --- Étape 2 : contrôles appliqués aux vraies sorties du pipeline ----------------------
+# Les sorties sont produites sur Bedrock par `python -m agents.pipeline <persona>` et gardées
+# dans agents/sorties/. Le test rejoue les contrôles du scénario sur la dernière sortie.
+
+from tests.scenarios.verifier_sortie import appliquer  # noqa: E402
+
+SORTIES = RACINE / "agents" / "sorties"
+
+
+@pytest.mark.parametrize("nom", SCENARIOS)
+def test_sortie_du_pipeline_respecte_le_scenario(nom):
+    chemin = SORTIES / f"{nom}.json"
+    if not chemin.exists():
+        pytest.skip(f"pas encore de sortie : python -m agents.pipeline {nom}")
+    resultats = appliquer(SCENARIOS[nom], json.loads(chemin.read_text(encoding="utf-8")))
+    echecs = [f"{r['id']} : {r['raison']}" for r in resultats if not r["ok"]]
+    assert not echecs, "\n".join(echecs)
