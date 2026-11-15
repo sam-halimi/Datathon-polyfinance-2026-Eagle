@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CarteLimites, CarteVerifications } from "./Cartes";
+import { CarteVerifications } from "./Cartes";
+import { FichesLignes, LimitesPortefeuille, MANQUE, retenu, TableauAdequation } from "./Adequation";
 import { Chiffre, Texte, texteBrut, typo } from "./Chiffres";
 import { Camembert, Cours, Legende, LegendeCours, PhraseCours, phraseCours, SourceCours } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
@@ -14,7 +15,7 @@ import type { Reference, SortiePipeline } from "@/lib/types";
 // les chiffres de ce texte viennent de la table « chiffres », rien d'autre.
 
 export type Diapositive = {
-  id: "demarche" | "demande" | "repartition" | "cours" | "scenarios" | "verifications" | "limites";
+  id: "demarche" | "demande" | "adequation" | "repartition" | "lignes" | "cours" | "scenarios" | "verifications" | "limites";
   court: string;
   titre: string;
   justification: string;
@@ -69,6 +70,14 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
       texte: [s.messages.analyse, demande && `Demande : ${demande}`, tension && brut(tension.detail, c), brut(e.niveau1, c), ...e.niveau2.map((t) => brut(t, c))].filter(Boolean).join(" "),
     },
     {
+      id: "adequation", court: "Pourquoi vous", titre: "Pourquoi ce portefeuille vous correspond",
+      justification: "Chaque critère de votre profil, ce que fait le portefeuille simulé pour y répondre et la preuve chiffrée. Touchez un chiffre pour son calcul.",
+      contenu: <TableauAdequation s={s} />,
+      texte: (retenu(s).adequation ?? s.adequation)
+        ? (retenu(s).adequation ?? s.adequation)!.map((a) => `${a.critere}${a.element ? ` ${a.element}` : ""} : ${a.statut}. ${brut(a.reponse, c)}${a.raison ? ` ${a.raison}` : ""}`).join(" ")
+        : `${MANQUE} : la réponse du pipeline ne contient pas l'adéquation au profil.`,
+    },
+    {
       id: "repartition", court: "Répartition", titre: `Répartition du portefeuille simulé ${ptf.id} : ${ptf.nom}`, justification: ptf.intention,
       contenu: (
         <div className="diapo__camemberts">
@@ -82,6 +91,12 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
         </div>
       ),
       texte: [ptf.intention, ...(["secteur", "zone"] as const).map((k) => `${k === "secteur" ? "Par secteur" : "Par zone"} : ${reps[k].map((p) => `${p.libelle} ${brut(`{${p.id}}`, c)}`).join(", ")}.`)].join(" "),
+    },
+    {
+      id: "lignes", court: "Lignes", titre: `Les lignes du portefeuille simulé ${ptf.id}`,
+      justification: "Une fiche par ligne : ce qu'elle est, pourquoi elle est là pour vous, ses chiffres et ses sources.",
+      contenu: <FichesLignes s={s} />,
+      texte: ptf.lignes.map((l) => `${l.nom} (${l.symbole}), ${brut(l.poids_id ? `{${l.poids_id}}` : "", c) || `${Math.round(l.poids * 100)} %`} : ${l.pourquoi ? brut(l.pourquoi, c) : `${MANQUE} sur la raison de cette ligne.`}`).join(" "),
     },
     {
       id: "cours", court: "Cours", titre: cours ? `Cours de ${cours.nom} (${cours.symbole})` : "Cours de l'actif demandé", justification: s.messages.risque,
@@ -109,9 +124,12 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
       texte: [s.messages.verifications, ...g.controles.filter((k) => k.statut !== "ok").map((k) => `${k.titre} : ${brut(k.detail, c)}`), `${g.controles.filter((k) => k.statut === "ok").length} contrôles conformes.`].join(" "),
     },
     {
-      id: "limites", court: "Limites", titre: "Faits, hypothèses et limites", justification: s.messages.limites,
-      contenu: <CarteLimites sortie={s} />,
-      texte: [s.messages.limites, ...s.limites.limites.map((t) => brut(t, c))].join(" "),
+      id: "limites", court: "Limites", titre: "Limites et hypothèses de ce portefeuille", justification: s.messages.limites,
+      contenu: <LimitesPortefeuille s={s} />,
+      texte: s.limites.limites_specifiques
+        ? [s.messages.limites, ...[...s.limites.limites_specifiques].sort((x, y) => x.importance - y.importance).map((x) => brut(x.texte, c)),
+          ...(s.limites.hypotheses_specifiques ?? []).map((h) => `${brut(h.texte, c)} Si elle ne tient pas : ${brut(h.si_elle_tombe, c)}`)].join(" ")
+        : [s.messages.limites, `${MANQUE} : pas de limites propres au portefeuille dans la réponse.`, ...s.limites.limites.map((t) => brut(t, c))].join(" "),
     },
   ];
 }

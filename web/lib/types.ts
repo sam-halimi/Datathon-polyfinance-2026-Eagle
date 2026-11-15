@@ -31,6 +31,8 @@ export type Profil = {
   demande?: string;
 };
 
+export type Source = { fichier: string; url: string | null; date: string | null; objet: string };
+
 export type Ligne = {
   symbole: string;
   nom: string;
@@ -39,7 +41,31 @@ export type Ligne = {
   role: string;
   role_code: string;
   poids: number;
+  // Format v2 (agents-eagle) : absents d'une sortie v1, affichés « information manquante ».
+  poids_id?: string;
+  secteur?: string;
+  pays?: string;
+  devise?: string;
+  pourquoi?: string;
+  critere_profil?: string;
+  plutot_que?: { symbole: string; raison: string } | null;
+  chiffres?: { volatilite?: string; pire_baisse?: string; part_du_risque?: string };
+  sources?: Source[];
 };
+
+export type Adequation = {
+  critere: string;
+  element: string | null;
+  attente: string;
+  reponse: string;
+  statut: "respecté" | "partiel" | "non couvert";
+  raison: string | null;
+  chiffres: string[];
+  regle: string;
+};
+
+export type LimiteSpecifique = { texte: string; type: string; lignes: string[]; chiffres: string[]; importance: number };
+export type HypotheseSpecifique = { texte: string; si_elle_tombe: string; type: string; chiffres: string[]; lignes: string[] };
 
 export type Controle = {
   statut: "ok" | "alerte" | "echec";
@@ -65,6 +91,7 @@ export type Portefeuille = {
   theme: { nom: string; symboles: string[] } | null;
   essai: number;
   controles: Controle[];
+  adequation?: Adequation[];
 };
 
 export type Proposition = {
@@ -97,12 +124,20 @@ export type SortiePipeline = {
     niveau2: string[];
     niveau3: { formule: string; lignes: string[] };
     chiffre_central: string;
+    registre?: { niveau: number; nom: string; description: string; ecarts?: string[] };
+    lexique?: { terme: string; definition: string }[];
   };
-  limites: { faits: string[]; hypotheses: string[]; limites: string[] };
+  limites: {
+    faits: string[]; hypotheses: string[]; limites: string[];
+    methode?: string[];
+    limites_specifiques?: LimiteSpecifique[];
+    hypotheses_specifiques?: HypotheseSpecifique[];
+  };
+  adequation?: Adequation[];
   messages: Record<"analyse" | "repartition" | "risque" | "verifications" | "pourquoi" | "limites" | "tout", string>;
   chiffres: Record<string, Reference>;
   exclus: Record<string, string>;
-  meta: { modele: string; duree_secondes: number; date: string };
+  meta: { modele: string; duree_secondes: number; date: string; version_format?: number };
   graphiques: Graphiques;
   demande_analysee?: { texte: string; resume: string; symboles: { symbole: string; poids: number }[]; classes: string[]; part_risquee: number };
   /** Éventail de scénarios (réponse de POST /analyse). Absent des sorties de démonstration. */
