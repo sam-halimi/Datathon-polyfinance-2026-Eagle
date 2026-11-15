@@ -114,13 +114,19 @@ def diversification(poids: dict[str, float], c: dict[str, Any]) -> dict[str, Any
 
 
 def controler(portefeuille: dict[str, Any], profil: Profil, c: dict[str, Any],
-              controles_en_plus: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-    """Contrôle d'un portefeuille. `portefeuille` : {"poids": {...}, "theme": {...} | None}."""
+              controles_en_plus: list[dict[str, Any]] | None = None,
+              exclusions_traitees: list[str] | None = None) -> dict[str, Any]:
+    """Contrôle d'un portefeuille. `portefeuille` : {"poids": {...}, "theme": {...} | None}.
+
+    `exclusions_traitees` : exclusions du profil vérifiées par un contrôle en plus (exclusion_esg) ;
+    le contrôle « exclusion » de l'outil, qui ne sait pas les vérifier, est alors retiré.
+    """
     res = verifier_contraintes(
         {"poids": portefeuille["poids"], "theme": portefeuille.get("theme")},
         profil.model_dump(), plafond_theme=c["limites"]["plafond_theme"], seuils=c["seuils_outil"],
         debut=None, fin=None)
-    controles = list(res["details"]["controles"])
+    controles = [x for x in res["details"]["controles"]
+                 if not (x["controle"] == "exclusion" and x.get("exclusion") in (exclusions_traitees or []))]
     controles.append(diversification(portefeuille["poids"], c))
     controles.extend(controles_en_plus or [])
     rejets = [x["controle"] for x in controles if x["statut"] == "non conforme"]
@@ -150,10 +156,13 @@ def demande_hors_profil(demande: dict[str, Any], c: dict[str, Any], journal: Jou
         vol = journal.mesurer("volatilite", cle("vol", s), symbole=s)["valeur"]
         pb = journal.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"]
         rattrapage = journal.enregistrer(cle("rattrapage", s), _rattrapage(journal, pb))
+        # Sans part chiffrée (« une bonne part »), la demande est signalée : elle ne fixe aucune limite.
         depasse = voulu is None or voulu > lim[plafond_nom] + 1e-9
+        portee = ("pour la crypto, BTC-USD et ETH-USD ensemble" if plafond_nom == "max_crypto"
+                  else "pour une action seule")
         detail = (f"{s} : volatilité {{{vol}}}, pire baisse {{{pb}}} sur la fenêtre. "
                   f"Après une telle baisse, il faut un gain de {{{rattrapage}}} pour revenir au point de départ. "
-                  f"Plafond du profil pour un titre : {{{ids_limites[plafond_nom]}}}.")
+                  f"Plafond du profil {portee} : {{{ids_limites[plafond_nom]}}}.")
         controles.append(_controle(
             "demande_hors_profil", "à signaler" if depasse else "conforme", detail,
             symboles=[s], poids_demande=voulu, plafond=lim[plafond_nom], limite=plafond_nom,

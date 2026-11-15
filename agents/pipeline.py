@@ -71,7 +71,9 @@ class SymboleDemande(BaseModel):
 
 
 class DemandeAnalysee(BaseModel):
-    symboles: list[SymboleDemande] = Field(default_factory=list, description="Actifs nommés dans la demande")
+    symboles: list[SymboleDemande] = Field(default_factory=list, description=(
+        "Actifs nommés explicitement dans la demande (nom ou symbole). Une catégorie (« la techno », « la crypto ») "
+        "va dans classes, pas ici"))
     classes: list[Literal["crypto", "equity", "etf_bond", "etf_commodity", "etf_equity"]] = Field(
         default_factory=list, description="Classes d'actifs demandées en bloc (par exemple « la crypto »)")
     part_risquee: float | None = Field(None, description="Part demandée en actions et crypto ensemble, en fraction, sinon null")
@@ -341,6 +343,12 @@ class Session:
         return {"valeur": v, "inconnue": inc, "titres": list(res["details"]["titres_signales"]),
                 "date": res["details"]["date_composition"]}
 
+    def exclusions_traitees(self) -> list[str]:
+        """Exclusions du profil vérifiées par le spécialiste ESG (et non par l'outil, qui ne les connaît pas)."""
+        if "activite_fossile" not in self.criteres_esg:
+            return []
+        return [t for t in self.profil.exclusions if "fossil" in _normaliser(t) or "petrol" in _normaliser(t)]
+
     def controles_esg(self, ptf: dict[str, Any]) -> list[dict[str, Any]]:
         """Contrôles ajoutés à la gouvernance quand le profil a des critères ESG."""
         if not self.criteres_esg:
@@ -466,7 +474,7 @@ class Session:
             rejets_texte = []
             for p in props.portefeuilles[:3]:
                 ptf = self._normaliser_ptf(p)
-                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf))
+                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf), self.exclusions_traitees())
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
                 if verdict["accepte"]:
