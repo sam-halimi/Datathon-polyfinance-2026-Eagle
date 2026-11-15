@@ -21,6 +21,9 @@
   --serie-3: #e0912b;
   --serie-4: #8a4fb5;
   --serie-5: #c2475e;
+  --serie-6: #5b6b7a;
+  --serie-7: #a8862a;
+  --serie-8: #3d8fc7;
   --capital: #9aa3ad;
   --rayon: 20px;
   --ombre: 0 1px 2px rgb(27 31 36 / 6%), 0 6px 24px rgb(27 31 36 / 6%);
@@ -49,6 +52,9 @@
     --serie-3: #f0a54a;
     --serie-4: #b48ae0;
     --serie-5: #e57890;
+    --serie-6: #9fb0c0;
+    --serie-7: #d8b75a;
+    --serie-8: #74b9e8;
     --capital: #6b737d;
     --ombre: none;
     color-scheme: dark;
@@ -266,6 +272,15 @@ ul, ol { list-style: none; }
 .ligne__detail { font-size: 14px; color: var(--encre-douce); }
 .ligne__poids { font-size: 23px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
+.repartition__haut { display: flex; gap: 14px; align-items: center; }
+.camembert { flex: none; width: 92px; height: 92px; }
+.repartition__texte { min-width: 0; display: grid; gap: 2px; }
+.repartition__sous-titre { font-size: 14px; color: var(--encre-douce); }
+.lignes .ligne__poids .chiffre { font-weight: 700; }
+.legende-parts { display: grid; gap: 4px; font-size: 14px; }
+.legende-parts li { display: flex; align-items: center; gap: 8px; }
+.legende-parts__nom { flex: 1; min-width: 0; }
+
 /* ---------- Carte risque ---------- */
 
 .risque__totaux { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -464,6 +479,9 @@ ul, ol { list-style: none; }
   .puce--serree { font-size: 14px; }
   .persona__demande { -webkit-line-clamp: 2; }
   .tuile__extrait { --lignes-tuile: 4; }
+  .camembert { width: 68px; height: 68px; }
+  .lignes .carte__chapeau { font-size: 13.5px; line-height: 1.3; }
+  .repartition__sous-titre { display: none; }
   .fiche { gap: 9px; padding-top: 16px; }
   .fiche__valeur { font-size: 26px; }
   .fiche__liste { font-size: 13.5px; gap: 4px 8px; }

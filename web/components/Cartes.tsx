@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { Chiffre, Texte, typo, useChiffres } from "./Chiffres";
+import { Camembert, PALETTE } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
 import { formaterDate, formaterHorizon, formaterMontant, formaterPoids, majuscule } from "@/lib/format";
-import type { Controle, Portefeuille, Profil, SortiePipeline } from "@/lib/types";
+import type { Controle, Portefeuille, Profil, Regroupement, SortiePipeline } from "@/lib/types";
 
 // Les six cartes. Leur contenu vient de la sortie du pipeline
 // (agents/sorties/<persona>.json), jamais de la voix. Une liste trop longue
 // pour l'écran est coupée en pages : rien ne défile.
 
-export const COULEURS = ["var(--serie-1)", "var(--serie-2)", "var(--serie-3)", "var(--serie-4)", "var(--serie-5)"];
+export const COULEURS = PALETTE;
 
 function Entete({ titre, children }: { titre: string; children?: React.ReactNode }) {
   return (
@@ -86,28 +87,60 @@ export function BarreRepartition({ ptf, mince }: { ptf: Portefeuille; mince?: bo
   );
 }
 
+const REGROUPEMENTS: [Regroupement, string][] = [["actif", "Par actif"], ["secteur", "Par secteur"], ["zone", "Par zone"]];
+
 export function CarteRepartition({ sortie, ptf, choisir }: { sortie: SortiePipeline; ptf: Portefeuille; choisir: (id: string) => void }) {
-  const elements: Element[] = [
-    { cle: "intention", contenu: <p className="carte__chapeau">{typo(ptf.intention)}</p> },
-    ...ptf.lignes.map((l, i) => ({
-      cle: l.symbole,
-      contenu: (
-        <div className="ligne">
-          <span className="ligne__pastille" style={{ background: COULEURS[i % COULEURS.length] }} aria-hidden="true" />
-          <span className="ligne__texte">
-            <span className="ligne__nom">{typo(l.role)}</span>
-            <span className="ligne__detail">{l.nom} · {l.symbole}</span>
-          </span>
-          <span className="ligne__poids">{formaterPoids(l.poids)}</span>
-        </div>
-      ),
-    })),
-  ];
+  const [vue, setVue] = useState<Regroupement>("actif");
+  const reps = sortie.graphiques.repartitions[ptf.id];
+  const parts = reps[vue];
+  const intention: Element = { cle: "intention", contenu: <p className="carte__chapeau">{typo(ptf.intention)}</p> };
+  const elements: Element[] =
+    vue === "actif"
+      ? [intention, ...parts.map((p, i) => {
+        const l = ptf.lignes.find((x) => x.symbole === p.symboles[0]);
+        return {
+          cle: p.id,
+          contenu: (
+            <div className="ligne">
+              <span className="ligne__pastille" style={{ background: PALETTE[i % PALETTE.length] }} aria-hidden="true" />
+              <span className="ligne__texte">
+                <span className="ligne__nom">{l ? typo(l.role) : p.libelle}</span>
+                <span className="ligne__detail">{l ? `${l.nom} · ${l.symbole}` : p.libelle}</span>
+              </span>
+              <span className="ligne__poids"><Chiffre id={p.id} /></span>
+            </div>
+          ),
+        };
+      })]
+      : parts.map((p, i) => ({
+        cle: p.id,
+        contenu: (
+          <div className="ligne">
+            <span className="ligne__pastille" style={{ background: PALETTE[i % PALETTE.length] }} aria-hidden="true" />
+            <span className="ligne__texte">
+              <span className="ligne__nom">{p.libelle}</span>
+              <span className="ligne__detail">{p.symboles.join(", ")}</span>
+            </span>
+            <span className="ligne__poids"><Chiffre id={p.id} /></span>
+          </div>
+        ),
+      }));
   return (
     <article className="carte">
       <Entete titre="Répartition"><ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /></Entete>
-      <p className="carte__nom">{typo(ptf.nom)}</p>
-      <BarreRepartition ptf={ptf} />
+      <div className="repartition__haut">
+        <Camembert parts={parts} libelle={`Répartition ${REGROUPEMENTS.find(([k]) => k === vue)?.[1].toLowerCase()} du portefeuille ${ptf.id}`} />
+        <div className="repartition__texte">
+          <p className="carte__nom">{typo(ptf.nom)}</p>
+          <p className="repartition__sous-titre">Portefeuille simulé {ptf.id}, {REGROUPEMENTS.find(([k]) => k === vue)?.[1].toLowerCase()}</p>
+        </div>
+      </div>
+      <div className="niveaux" role="tablist" aria-label="Regroupement">
+        {REGROUPEMENTS.map(([cle, nom]) => (
+          <button key={cle} type="button" role="tab" aria-selected={vue === cle}
+            className={vue === cle ? "niveau niveau--actif" : "niveau"} onClick={() => setVue(cle)}>{nom}</button>
+        ))}
+      </div>
       <Pages elements={elements} classe="lignes" />
     </article>
   );

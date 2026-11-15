@@ -1,0 +1,2508 @@
+{
+ "note": "Calculé par web/scripts/graphiques.py depuis agents/sorties/mateo.json, data/assets_universe.csv et data/prices_daily.csv.",
+ "repartitions": {
+  "A": {
+   "actif": [
+    {
+     "libelle": "ESGV",
+     "id": "rep_a_actif_esgv",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "AGG",
+     "id": "rep_a_actif_agg",
+     "symboles": [
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "XBB.TO",
+     "id": "rep_a_actif_xbb_to",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "GLD",
+     "id": "rep_a_actif_gld",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "PG",
+     "id": "rep_a_actif_pg",
+     "symboles": [
+      "PG"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_a_secteur_obligations_fnb",
+     "symboles": [
+      "AGG",
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_a_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_a_secteur_or",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "Consommation de base",
+     "id": "rep_a_secteur_consommation_de_base",
+     "symboles": [
+      "PG"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_a_zone_etats_unis",
+     "symboles": [
+      "ESGV",
+      "AGG",
+      "PG"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_a_zone_canada",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_a_zone_or_a_part",
+     "symboles": [
+      "GLD"
+     ]
+    }
+   ]
+  },
+  "B": {
+   "actif": [
+    {
+     "libelle": "ESGV",
+     "id": "rep_b_actif_esgv",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "XBB.TO",
+     "id": "rep_b_actif_xbb_to",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "AGG",
+     "id": "rep_b_actif_agg",
+     "symboles": [
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "GLD",
+     "id": "rep_b_actif_gld",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "PG",
+     "id": "rep_b_actif_pg",
+     "symboles": [
+      "PG"
+     ]
+    },
+    {
+     "libelle": "ZST.TO",
+     "id": "rep_b_actif_zst_to",
+     "symboles": [
+      "ZST.TO"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_b_secteur_obligations_fnb",
+     "symboles": [
+      "XBB.TO",
+      "AGG",
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_b_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_b_secteur_or",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "Consommation de base",
+     "id": "rep_b_secteur_consommation_de_base",
+     "symboles": [
+      "PG"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_b_zone_etats_unis",
+     "symboles": [
+      "ESGV",
+      "AGG",
+      "PG"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_b_zone_canada",
+     "symboles": [
+      "XBB.TO",
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_b_zone_or_a_part",
+     "symboles": [
+      "GLD"
+     ]
+    }
+   ]
+  },
+  "C": {
+   "actif": [
+    {
+     "libelle": "ESGV",
+     "id": "rep_c_actif_esgv",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "XBB.TO",
+     "id": "rep_c_actif_xbb_to",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "AGG",
+     "id": "rep_c_actif_agg",
+     "symboles": [
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "GLD",
+     "id": "rep_c_actif_gld",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "PG",
+     "id": "rep_c_actif_pg",
+     "symboles": [
+      "PG"
+     ]
+    },
+    {
+     "libelle": "ZST.TO",
+     "id": "rep_c_actif_zst_to",
+     "symboles": [
+      "ZST.TO"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_c_secteur_obligations_fnb",
+     "symboles": [
+      "XBB.TO",
+      "AGG",
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_c_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "ESGV"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_c_secteur_or",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "Consommation de base",
+     "id": "rep_c_secteur_consommation_de_base",
+     "symboles": [
+      "PG"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_c_zone_etats_unis",
+     "symboles": [
+      "ESGV",
+      "AGG",
+      "PG"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_c_zone_canada",
+     "symboles": [
+      "XBB.TO",
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_c_zone_or_a_part",
+     "symboles": [
+      "GLD"
+     ]
+    }
+   ]
+  }
+ },
+ "cours": {
+  "symbole": "TSLA",
+  "id": "tsla",
+  "points": [
+   [
+    "2021-11-12",
+    344.473328
+   ],
+   [
+    "2021-11-19",
+    379.019989
+   ],
+   [
+    "2021-11-26",
+    360.640015
+   ],
+   [
+    "2021-12-03",
+    338.323334
+   ],
+   [
+    "2021-12-10",
+    339.01001
+   ],
+   [
+    "2021-12-17",
+    310.856659
+   ],
+   [
+    "2021-12-23",
+    355.666656
+   ],
+   [
+    "2021-12-31",
+    352.26001
+   ],
+   [
+    "2022-01-03",
+    399.926666
+   ],
+   [
+    "2022-01-07",
+    342.320007
+   ],
+   [
+    "2022-01-14",
+    349.869995
+   ],
+   [
+    "2022-01-21",
+    314.633331
+   ],
+   [
+    "2022-01-28",
+    282.116669
+   ],
+   [
+    "2022-02-04",
+    307.773346
+   ],
+   [
+    "2022-02-11",
+    286.666656
+   ],
+   [
+    "2022-02-18",
+    285.660004
+   ],
+   [
+    "2022-02-25",
+    269.956665
+   ],
+   [
+    "2022-03-04",
+    279.429993
+   ],
+   [
+    "2022-03-11",
+    265.116669
+   ],
+   [
+    "2022-03-18",
+    301.796661
+   ],
+   [
+    "2022-03-25",
+    336.880005
+   ],
+   [
+    "2022-04-01",
+    361.529999
+   ],
+   [
+    "2022-04-08",
+    341.829987
+   ],
+   [
+    "2022-04-14",
+    328.333344
+   ],
+   [
+    "2022-04-22",
+    335.016663
+   ],
+   [
+    "2022-04-29",
+    290.253326
+   ],
+   [
+    "2022-05-06",
+    288.549988
+   ],
+   [
+    "2022-05-13",
+    256.529999
+   ],
+   [
+    "2022-05-20",
+    221.300003
+   ],
+   [
+    "2022-05-27",
+    253.210007
+   ],
+   [
+    "2022-06-03",
+    234.516663
+   ],
+   [
+    "2022-06-10",
+    232.229996
+   ],
+   [
+    "2022-06-17",
+    216.759995
+   ],
+   [
+    "2022-06-24",
+    245.706665
+   ],
+   [
+    "2022-07-01",
+    227.263336
+   ],
+   [
+    "2022-07-08",
+    250.763336
+   ],
+   [
+    "2022-07-15",
+    240.066666
+   ],
+   [
+    "2022-07-22",
+    272.243347
+   ],
+   [
+    "2022-07-29",
+    297.149994
+   ],
+   [
+    "2022-08-05",
+    288.170013
+   ],
+   [
+    "2022-08-12",
+    300.029999
+   ],
+   [
+    "2022-08-19",
+    296.666656
+   ],
+   [
+    "2022-08-26",
+    288.089996
+   ],
+   [
+    "2022-09-02",
+    270.209991
+   ],
+   [
+    "2022-09-09",
+    299.679993
+   ],
+   [
+    "2022-09-16",
+    303.350006
+   ],
+   [
+    "2022-09-23",
+    275.329987
+   ],
+   [
+    "2022-09-30",
+    265.25
+   ],
+   [
+    "2022-10-07",
+    223.070007
+   ],
+   [
+    "2022-10-14",
+    204.990005
+   ],
+   [
+    "2022-10-21",
+    214.440002
+   ],
+   [
+    "2022-10-28",
+    228.520004
+   ],
+   [
+    "2022-11-04",
+    207.470001
+   ],
+   [
+    "2022-11-11",
+    195.970001
+   ],
+   [
+    "2022-11-18",
+    180.190002
+   ],
+   [
+    "2022-11-25",
+    182.860001
+   ],
+   [
+    "2022-12-02",
+    194.860001
+   ],
+   [
+    "2022-12-09",
+    179.050003
+   ],
+   [
+    "2022-12-16",
+    150.229996
+   ],
+   [
+    "2022-12-23",
+    123.150002
+   ],
+   [
+    "2022-12-30",
+    123.18
+   ],
+   [
+    "2023-01-03",
+    108.099998
+   ],
+   [
+    "2023-01-06",
+    113.059998
+   ],
+   [
+    "2023-01-13",
+    122.400002
+   ],
+   [
+    "2023-01-20",
+    133.419998
+   ],
+   [
+    "2023-01-27",
+    177.899994
+   ],
+   [
+    "2023-02-03",
+    189.979996
+   ],
+   [
+    "2023-02-10",
+    196.889999
+   ],
+   [
+    "2023-02-17",
+    208.309998
+   ],
+   [
+    "2023-02-24",
+    196.880005
+   ],
+   [
+    "2023-03-03",
+    197.789993
+   ],
+   [
+    "2023-03-10",
+    173.440002
+   ],
+   [
+    "2023-03-17",
+    180.130005
+   ],
+   [
+    "2023-03-24",
+    190.410004
+   ],
+   [
+    "2023-03-31",
+    207.460007
+   ],
+   [
+    "2023-04-06",
+    185.059998
+   ],
+   [
+    "2023-04-14",
+    185.0
+   ],
+   [
+    "2023-04-21",
+    165.080002
+   ],
+   [
+    "2023-04-28",
+    164.309998
+   ],
+   [
+    "2023-05-05",
+    170.059998
+   ],
+   [
+    "2023-05-12",
+    167.979996
+   ],
+   [
+    "2023-05-19",
+    180.139999
+   ],
+   [
+    "2023-05-26",
+    193.169998
+   ],
+   [
+    "2023-06-02",
+    213.970001
+   ],
+   [
+    "2023-06-09",
+    244.399994
+   ],
+   [
+    "2023-06-16",
+    260.540009
+   ],
+   [
+    "2023-06-23",
+    256.600006
+   ],
+   [
+    "2023-06-30",
+    261.769989
+   ],
+   [
+    "2023-07-07",
+    274.429993
+   ],
+   [
+    "2023-07-14",
+    281.380005
+   ],
+   [
+    "2023-07-21",
+    260.019989
+   ],
+   [
+    "2023-07-28",
+    266.440002
+   ],
+   [
+    "2023-08-04",
+    253.860001
+   ],
+   [
+    "2023-08-11",
+    242.649994
+   ],
+   [
+    "2023-08-18",
+    215.490005
+   ],
+   [
+    "2023-08-25",
+    238.589996
+   ],
+   [
+    "2023-09-01",
+    245.009995
+   ],
+   [
+    "2023-09-08",
+    248.5
+   ],
+   [
+    "2023-09-15",
+    274.390015
+   ],
+   [
+    "2023-09-22",
+    244.880005
+   ],
+   [
+    "2023-09-29",
+    250.220001
+   ],
+   [
+    "2023-10-06",
+    260.529999
+   ],
+   [
+    "2023-10-13",
+    251.119995
+   ],
+   [
+    "2023-10-20",
+    211.990005
+   ],
+   [
+    "2023-10-27",
+    207.300003
+   ],
+   [
+    "2023-11-03",
+    219.960007
+   ],
+   [
+    "2023-11-10",
+    214.649994
+   ],
+   [
+    "2023-11-17",
+    234.300003
+   ],
+   [
+    "2023-11-24",
+    235.449997
+   ],
+   [
+    "2023-12-01",
+    238.830002
+   ],
+   [
+    "2023-12-08",
+    243.839996
+   ],
+   [
+    "2023-12-15",
+    253.5
+   ],
+   [
+    "2023-12-22",
+    252.539993
+   ],
+   [
+    "2023-12-29",
+    248.479996
+   ],
+   [
+    "2024-01-05",
+    237.490005
+   ],
+   [
+    "2024-01-12",
+    218.889999
+   ],
+   [
+    "2024-01-19",
+    212.190002
+   ],
+   [
+    "2024-01-26",
+    183.25
+   ],
+   [
+    "2024-02-02",
+    187.910004
+   ],
+   [
+    "2024-02-09",
+    193.570007
+   ],
+   [
+    "2024-02-16",
+    199.949997
+   ],
+   [
+    "2024-02-23",
+    191.970001
+   ],
+   [
+    "2024-03-01",
+    202.639999
+   ],
+   [
+    "2024-03-08",
+    175.339996
+   ],
+   [
+    "2024-03-15",
+    163.570007
+   ],
+   [
+    "2024-03-22",
+    170.830002
+   ],
+   [
+    "2024-03-28",
+    175.789993
+   ],
+   [
+    "2024-04-05",
+    164.899994
+   ],
+   [
+    "2024-04-12",
+    171.050003
+   ],
+   [
+    "2024-04-19",
+    147.050003
+   ],
+   [
+    "2024-04-26",
+    168.289993
+   ],
+   [
+    "2024-05-03",
+    181.190002
+   ],
+   [
+    "2024-05-10",
+    168.470001
+   ],
+   [
+    "2024-05-17",
+    177.460007
+   ],
+   [
+    "2024-05-24",
+    179.240005
+   ],
+   [
+    "2024-05-31",
+    178.080002
+   ],
+   [
+    "2024-06-07",
+    177.479996
+   ],
+   [
+    "2024-06-14",
+    178.009995
+   ],
+   [
+    "2024-06-21",
+    183.009995
+   ],
+   [
+    "2024-06-28",
+    197.880005
+   ],
+   [
+    "2024-07-05",
+    251.520004
+   ],
+   [
+    "2024-07-12",
+    248.229996
+   ],
+   [
+    "2024-07-19",
+    239.199997
+   ],
+   [
+    "2024-07-26",
+    219.800003
+   ],
+   [
+    "2024-08-02",
+    207.669998
+   ],
+   [
+    "2024-08-09",
+    200.0
+   ],
+   [
+    "2024-08-16",
+    216.119995
+   ],
+   [
+    "2024-08-23",
+    220.320007
+   ],
+   [
+    "2024-08-30",
+    214.110001
+   ],
+   [
+    "2024-09-06",
+    210.729996
+   ],
+   [
+    "2024-09-13",
+    230.289993
+   ],
+   [
+    "2024-09-20",
+    238.25
+   ],
+   [
+    "2024-09-27",
+    260.459991
+   ],
+   [
+    "2024-10-04",
+    250.080002
+   ],
+   [
+    "2024-10-11",
+    217.800003
+   ],
+   [
+    "2024-10-18",
+    220.699997
+   ],
+   [
+    "2024-10-25",
+    269.190002
+   ],
+   [
+    "2024-11-01",
+    248.979996
+   ],
+   [
+    "2024-11-08",
+    321.220001
+   ],
+   [
+    "2024-11-15",
+    320.720001
+   ],
+   [
+    "2024-11-22",
+    352.559998
+   ],
+   [
+    "2024-11-29",
+    345.160004
+   ],
+   [
+    "2024-12-06",
+    389.220001
+   ],
+   [
+    "2024-12-13",
+    436.230011
+   ],
+   [
+    "2024-12-20",
+    421.059998
+   ],
+   [
+    "2024-12-27",
+    431.660004
+   ],
+   [
+    "2025-01-03",
+    410.440002
+   ],
+   [
+    "2025-01-10",
+    394.73999
+   ],
+   [
+    "2025-01-17",
+    426.5
+   ],
+   [
+    "2025-01-24",
+    406.579987
+   ],
+   [
+    "2025-01-31",
+    404.600006
+   ],
+   [
+    "2025-02-07",
+    361.619995
+   ],
+   [
+    "2025-02-14",
+    355.839996
+   ],
+   [
+    "2025-02-21",
+    337.799988
+   ],
+   [
+    "2025-02-28",
+    292.980011
+   ],
+   [
+    "2025-03-07",
+    262.670013
+   ],
+   [
+    "2025-03-14",
+    249.979996
+   ],
+   [
+    "2025-03-21",
+    248.710007
+   ],
+   [
+    "2025-03-28",
+    263.549988
+   ],
+   [
+    "2025-04-04",
+    239.429993
+   ],
+   [
+    "2025-04-11",
+    252.309998
+   ],
+   [
+    "2025-04-17",
+    241.369995
+   ],
+   [
+    "2025-04-25",
+    284.950012
+   ],
+   [
+    "2025-05-02",
+    287.209991
+   ],
+   [
+    "2025-05-09",
+    298.26001
+   ],
+   [
+    "2025-05-16",
+    349.980011
+   ],
+   [
+    "2025-05-23",
+    339.339996
+   ],
+   [
+    "2025-05-30",
+    346.459991
+   ],
+   [
+    "2025-06-06",
+    295.140015
+   ],
+   [
+    "2025-06-13",
+    325.309998
+   ],
+   [
+    "2025-06-20",
+    322.160004
+   ],
+   [
+    "2025-06-27",
+    323.630005
+   ],
+   [
+    "2025-07-03",
+    315.350006
+   ],
+   [
+    "2025-07-11",
+    313.51001
+   ],
+   [
+    "2025-07-18",
+    329.649994
+   ],
+   [
+    "2025-07-25",
+    316.059998
+   ],
+   [
+    "2025-08-01",
+    302.630005
+   ],
+   [
+    "2025-08-08",
+    329.649994
+   ],
+   [
+    "2025-08-15",
+    330.559998
+   ],
+   [
+    "2025-08-22",
+    340.01001
+   ],
+   [
+    "2025-08-29",
+    333.869995
+   ],
+   [
+    "2025-09-05",
+    350.839996
+   ],
+   [
+    "2025-09-12",
+    395.940002
+   ],
+   [
+    "2025-09-19",
+    426.070007
+   ],
+   [
+    "2025-09-26",
+    440.399994
+   ],
+   [
+    "2025-10-03",
+    429.829987
+   ],
+   [
+    "2025-10-10",
+    413.48999
+   ],
+   [
+    "2025-10-17",
+    439.309998
+   ],
+   [
+    "2025-10-24",
+    433.720001
+   ],
+   [
+    "2025-10-31",
+    456.559998
+   ],
+   [
+    "2025-11-07",
+    429.519989
+   ],
+   [
+    "2025-11-14",
+    404.350006
+   ],
+   [
+    "2025-11-21",
+    391.089996
+   ],
+   [
+    "2025-11-28",
+    430.170013
+   ],
+   [
+    "2025-12-05",
+    455.0
+   ],
+   [
+    "2025-12-12",
+    458.959991
+   ],
+   [
+    "2025-12-19",
+    481.200012
+   ],
+   [
+    "2025-12-26",
+    475.190002
+   ],
+   [
+    "2026-01-02",
+    438.070007
+   ],
+   [
+    "2026-01-09",
+    445.01001
+   ],
+   [
+    "2026-01-16",
+    437.5
+   ],
+   [
+    "2026-01-23",
+    449.059998
+   ],
+   [
+    "2026-01-30",
+    430.410004
+   ],
+   [
+    "2026-02-06",
+    411.109985
+   ],
+   [
+    "2026-02-13",
+    417.440002
+   ],
+   [
+    "2026-02-20",
+    411.820007
+   ],
+   [
+    "2026-02-27",
+    402.51001
+   ],
+   [
+    "2026-03-06",
+    396.730011
+   ],
+   [
+    "2026-03-13",
+    391.200012
+   ],
+   [
+    "2026-03-20",
+    367.959991
+   ],
+   [
+    "2026-03-27",
+    361.829987
+   ],
+   [
+    "2026-04-02",
+    360.589996
+   ],
+   [
+    "2026-04-10",
+    348.950012
+   ],
+   [
+    "2026-04-17",
+    400.619995
+   ],
+   [
+    "2026-04-24",
+    376.299988
+   ],
+   [
+    "2026-05-01",
+    390.820007
+   ],
+   [
+    "2026-05-08",
+    428.350006
+   ],
+   [
+    "2026-05-15",
+    422.23999
+   ],
+   [
+    "2026-05-22",
+    426.01001
+   ],
+   [
+    "2026-05-29",
+    435.790009
+   ],
+   [
+    "2026-06-05",
+    391.0
+   ],
+   [
+    "2026-06-12",
+    406.429993
+   ],
+   [
+    "2026-06-18",
+    400.48999
+   ],
+   [
+    "2026-06-26",
+    379.709991
+   ],
+   [
+    "2026-07-02",
+    393.450012
+   ],
+   [
+    "2026-07-10",
+    407.76001
+   ],
+   [
+    "2026-07-17",
+    380.839996
+   ],
+   [
+    "2026-07-24",
+    313.029999
+   ],
+   [
+    "2026-07-31",
+    311.209991
+   ],
+   [
+    "2026-08-07",
+    328.579987
+   ],
+   [
+    "2026-08-14",
+    342.269989
+   ],
+   [
+    "2026-08-21",
+    362.859985
+   ],
+   [
+    "2026-08-28",
+    348.75
+   ],
+   [
+    "2026-09-04",
+    354.079987
+   ],
+   [
+    "2026-09-11",
+    365.440002
+   ],
+   [
+    "2026-09-18",
+    364.269989
+   ],
+   [
+    "2026-09-25",
+    372.109985
+   ],
+   [
+    "2026-10-02",
+    370.589996
+   ],
+   [
+    "2026-10-09",
+    382.700012
+   ],
+   [
+    "2026-10-16",
+    354.720001
+   ],
+   [
+    "2026-10-23",
+    372.220001
+   ],
+   [
+    "2026-10-30",
+    399.809998
+   ],
+   [
+    "2026-11-06",
+    358.220001
+   ],
+   [
+    "2026-11-12",
+    397.450012
+   ]
+  ],
+  "date_pic": "2022-01-03",
+  "date_creux": "2023-01-03",
+  "reference": "pb_tsla",
+  "sources": [
+   "data/prices_daily.csv (adj_close, dernier cours de chaque semaine)"
+  ],
+  "devise": "USD",
+  "nom": "Tesla"
+ },
+ "chiffres": {
+  "rep_a_actif_esgv": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "ESGV",
+    "poids": {
+     "ESGV": 0.35
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_a_actif_agg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "AGG",
+    "poids": {
+     "AGG": 0.3
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.3,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "AGG"
+    ]
+   }
+  },
+  "rep_a_actif_xbb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "XBB.TO",
+    "poids": {
+     "XBB.TO": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_a_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_a_actif_pg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "PG",
+    "poids": {
+     "PG": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.07,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_a_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "AGG": 0.3,
+     "XBB.TO": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.5,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "AGG",
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_a_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "ESGV": 0.35
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_a_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_a_secteur_consommation_de_base": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Consommation de base",
+    "poids": {
+     "PG": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.07,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_a_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "ESGV": 0.35,
+     "AGG": 0.3,
+     "PG": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.72,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV",
+     "AGG",
+     "PG"
+    ]
+   }
+  },
+  "rep_a_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XBB.TO": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_a_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_b_actif_esgv": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "ESGV",
+    "poids": {
+     "ESGV": 0.3
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.3,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_b_actif_xbb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "XBB.TO",
+    "poids": {
+     "XBB.TO": 0.25
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.25,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_b_actif_agg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "AGG",
+    "poids": {
+     "AGG": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "AGG"
+    ]
+   }
+  },
+  "rep_b_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_b_actif_pg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "PG",
+    "poids": {
+     "PG": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_b_actif_zst_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "ZST.TO",
+    "poids": {
+     "ZST.TO": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.07,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_b_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "XBB.TO": 0.25,
+     "AGG": 0.2,
+     "ZST.TO": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.52,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO",
+     "AGG",
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_b_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "ESGV": 0.3
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.3,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_b_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_b_secteur_consommation_de_base": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Consommation de base",
+    "poids": {
+     "PG": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_b_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "ESGV": 0.3,
+     "AGG": 0.2,
+     "PG": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.58,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV",
+     "AGG",
+     "PG"
+    ]
+   }
+  },
+  "rep_b_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XBB.TO": 0.25,
+     "ZST.TO": 0.07
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.32,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO",
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_b_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_c_actif_esgv": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "ESGV",
+    "poids": {
+     "ESGV": 0.35
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_c_actif_xbb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "XBB.TO",
+    "poids": {
+     "XBB.TO": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_c_actif_agg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "AGG",
+    "poids": {
+     "AGG": 0.15
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "AGG"
+    ]
+   }
+  },
+  "rep_c_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_c_actif_pg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "PG",
+    "poids": {
+     "PG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_c_actif_zst_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "ZST.TO",
+    "poids": {
+     "ZST.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_c_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "ZST.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.45,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO",
+     "AGG",
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_c_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "ESGV": 0.35
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV"
+    ]
+   }
+  },
+  "rep_c_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_c_secteur_consommation_de_base": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Consommation de base",
+    "poids": {
+     "PG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "PG"
+    ]
+   }
+  },
+  "rep_c_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "ESGV": 0.35,
+     "AGG": 0.15,
+     "PG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.6,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "ESGV",
+     "AGG",
+     "PG"
+    ]
+   }
+  },
+  "rep_c_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XBB.TO": 0.2,
+     "ZST.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.3,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XBB.TO",
+     "ZST.TO"
+    ]
+   }
+  },
+  "rep_c_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/mateo.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  }
+ }
+}

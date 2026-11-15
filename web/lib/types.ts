@@ -100,9 +100,32 @@ export type SortiePipeline = {
   chiffres: Record<string, Reference>;
   exclus: Record<string, string>;
   meta: { modele: string; duree_secondes: number; date: string };
+  graphiques: Graphiques;
 };
 
 export const CARTES = ["profil", "repartition", "risque", "verifications", "pourquoi", "limites"] as const;
 export type Carte = (typeof CARTES)[number];
 
 export const ETAPES = ["Profil", "Analyse", "Proposition", "Vérification", "Explication"] as const;
+
+// Données des graphiques : web/data/graphiques/<persona>.json, calculées par
+// web/scripts/graphiques.py. Leurs chiffres rejoignent la table « chiffres ».
+export type Part = { libelle: string; id: string; symboles: string[] };
+export type Regroupement = "actif" | "secteur" | "zone";
+
+export type Graphiques = {
+  note: string;
+  repartitions: Record<string, Record<Regroupement, Part[]>>;
+  cours: {
+    symbole: string;
+    id: string;
+    nom: string;
+    devise: string;
+    points: [string, number][];
+    date_pic: string;
+    date_creux: string;
+    reference: string;
+    sources: string[];
+  };
+  chiffres: Record<string, Reference>;
+};
