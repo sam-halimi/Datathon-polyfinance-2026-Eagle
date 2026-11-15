@@ -1295,3 +1295,14 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .attente__liste { gap: 8px; }
   .demos { margin-top: 12px; }
 }
+
+/* ---------- Démarche : le diagnostic de chaque spécialiste sous son étape ---------- */
+
+.demarche__corps { display: grid; gap: 6px; min-width: 0; }
+.demarche__constats {
+  display: grid; gap: 6px; margin: 2px 0 4px; padding: 10px 14px;
+  border-left: 2px solid var(--border-strong); background: var(--surface-2); border-radius: 0 var(--rayon-m) var(--rayon-m) 0;
+  font-size: 14.5px; line-height: 1.45; color: var(--encre);
+}
+.demarche__constats li { position: relative; padding-left: 14px; }
+.demarche__constats li::before { content: "–"; position: absolute; left: 0; color: var(--encre-discrete); }

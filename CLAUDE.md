@@ -84,7 +84,7 @@ Tous testés avec pytest sur les vrais CSV.
 ## Interface
 
 - Mobile d'abord : conçue à 390 px de large, puis adaptée au bureau.
-- Aucun défilement dans un écran. Une seule chose à la fois.
+- Une seule chose à la fois. Sur ordinateur la page ne défile pas ; un contenu plus long que sa carte (diagnostic des agents, adéquation, vérifications, transcription) défile à l'intérieur de la carte, pour que tout reste lisible. Sur téléphone (moins de 900 px), une seule colonne et la page défile.
 - Écran d'appel : l'assistant en haut, une carte en dessous, le micro en bas. Bouton « Démarrer l'appel » obligatoire (le navigateur exige un geste pour l'audio) et site en HTTPS (exigé pour le micro).
 - Six cartes : profil, répartition, risque, pourquoi, limites, vérifications. Le contenu vient du pipeline, jamais de la voix.
 - Bouton « tout voir » en fin de parcours : toutes les cartes sur un écran.
