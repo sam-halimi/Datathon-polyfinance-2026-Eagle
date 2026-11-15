@@ -5,12 +5,21 @@ OK      V39079 : 1293 observations, 2021-11-12 au 2026-11-12, délai 1 j
 OK      BD.CDN.2YR.DQ.YLD : 1245 observations, 2021-11-12 au 2026-11-12, délai 1 j
 OK      BD.CDN.10YR.DQ.YLD : 1245 observations, 2021-11-12 au 2026-11-12, délai 1 j
 OK      STATIC_TOTALCPICHANGE : 58 observations, 2021-12-01 au 2026-09-01, délai 55 j
-OK      DFF : 1826 observations, 2021-11-12 au 2026-11-11, délai 1 j
-OK      DGS2 : 1248 observations, 2021-11-12 au 2026-11-10, délai 1 j
-OK      DGS10 : 1248 observations, 2021-11-12 au 2026-11-10, délai 1 j
-OK      CPIAUCSL : 59 observations, 2021-11-01 au 2026-10-01, délai 45 j
+OK      DFF : 1827 observations, 2021-11-12 au 2026-11-12, délai réel 1 à 6 j, médiane 1 j (catalogue : 1 j)
+        ! dates de publication réelles pour 1827 observations sur 1827
+OK      DGS2 : 1249 observations, 2021-11-12 au 2026-11-12, délai réel 1 à 6 j, médiane 1 j (catalogue : 1 j)
+        ! dates de publication réelles pour 1249 observations sur 1249
+        ! 56 lignes rejetées (date ou nombre illisible)
+OK      DGS10 : 1249 observations, 2021-11-12 au 2026-11-12, délai réel 1 à 6 j, médiane 1 j (catalogue : 1 j)
+        ! dates de publication réelles pour 1249 observations sur 1249
+        ! 56 lignes rejetées (date ou nombre illisible)
+OK      CPIAUCSL : 59 observations, 2021-11-01 au 2026-10-01, délai réel 37 à 53 j, médiane 41 j (catalogue : 45 j)
+        ! dates de publication réelles pour 59 observations sur 59
+        ! 1 lignes rejetées (date ou nombre illisible)
         ! trou de 61 jours pour une série mensuelle
-OK      UNRATE : 59 observations, 2021-11-01 au 2026-10-01, délai 40 j
+OK      UNRATE : 59 observations, 2021-11-01 au 2026-10-01, délai réel 31 à 80 j, médiane 34 j (catalogue : 40 j)
+        ! dates de publication réelles pour 59 observations sur 59
+        ! 1 lignes rejetées (date ou nombre illisible)
         ! trou de 61 jours pour une série mensuelle
 
-10 séries, 9526 observations, panel de 1314 jours sur 10 colonnes, 0 erreur(s).
+10 séries, 9529 observations, panel de 1314 jours sur 10 colonnes, 0 erreur(s).

@@ -62,7 +62,11 @@ Même principe, fournisseur `banque_du_canada`, avec le code de l'API Valet.
 
 Une donnée mensuelle est datée du mois qu'elle décrit, mais publiée plusieurs semaines après. L'ingestion calcule `date_disponible = date + délai`, et le panel n'utilise une valeur qu'à partir de cette date. C'est ce qui empêche une simulation de voir le futur.
 
-Les délais du catalogue de départ (45 jours pour l'IPC américain, 40 pour le chômage américain, 55 pour l'IPC canadien, 1 pour les séries quotidiennes) sont des valeurs prudentes, pas les dates de publication exactes. À ajuster si on trouve le calendrier officiel.
+Les cinq séries américaines (`DFF`, `DGS2`, `DGS10`, `CPIAUCSL`, `UNRATE`) sont lues sur FRED avec leur date de première publication réelle. Le délai du catalogue ne sert pour elles que si cette date manque, et le rapport le signale. Il n'était pas prudent : l'IPC américain est sorti jusqu'à 53 jours après le mois (catalogue : 45) et le chômage jusqu'à 80 jours pendant la fermeture de l'administration fin 2025 (catalogue : 40).
+
+Pour les séries lues dans un fichier (Banque du Canada : 55 jours pour l'IPC canadien, 1 pour les séries quotidiennes), le délai reste une estimation, pas la date de publication exacte. À ajuster si on trouve le calendrier officiel.
+
+Les copies téléchargées sont gardées dans `data/base/brut/` et poussées dans le dépôt : `--hors-ligne` et les tests marchent sans réseau. Les valeurs FRED sont celles du dernier millésime : une révision faite après la première publication est visible dès la date de première publication.
 
 ## Ce qui sort, dans `data/base/`
 

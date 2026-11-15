@@ -28,6 +28,7 @@ import io
 import json
 import os
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
@@ -88,20 +89,35 @@ def _fred_api(code: str, debut: str, fin: str, cle: str, premiere_publication: b
 
     Avec `premiere_publication`, FRED renvoie pour chaque observation sa première
     publication : `realtime_start` est alors la date où la valeur est sortie.
+    La période réelle commence à `debut` et non en 1776 : FRED refuse plus de
+    2 000 dates de révision par appel, et une série quotidienne en a une par jour.
+    Une observation datée après `debut` ne peut pas avoir été publiée avant.
+
+    Une erreur de FRED (HTTP 400 compris) remonte avec le message exact de FRED.
     """
     params = {"series_id": code, "api_key": cle, "file_type": "json",
               "observation_start": debut, "observation_end": fin}
     if premiere_publication:
-        params |= {"realtime_start": "1776-07-04", "realtime_end": "9999-12-31", "output_type": "4"}
-    donnees = json.loads(_telecharger(f"{FRED_API}?{urllib.parse.urlencode(params)}"))
+        params |= {"realtime_start": debut, "realtime_end": "9999-12-31", "output_type": "4"}
+    try:
+        donnees = json.loads(_telecharger(f"{FRED_API}?{urllib.parse.urlencode(params)}"))
+    except urllib.error.HTTPError as e:
+        try:
+            message = json.loads(e.read()).get("error_message", "")
+        except Exception:
+            message = ""
+        raise ErreurIngestion(f"FRED HTTP {e.code} : {message or e.reason}".replace(cle, "<clé>")) from None
     if "observations" not in donnees:
-        raise ErreurIngestion(f"FRED : {donnees.get('error_message', 'réponse inattendue')}")
+        raise ErreurIngestion(f"FRED : {donnees.get('error_message', 'réponse inattendue')}".replace(cle, "<clé>"))
     return donnees["observations"]
 
 
 def lire_fred(code: str, debut: str, fin: str) -> pd.DataFrame:
     """Série FRED. Avec la variable d'environnement FRED_API_KEY : API officielle et
     dates de publication réelles. Sans clé : export CSV public, sans dates de publication.
+
+    Si les dates de publication manquent, `df.attrs["avertissement"]` dit pourquoi :
+    l'ingestion l'écrit dans le rapport au lieu de l'avaler.
     """
     cle = os.environ.get(VARIABLE_CLE_FRED, "").strip()
     if not cle:
@@ -110,6 +126,8 @@ def lire_fred(code: str, debut: str, fin: str) -> pd.DataFrame:
         if df.shape[1] != 2:
             raise ErreurIngestion(f"FRED n'a pas renvoyé de série pour le code {code!r}.")
         df.columns = ["date", "value"]
+        df.attrs["avertissement"] = (f"pas de {VARIABLE_CLE_FRED} : export CSV public, "
+                                     "sans dates de publication, délai du catalogue appliqué")
         return df
     obs = _fred_api(code, debut, fin, cle)
     if not obs:
@@ -118,8 +136,9 @@ def lire_fred(code: str, debut: str, fin: str) -> pd.DataFrame:
     try:
         sorties = {o["date"]: o["realtime_start"] for o in _fred_api(code, debut, fin, cle, True)}
         df["date_publication"] = df["date"].map(sorties)
-    except Exception:
-        pass  # sans dates de publication, le délai du catalogue s'applique
+    except Exception as e:  # le délai du catalogue s'applique, et le rapport le dit
+        df.attrs["avertissement"] = (f"dates de publication indisponibles ({e}) : "
+                                     "délai du catalogue appliqué")
     return df
 
 
@@ -252,7 +271,7 @@ def _lire_serie(ligne: pd.Series, data: Path, brut: Path, hors_ligne: bool,
             df = lecteur(ligne["code"], DEBUT, fin)
             brut.mkdir(parents=True, exist_ok=True)
             df.to_csv(copie, index=False)
-            return df, ""
+            return df, df.attrs.get("avertissement", "")
         except Exception as e:  # réseau, code inconnu : on retombe sur la copie locale
             if not copie.exists():
                 raise ErreurIngestion(f"téléchargement impossible ({e}) et aucune copie locale") from e
@@ -260,6 +279,14 @@ def _lire_serie(ligne: pd.Series, data: Path, brut: Path, hors_ligne: bool,
     if not copie.exists():
         raise ErreurIngestion("mode hors ligne et aucune copie locale : relancer sans --hors-ligne")
     return pd.read_csv(copie), "copie locale (hors ligne)"
+
+
+def _texte_delai(df: pd.DataFrame, delai: int, reelles: int) -> str:
+    if reelles < len(df):
+        return f"délai {delai} j"
+    jours = (df["date_disponible"] - df["date"]).dt.days
+    return (f"délai réel {int(jours.min())} à {int(jours.max())} j, médiane {jours.median():g} j "
+            f"(catalogue : {delai} j)")
 
 
 def panel_quotidien(series: pd.DataFrame) -> pd.DataFrame:
@@ -279,7 +306,21 @@ def panel_quotidien(series: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(colonnes, index=jours)
 
 
-def _maj_sources(chemin: Path, series: pd.DataFrame, cat: pd.DataFrame) -> int:
+def _limites(ligne: pd.Series, n: int, reelles: int) -> str:
+    delai = (f"délai de publication fixé à {ligne['delai_publication_jours']} jours dans "
+             "data/catalogue.csv : valeur prudente, pas la date de publication exacte")
+    if not reelles:
+        return delai[0].upper() + delai[1:]
+    texte = (f"date_disponible = date de première publication réelle (FRED, output_type=4) "
+             f"pour {reelles} observations sur {n}")
+    if reelles < n:
+        texte += f" ; pour les autres, {delai}"
+    return texte + (" ; valeurs = dernier millésime FRED : une révision postérieure à la première "
+                    "publication est visible dès cette date")
+
+
+def _maj_sources(chemin: Path, series: pd.DataFrame, cat: pd.DataFrame,
+                 reelles: dict[str, int] | None = None) -> int:
     """Ajoute ou met à jour la ligne de chaque série ajoutée dans sources_metadata.csv."""
     if not chemin.exists():
         return 0
@@ -305,9 +346,8 @@ def _maj_sources(chemin: Path, series: pd.DataFrame, cat: pd.DataFrame) -> int:
             "coverage": f"{g['date'].min().date()} to {g['date'].max().date()}",
             "frequency": ligne["frequence"],
             "processing": "tools/ingestion.py : dates et nombres valides, une valeur par date, "
-                          "date_disponible = date + délai de publication",
-            "limitations": f"Délai de publication fixé à {ligne['delai_publication_jours']} jours "
-                           "dans data/catalogue.csv : valeur prudente, pas la date de publication exacte",
+                          "date_disponible = date de première publication si FRED la donne, sinon date + délai de publication",
+            "limitations": _limites(ligne, len(g), (reelles or {}).get(sid, 0)),
             "terms_of_use": CONDITIONS.get(fournisseur, A_COMPLETER),
         }
         existe = (meta["file"] == "base/series.csv") & meta["content"].str.startswith(f"{sid} :")
@@ -327,7 +367,7 @@ def executer(data: Path = DATA, hors_ligne: bool = False, fin: str | None = None
     chemin_cat = data / "catalogue.csv"
     cat, ajoutees = decouvrir_depot(lire_catalogue(chemin_cat), data / "depot")
 
-    morceaux, erreurs = [], {}
+    morceaux, erreurs, publications = [], {}, {}
     rapport = [f"Ingestion du {date.today().isoformat()}, fenêtre {DEBUT} au {fin}.", ""]
     if ajoutees:
         rapport += [f"Nouvelles séries détectées dans depot/ et ajoutées au catalogue : {ajoutees}", ""]
@@ -354,13 +394,18 @@ def executer(data: Path = DATA, hors_ligne: bool = False, fin: str | None = None
             ok = df["date_publication"].notna() & (df["date_publication"] >= df["date"])
             df.loc[ok, "date_disponible"] = df.loc[ok, "date_publication"]
             reelles = int(ok.sum())
+        publications[sid] = reelles
         for champ in ("unite", "frequence", "libelle", "source"):
             df[champ] = ligne[champ]
         morceaux.append(df)
 
         alertes = [note] if note else []
         if reelles:
-            alertes.append(f"dates de publication réelles pour {reelles} observations sur {len(df)}")
+            alertes.append(f"dates de publication réelles pour {reelles} observations sur {len(df)}"
+                           + (f", délai du catalogue pour les {len(df) - reelles} autres"
+                              if reelles < len(df) else ""))
+        elif ligne["fournisseur"] == "fred" and "dates de publication" not in note:
+            alertes.append("aucune date de publication réelle : délai du catalogue appliqué")
         if stats["rejetees"]:
             alertes.append(f"{stats['rejetees']} lignes rejetées (date ou nombre illisible)")
         if stats["doublons"]:
@@ -373,7 +418,7 @@ def executer(data: Path = DATA, hors_ligne: bool = False, fin: str | None = None
         if A_COMPLETER in (ligne["source"], ligne["unite"], ligne["url"]):
             alertes.append("source, unité ou adresse à compléter dans data/catalogue.csv")
         rapport.append(f"OK      {sid} : {len(df)} observations, {df['date'].min().date()} au "
-                       f"{df['date'].max().date()}, délai {delai} j"
+                       f"{df['date'].max().date()}, {_texte_delai(df, delai, reelles)}"
                        + ("".join(f"\n        ! {a}" for a in alertes)))
 
     colonnes = ["date", "series_id", "value", "date_disponible", "unite", "frequence", "libelle", "source"]
@@ -391,7 +436,7 @@ def executer(data: Path = DATA, hors_ligne: bool = False, fin: str | None = None
         (sortie / "rapport_qualite.txt").write_text("\n".join(rapport) + "\n", encoding="utf-8")
         if ajoutees:
             cat.to_csv(chemin_cat, index=False)
-        _maj_sources(data / "sources_metadata.csv", series, cat)
+        _maj_sources(data / "sources_metadata.csv", series, cat, publications)
     return Resultat(series, panel, rapport, erreurs, ajoutees)
 
 

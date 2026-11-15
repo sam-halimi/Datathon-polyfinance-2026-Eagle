@@ -4,8 +4,8 @@ V39079,fichier,macro_rates.csv,,Taux directeur de la Banque du Canada,pourcentag
 BD.CDN.2YR.DQ.YLD,fichier,macro_rates.csv,,Rendement des obligations du Canada 2 ans,pourcentage,quotidienne,1,Bank of Canada Valet API,https://www.bankofcanada.ca/valet/docs
 BD.CDN.10YR.DQ.YLD,fichier,macro_rates.csv,,Rendement des obligations du Canada 10 ans,pourcentage,quotidienne,1,Bank of Canada Valet API,https://www.bankofcanada.ca/valet/docs
 STATIC_TOTALCPICHANGE,fichier,macro_rates.csv,,IPC du Canada (variation annuelle),pourcentage,mensuelle,55,Bank of Canada Valet API,https://www.bankofcanada.ca/valet/docs
-DFF,fichier,macro_rates.csv,,Taux effectif des fonds fédéraux américains,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org
-DGS2,fichier,macro_rates.csv,,Rendement du Trésor américain 2 ans,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org
-DGS10,fichier,macro_rates.csv,,Rendement du Trésor américain 10 ans,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org
-CPIAUCSL,fichier,macro_rates.csv,,IPC américain (indice 1982-84 = 100),indice,mensuelle,45,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org
-UNRATE,fichier,macro_rates.csv,,Taux de chômage américain,pourcentage,mensuelle,40,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org
+DFF,fred,DFF,,Taux effectif des fonds fédéraux américains,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/series/DFF
+DGS2,fred,DGS2,,Rendement du Trésor américain 2 ans,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/series/DGS2
+DGS10,fred,DGS10,,Rendement du Trésor américain 10 ans,pourcentage,quotidienne,1,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/series/DGS10
+CPIAUCSL,fred,CPIAUCSL,,IPC américain (indice 1982-84 = 100),indice,mensuelle,45,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/series/CPIAUCSL
+UNRATE,fred,UNRATE,,Taux de chômage américain,pourcentage,mensuelle,40,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/series/UNRATE
