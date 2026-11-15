@@ -659,7 +659,7 @@ ul, ol { list-style: none; }
 .diapo__titre--non { color: var(--echec); }
 .diapo__justification { font-size: 16.5px; color: var(--encre-douce); max-width: 70ch; }
 .diapo__contenu { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-.diapo__contenu > .carte { box-shadow: none; border: 0; padding: 0; }
+.diapo__contenu > .carte { box-shadow: none; border: 0; padding: 0 2px; }
 .diapo__contenu > .carte > .carte__entete { display: none; }
 .diapo__nav { display: flex; gap: 12px; align-items: center; justify-content: flex-end; }
 .diapo__nav .bouton { min-width: 160px; }
@@ -964,4 +964,81 @@ ul, ol { list-style: none; }
   .anneau__centre strong { font-size: 17px; }
   .anneau__entree { font-size: 13px; padding: 1px 6px; }
   .cours-commentes__commentaire { font-size: 14.5px; }
+}
+
+/* ======================================================================
+   Dynamisme : survols, transitions entre diapositives, apparition progressive.
+   Rien ne grandit au point de déborder : translations de 1 à 2 px, ombres.
+   ====================================================================== */
+
+/* Transitions entre diapositives : glissement dans le sens de la navigation. */
+.diapo { animation: none; }
+.diapo--avant { animation: glisse-avant var(--duree-moyenne, 320ms) var(--courbe, cubic-bezier(0.2, 0.7, 0.2, 1)) both; }
+.diapo--arriere { animation: glisse-arriere var(--duree-moyenne, 320ms) var(--courbe, cubic-bezier(0.2, 0.7, 0.2, 1)) both; }
+@keyframes glisse-avant { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes glisse-arriere { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+
+/* Apparition progressive des éléments d'une liste (pages, choix, étapes). */
+@keyframes apparait { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pages__zone > ul:not(.pages__mesure) > li,
+.choix > .choix__bouton,
+.attente__agent,
+.anneau,
+.fiche-ligne__champ {
+  animation: apparait var(--duree-moyenne, 320ms) var(--courbe, cubic-bezier(0.2, 0.7, 0.2, 1)) both;
+}
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(2), .choix > :nth-child(2), .attente__agent:nth-child(2), .anneau:nth-child(2), .fiche-ligne__champ:nth-child(2) { animation-delay: 40ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(3), .choix > :nth-child(3), .attente__agent:nth-child(3), .anneau:nth-child(3), .fiche-ligne__champ:nth-child(3) { animation-delay: 80ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(4), .choix > :nth-child(4), .attente__agent:nth-child(4), .fiche-ligne__champ:nth-child(4) { animation-delay: 120ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(5), .choix > :nth-child(5), .attente__agent:nth-child(5), .fiche-ligne__champ:nth-child(5) { animation-delay: 160ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(6), .choix > :nth-child(6), .attente__agent:nth-child(6), .fiche-ligne__champ:nth-child(6) { animation-delay: 200ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(7), .choix > :nth-child(7), .attente__agent:nth-child(7), .fiche-ligne__champ:nth-child(7) { animation-delay: 240ms; }
+.pages__zone > ul:not(.pages__mesure) > li:nth-child(n+8), .choix > :nth-child(n+8) { animation-delay: 280ms; }
+.pages__mesure > li { animation: none !important; }
+
+/* États de survol : tout ce qui se clique. */
+.bouton, .choix__bouton, .onglet, .diapo__point, .demo, .segment__bouton, .niveau, .pages__fleche, .libre__ajouter,
+.etiquette, .champ__envoyer, .bouton-texte, .bouton-export, .curseur__graduation button {
+  transition: background-color var(--duree-courte, 160ms) ease-out, border-color var(--duree-courte, 160ms) ease-out,
+    color var(--duree-courte, 160ms) ease-out, box-shadow var(--duree-courte, 160ms) ease-out, transform var(--duree-courte, 160ms) ease-out;
+}
+.bouton:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--ombre-survol, 0 6px 18px rgb(27 31 36 / 14%)); }
+.bouton:not(:disabled):active { transform: translateY(0); box-shadow: none; }
+.bouton--principal:not(:disabled):hover { background: color-mix(in srgb, var(--accent) 88%, var(--encre)); }
+.bouton--secondaire:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+.choix__bouton:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--trait)); transform: translateY(-1px); box-shadow: var(--ombre-survol, 0 6px 18px rgb(27 31 36 / 12%)); }
+.choix__bouton:hover .choix__icone { transform: scale(1.08); }
+.choix__icone { transition: transform var(--duree-courte, 160ms) ease-out; }
+.onglet:hover, .diapo__point:not(.diapo__point--actif):hover, .segment__bouton:hover, .niveau:not(.niveau--actif):hover {
+  border-color: var(--accent); color: var(--encre); background: var(--accent-fond);
+}
+.demo:hover { transform: translateY(-1px); box-shadow: var(--ombre-survol, 0 6px 18px rgb(27 31 36 / 12%)); }
+.pages__fleche:not(:disabled):hover, .champ__envoyer:hover, .libre__ajouter:not(:disabled):hover { background: var(--accent); color: var(--accent-encre); }
+.etiquette:hover { background: var(--echec-fond); border-color: var(--echec); }
+.bouton-texte:hover { color: var(--encre); }
+.curseur__graduation button:hover { background: var(--accent-fond); color: var(--accent); }
+.curseur input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.1); }
+.curseur input[type="range"]::-webkit-slider-thumb { transition: transform var(--duree-courte, 160ms) ease-out; }
+
+/* Chiffres : le lien vers le calcul se voit au survol. */
+.chiffre { border-radius: 4px; transition: background-color var(--duree-courte, 160ms) ease-out, color var(--duree-courte, 160ms) ease-out; }
+.chiffre:hover, .chiffre:focus-visible { background: var(--accent-fond); color: var(--accent); text-decoration-style: solid; }
+
+/* Survol de ce qui se lit : lignes, cartes, entrées. */
+.adequation__ligne:not(.adequation__ligne--entete), .limite, .hypothese, .demarche__etape, .fiche-ligne__champ,
+.profil-direct__ligne, .controle, .attente__agent, .anneau__entree, .ligne, .puce, .replique {
+  transition: background-color var(--duree-courte, 160ms) ease-out, box-shadow var(--duree-courte, 160ms) ease-out;
+}
+.adequation__ligne:not(.adequation__ligne--entete):hover, .limite:hover, .demarche__etape:hover, .fiche-ligne__champ:hover,
+.profil-direct__ligne:hover, .controle:hover, .anneau__entree:hover, .ligne:hover { background: var(--survol-ligne, rgb(31 79 163 / 5%)); }
+.limite, .demarche__etape, .controle { border-radius: 10px; padding: 4px 6px; margin: 0 -6px; }
+.hypothese:hover { background: var(--survol-ligne, rgb(31 79 163 / 5%)); }
+.fiche-ligne, .diapo, .transcription, .profil-direct { transition: box-shadow var(--duree-moyenne, 320ms) ease-out, border-color var(--duree-moyenne, 320ms) ease-out; }
+.diapo:hover { box-shadow: var(--ombre-survol, 0 10px 34px rgb(27 31 36 / 10%)); }
+.profil-direct:hover, .transcription:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--trait)); }
+.lien:hover { text-decoration-thickness: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .diapo--avant, .diapo--arriere, .pages__zone > ul > li, .choix > .choix__bouton, .attente__agent, .anneau, .fiche-ligne__champ { animation: none; }
+  .bouton:hover, .choix__bouton:hover, .demo:hover { transform: none; }
 }

@@ -50,7 +50,12 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
   const [prenom, setPrenom] = useState("");
   const [demande, setDemande] = useState("");
   const [sortie, setSortie] = useState<SortiePipeline | null>(null);
-  const [diapo, setDiapo] = useState(0);
+  const [diapo, setDiapoBrut] = useState(0);
+  // Sens de la dernière navigation, pour faire glisser la diapositive du bon côté.
+  const [sens, setSens] = useState<"avant" | "arriere">("avant");
+  const setDiapo = useCallback((k: number) => {
+    setDiapoBrut((avant) => { setSens(k < avant ? "arriere" : "avant"); return k; });
+  }, []);
   const [actif, setActif] = useState<{ symbole: string; verdict?: VerdictActif; erreur?: string } | null>(null);
   const [transcription, setTranscription] = useState<Replique[]>([
     { qui: "eagle", texte: "Bonjour, je suis Eagle, votre assistant. Je vais établir avec vous un portefeuille simulé et vous détailler chacun de ses chiffres. Aucune transaction réelle n'est effectuée. Commençons par votre profil." },
@@ -90,6 +95,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
   };
 
   const suivante = () => {
+    setSens("avant");
     const i = question + 1;
     if (i < QUESTIONS.length) {
       setQuestion(i);
@@ -280,7 +286,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     navigation = (
       <>
         <button type="button" className="bouton bouton--secondaire" disabled={question === 0}
-          onClick={() => { setQuestion(question - 1); dire(QUESTIONS[question - 1].texte); }}>Précédente</button>
+          onClick={() => { setSens("arriere"); setQuestion(question - 1); dire(QUESTIONS[question - 1].texte); }}>Précédente</button>
         {q.type === "curseur" ? (
           <button type="button" className="bouton bouton--principal"
             onClick={() => { if (!estRepondue(profil, q)) { setProfil((p) => noter(p, q.champ, q.depart)); setDernierChamp(q.champ); } suivante(); }}>Valider</button>
@@ -394,7 +400,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
             </p>
             </div>
           ) : null}
-          <section className="diapo" key={actif ? `actif-${actif.symbole}` : `${phase}-${question}-${diapo}`}>
+          <section className={`diapo diapo--${sens}`} key={actif ? `actif-${actif.symbole}` : `${phase}-${question}-${diapo}`}>
             {titre ? <h2 className="diapo__titre">{typo(titre)}</h2> : null}
             {justification ? <p className="diapo__justification">{typeof justification === "string" ? typo(justification) : justification}</p> : null}
             <div className="diapo__contenu">{contenu}</div>
