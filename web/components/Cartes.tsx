@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { Chiffre, Texte, typo, useChiffres } from "./Chiffres";
-import { Camembert, Cours, LegendeCours, PALETTE, PhraseCours, SourceCours } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
 import { formaterDate, formaterHorizon, formaterMontant, formaterPoids, majuscule } from "@/lib/format";
-import type { Controle, Portefeuille, Profil, Regroupement, SortiePipeline } from "@/lib/types";
+import type { Controle, Portefeuille, Profil, SortiePipeline } from "@/lib/types";
 
 // Les six cartes. Leur contenu vient de la sortie du pipeline
 // (agents/sorties/<persona>.json), jamais de la voix. Une liste trop longue
 // pour l'écran est coupée en pages : rien ne défile.
 
-export const COULEURS = PALETTE;
+export const COULEURS = ["var(--serie-1)", "var(--serie-2)", "var(--serie-3)", "var(--serie-4)", "var(--serie-5)"];
 
 function Entete({ titre, children }: { titre: string; children?: React.ReactNode }) {
   return (
@@ -31,7 +30,7 @@ function liste(v: string[], vide: string) {
 
 // ---------- Profil ----------
 
-export function CarteProfil({ profil, titre, notes = [], exporter }: { profil: Profil; titre: string; notes?: string[]; exporter?: () => void }) {
+export function CarteProfil({ profil, titre, notes = [] }: { profil: Profil; titre: string; notes?: string[] }) {
   const lignes: [string, string][] = [
     ["Horizon", formaterHorizon(profil.horizon_annees)],
     ["But", majuscule(profil.objectif) || "—"],
@@ -52,9 +51,7 @@ export function CarteProfil({ profil, titre, notes = [], exporter }: { profil: P
   ];
   return (
     <article className="carte">
-      <Entete titre={titre}>
-        {exporter ? <button type="button" className="bouton-export" onClick={exporter}>Exporter le dossier</button> : null}
-      </Entete>
+      <Entete titre={titre} />
       <Pages elements={elements} classe="profil" />
     </article>
   );
@@ -89,60 +86,28 @@ export function BarreRepartition({ ptf, mince }: { ptf: Portefeuille; mince?: bo
   );
 }
 
-const REGROUPEMENTS: [Regroupement, string][] = [["actif", "Par actif"], ["secteur", "Par secteur"], ["zone", "Par zone"]];
-
 export function CarteRepartition({ sortie, ptf, choisir }: { sortie: SortiePipeline; ptf: Portefeuille; choisir: (id: string) => void }) {
-  const [vue, setVue] = useState<Regroupement>("actif");
-  const reps = sortie.graphiques.repartitions[ptf.id];
-  const parts = reps[vue];
-  const intention: Element = { cle: "intention", contenu: <p className="carte__chapeau">{typo(ptf.intention)}</p> };
-  const elements: Element[] =
-    vue === "actif"
-      ? [intention, ...parts.map((p, i) => {
-        const l = ptf.lignes.find((x) => x.symbole === p.symboles[0]);
-        return {
-          cle: p.id,
-          contenu: (
-            <div className="ligne">
-              <span className="ligne__pastille" style={{ background: PALETTE[i % PALETTE.length] }} aria-hidden="true" />
-              <span className="ligne__texte">
-                <span className="ligne__nom">{l ? typo(l.role) : p.libelle}</span>
-                <span className="ligne__detail">{l ? `${l.nom} · ${l.symbole}` : p.libelle}</span>
-              </span>
-              <span className="ligne__poids"><Chiffre id={p.id} /></span>
-            </div>
-          ),
-        };
-      })]
-      : parts.map((p, i) => ({
-        cle: p.id,
-        contenu: (
-          <div className="ligne">
-            <span className="ligne__pastille" style={{ background: PALETTE[i % PALETTE.length] }} aria-hidden="true" />
-            <span className="ligne__texte">
-              <span className="ligne__nom">{p.libelle}</span>
-              <span className="ligne__detail">{p.symboles.join(", ")}</span>
-            </span>
-            <span className="ligne__poids"><Chiffre id={p.id} /></span>
-          </div>
-        ),
-      }));
+  const elements: Element[] = [
+    { cle: "intention", contenu: <p className="carte__chapeau">{typo(ptf.intention)}</p> },
+    ...ptf.lignes.map((l, i) => ({
+      cle: l.symbole,
+      contenu: (
+        <div className="ligne">
+          <span className="ligne__pastille" style={{ background: COULEURS[i % COULEURS.length] }} aria-hidden="true" />
+          <span className="ligne__texte">
+            <span className="ligne__nom">{typo(l.role)}</span>
+            <span className="ligne__detail">{l.nom} · {l.symbole}</span>
+          </span>
+          <span className="ligne__poids">{formaterPoids(l.poids)}</span>
+        </div>
+      ),
+    })),
+  ];
   return (
     <article className="carte">
       <Entete titre="Répartition"><ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /></Entete>
-      <div className="repartition__haut">
-        <Camembert parts={parts} libelle={`Répartition ${REGROUPEMENTS.find(([k]) => k === vue)?.[1].toLowerCase()} du portefeuille ${ptf.id}`} />
-        <div className="repartition__texte">
-          <p className="carte__nom">{typo(ptf.nom)}</p>
-          <p className="repartition__sous-titre">Portefeuille simulé {ptf.id}, {REGROUPEMENTS.find(([k]) => k === vue)?.[1].toLowerCase()}</p>
-        </div>
-      </div>
-      <div className="niveaux" role="tablist" aria-label="Regroupement">
-        {REGROUPEMENTS.map(([cle, nom]) => (
-          <button key={cle} type="button" role="tab" aria-selected={vue === cle}
-            className={vue === cle ? "niveau niveau--actif" : "niveau"} onClick={() => setVue(cle)}>{nom}</button>
-        ))}
-      </div>
+      <p className="carte__nom">{typo(ptf.nom)}</p>
+      <BarreRepartition ptf={ptf} />
       <Pages elements={elements} classe="lignes" />
     </article>
   );
@@ -176,46 +141,24 @@ export function CarteRisque({ sortie, ptf, choisir }: { sortie: SortiePipeline; 
       ),
     };
   });
-  const [vue, setVue] = useState<"portefeuille" | "cours">("portefeuille");
-  const c = sortie.graphiques.cours;
-  const elementsCours: Element[] = [
-    { cle: "graphique", contenu: <Cours sortie={sortie} /> },
-    { cle: "marques", contenu: <LegendeCours sortie={sortie} /> },
-    { cle: "phrase", contenu: <PhraseCours sortie={sortie} /> },
-    { cle: "source", contenu: <SourceCours sortie={sortie} /> },
-  ];
   return (
     <article className="carte">
-      <Entete titre="Risque">
-        {vue === "portefeuille" ? <ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /> : null}
-      </Entete>
-      <div className="niveaux niveaux--deux" role="tablist" aria-label="Portefeuille ou actif visé">
-        <button type="button" role="tab" aria-selected={vue === "portefeuille"}
-          className={vue === "portefeuille" ? "niveau niveau--actif" : "niveau"} onClick={() => setVue("portefeuille")}>Portefeuille {ptf.id}</button>
-        <button type="button" role="tab" aria-selected={vue === "cours"}
-          className={vue === "cours" ? "niveau niveau--actif" : "niveau"} onClick={() => setVue("cours")}>Cours de {c.symbole}</button>
+      <Entete titre="Risque"><ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /></Entete>
+      <div className="risque__totaux">
+        <p className="risque__total">
+          <span className="risque__total-libelle">Variation typique par an</span>
+          <span className="risque__total-valeur"><Chiffre id={ptf.volatilite} /></span>
+        </p>
+        <p className="risque__total">
+          <span className="risque__total-libelle">Pire baisse sur la fenêtre</span>
+          <span className="risque__total-valeur"><Chiffre id={ptf.pire_baisse} /></span>
+        </p>
       </div>
-      {vue === "cours" ? (
-        <Pages elements={elementsCours} classe="cours__liste" />
-      ) : (
-        <>
-          <div className="risque__totaux">
-            <p className="risque__total">
-              <span className="risque__total-libelle">Variation typique par an</span>
-              <span className="risque__total-valeur"><Chiffre id={ptf.volatilite} /></span>
-            </p>
-            <p className="risque__total">
-              <span className="risque__total-libelle">Pire baisse sur la fenêtre</span>
-              <span className="risque__total-valeur"><Chiffre id={ptf.pire_baisse} /></span>
-            </p>
-          </div>
-          <div className="legende" aria-hidden="true">
-            <span><i className="legende__capital" /> Part de l&apos;argent</span>
-            <span><i className="legende__risque" /> Part du risque</span>
-          </div>
-          <Pages elements={elements} classe="parts" />
-        </>
-      )}
+      <div className="legende" aria-hidden="true">
+        <span><i className="legende__capital" /> Part de l&apos;argent</span>
+        <span><i className="legende__risque" /> Part du risque</span>
+      </div>
+      <Pages elements={elements} classe="parts" />
     </article>
   );
 }

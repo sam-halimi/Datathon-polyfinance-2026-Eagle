@@ -1,10 +1,8 @@
-import { Eagle } from "@/components/Eagle";
-import { lireDa } from "@/lib/da";
+import { Appel } from "@/components/Appel";
 
-// Eagle, sur ordinateur : questions, analyse par le pipeline (POST /analyse),
-// présentation en diapositives. Démonstrations : agents/sorties/<persona>.json.
+// Le site lit les vraies sorties du pipeline : agents/sorties/<persona>.json
+// (format : docs/sortie-pipeline.md). Le persona se choisit au début de l'appel.
 
 export default function Page() {
-  const da = lireDa();
-  return <Eagle avatar={da.avatar} logo={da.logo} />;
+  return <Appel />;
 }

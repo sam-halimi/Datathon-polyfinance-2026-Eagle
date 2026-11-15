@@ -1,7 +1,7 @@
 import amira from "../../tests/scenarios/amira.json";
 import mateo from "../../tests/scenarios/mateo.json";
 import robert from "../../tests/scenarios/robert.json";
-import type { Graphiques, SortiePipeline } from "./types";
+import type { SortiePipeline } from "./types";
 
 // Les trois personas des tests d'acceptation (tests/scenarios/). L'écran de
 // choix lit ces fiches, légères ; la sortie du pipeline du persona choisi
@@ -48,21 +48,8 @@ const CHARGEURS: Record<Persona["id"], () => Promise<{ default: unknown }>> = {
   mateo: () => import("../../agents/sorties/mateo.json"),
 };
 
-const GRAPHIQUES: Record<Persona["id"], () => Promise<{ default: unknown }>> = {
-  robert: () => import("../data/graphiques/robert.json"),
-  amira: () => import("../data/graphiques/amira.json"),
-  mateo: () => import("../data/graphiques/mateo.json"),
-};
-
-export function estPersona(id: string | null): id is Persona["id"] {
-  return id === "robert" || id === "amira" || id === "mateo";
-}
-
-/** Charge la sortie du pipeline d'un persona et les données de ses graphiques.
- *  Les parts des camemberts rejoignent la table « chiffres ». */
+/** Charge la sortie du pipeline d'un persona. */
 export async function chargerSortie(id: Persona["id"]): Promise<SortiePipeline> {
-  const [m, g] = await Promise.all([CHARGEURS[id](), GRAPHIQUES[id]()]);
-  const sortie = m.default as Omit<SortiePipeline, "graphiques">;
-  const graphiques = g.default as Graphiques;
-  return { ...sortie, graphiques, chiffres: { ...sortie.chiffres, ...graphiques.chiffres } };
+  const m = await CHARGEURS[id]();
+  return m.default as SortiePipeline;
 }

@@ -8,8 +8,7 @@ import type { Reference } from "@/lib/types";
 // voir l'appel d'outil qui l'a produit. Un repère inconnu s'affiche « ? » :
 // on ne comble pas un trou en silence.
 
-export type Terme = { terme: string; definition: string };
-type Ctx = { chiffres: Record<string, Reference>; ouvrir: (id: string) => void; lexique?: Terme[] };
+type Ctx = { chiffres: Record<string, Reference>; ouvrir: (id: string) => void };
 const ChiffresCtx = createContext<Ctx>({ chiffres: {}, ouvrir: () => {} });
 
 export function FournisseurChiffres({ valeur, children }: { valeur: Ctx; children: ReactNode }) {
@@ -46,39 +45,10 @@ function hote(url: string): string {
   }
 }
 
-function echapper(t: string): string {
-  return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-/** Les termes du lexique (niveaux 1 et 2) : définis au survol ou au focus. */
-function AvecLexique({ texte, lexique }: { texte: string; lexique?: Terme[] }) {
-  if (!lexique?.length) return <>{texte}</>;
-  const tries = [...lexique].sort((a, b) => b.terme.length - a.terme.length);
-  const motif = new RegExp(`(?<![\\p{L}])(${tries.map((t) => echapper(t.terme)).join("|")})(?:s|x)?(?![\\p{L}])`, "giu");
-  const morceaux: ReactNode[] = [];
-  let dernier = 0;
-  for (const m of texte.matchAll(motif)) {
-    const i = m.index ?? 0;
-    const t = tries.find((x) => x.terme.toLowerCase() === m[1].toLowerCase());
-    if (!t) continue;
-    morceaux.push(texte.slice(dernier, i));
-    morceaux.push(
-      <span key={i} className="terme" tabIndex={0} aria-describedby={undefined}>
-        {m[0]}
-        <span className="terme__bulle" role="tooltip"><strong>{t.terme}</strong> : {t.definition}</span>
-      </span>,
-    );
-    dernier = i + m[0].length;
-  }
-  morceaux.push(texte.slice(dernier));
-  return <>{morceaux}</>;
-}
-
 /** Remplace les repères {id} d'un texte du pipeline par des chiffres touchables,
  *  et les adresses de sources par un lien court. La ponctuation qui suit un
  *  chiffre reste collée à lui. */
 export function Texte({ children }: { children: string }) {
-  const { lexique } = useChiffres();
   const morceaux = typo(children).split(MORCEAU);
   return (
     <>
@@ -89,7 +59,7 @@ export function Texte({ children }: { children: string }) {
           );
         }
         const r = /^\{([a-z0-9_]+)\}([.,;:)]?)$/.exec(m);
-        if (!r) return <span key={i}><AvecLexique texte={m} lexique={lexique} /></span>;
+        if (!r) return <span key={i}>{m}</span>;
         return (
           <span key={i} className="insecable">
             <Chiffre id={r[1]} />

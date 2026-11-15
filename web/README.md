@@ -1,10 +1,6 @@
-# Eagle (`web/`)
+# Interface AlphaForge (`web/`)
 
-Site Next.js pour ordinateur, format horizontal. Un seul écran en trois colonnes, sans défilement :
-
-- **à gauche** : l'aigle (SVG original, `components/Aigle.tsx`), l'état de l'appel, le bouton « Démarrer l'appel » (voix) et la transcription ;
-- **au centre** : une diapositive à la fois ;
-- **à droite** : le profil qui se remplit en direct, et trois boutons « Démonstration » (Robert, Amira, Mateo, lus dans `agents/sorties/`).
+Site Next.js, conçu à 390 px de large puis adapté au bureau. Aucun défilement dans un écran : une seule chose à la fois.
 
 ## Lancer
 
@@ -14,23 +10,28 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Le pipeline doit répondre sur http://localhost:8000 (autre adresse : `NEXT_PUBLIC_API_URL`). Sans lui, l'analyse en direct est signalée indisponible et les démonstrations marchent.
+Production : `npm run build && npm run start`. Le micro (étape 3) exigera HTTPS.
 
-## Parcours
+## Données
 
-1. **Questions** une par une (`lib/questions.ts`, valeurs du schéma `python -m agents.profil`). Chaque réponse remplit le profil à droite.
-2. **Récapitulatif**, prénom et demande, puis `POST /analyse` avec `{profil, demande, prenom}` (`lib/api.ts`). Pendant l'attente, les agents au travail.
-3. **Présentation** (`components/Diapositives.tsx`) : la demande face au profil, répartition (camemberts actif, secteur, zone), cours commenté de l'actif demandé, « Scénarios, pas une prévision » (champ `scenarios`), vérifications, limites. Chaque diapositive a sa justification et le texte que la voix lit.
-4. **Question sur un actif** à tout moment (« et Tesla ? ») : `GET /actif?symbole=…&tolerance=…&horizon=…`, diapositive « compatible » ou « pourquoi cet actif ne convient pas à ton profil ».
+Le site lit les **vraies sorties du pipeline**, là où le pipeline les écrit :
 
-Le dossier imprimable reste sur `/rapport?persona=…` (bouton « Exporter le dossier »).
+- `agents/sorties/robert.json`, `amira.json`, `mateo.json` (format : `docs/sortie-pipeline.md`, types : `lib/types.ts`) ;
+- `tests/scenarios/<persona>.json` pour l'écran de choix (prénom, âge, demande) et les choix de l'accueil.
 
-## Voix
+Les deux dossiers sont hors de `web/` : `next.config.ts` place donc la racine de compilation à la racine du dépôt. Pour mettre à jour l'interface après un nouveau passage du pipeline, il suffit de relancer `python -m agents.pipeline robert amira mateo` puis le build. Aucune copie à tenir à jour.
 
-ElevenLabs Agents (`components/Voix.tsx`, `@elevenlabs/react`), identifiant dans `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` (`web/.env.local`). Trois outils côté client : `noter_profil(champ, valeur)`, `lancer_analyse()`, `afficher_diapositive(id)`. Configuration exacte de l'agent : `docs/agent-elevenlabs.md`. Sans identifiant, tout marche par écrit.
+Seul le persona choisi est chargé (`lib/personas.ts`, import dynamique).
 
-## Données et chiffres
+## Ce qu'il y a
 
-- Chaque chiffre affiché est un repère `{id}` de la table `chiffres` : le toucher ouvre sa référence (outil, paramètres, période, formule, source).
-- `python web/scripts/graphiques.py` (depuis la racine) écrit `data/graphiques/<persona>.json` (camemberts et cours des démonstrations) et `data/univers.json` (secteur, zone et cours hebdomadaire de chaque actif, pour les analyses en direct, calculées dans `lib/repartition.ts`).
-- Une information absente (scénarios, cours) est signalée, jamais remplacée.
+- **Départ** : bouton « Démarrer l'appel » (le navigateur exige un geste avant l'audio).
+- **Choix du persona** : Robert, Amira ou Mateo, avec sa demande. Le choix charge sa sortie du pipeline.
+- **Récapitulatif** : le profil du persona tel que le pipeline l'a lu, avec les choix de l'accueil (« borne basse retenue »…).
+- **Analyse** : ce que chaque agent a fait (`etapes`).
+- **Six cartes** : profil, répartition, risque, vérifications, pourquoi (trois niveaux : en bref, les chiffres, le calcul), limites (faits, hypothèses, limites). Répartition et risque montrent les 2 ou 3 portefeuilles simulés (A, B, C), le retenu d'abord. Vérifications montre les contrôles de la gouvernance, les rejets renvoyés au constructeur et les titres écartés avec leur source. Puis **« tout voir »** : les six sur un écran.
+- **Chiffres touchables** : chaque repère `{id}` d'un texte est remplacé par la valeur de la table `chiffres`, soulignée. La toucher ouvre sa référence d'appel (outil, champ, paramètres, période, formule, source). Un repère inconnu s'affiche « ? » en rouge.
+- **Pas de défilement** : une liste trop longue pour l'écran est coupée en pages (‹ › ou glissement), calculées d'après la place réelle (`components/Pages.tsx`).
+- **Repli en texte** : la saisie en bas affiche une carte (« risque », « pourquoi », « tout »), comme le fera la voix.
+
+Aucun chiffre n'est écrit par l'interface : elle arrondit pour l'affichage une valeur brute venue de `tools/` (`lib/format.ts`).
