@@ -21,6 +21,7 @@ function signe(texte: string): string {
 }
 
 export function formaterChiffre(ref: Reference): string {
+  if (ref.unite.startsWith("montant en ")) return formaterMontant(ref.valeur, ref.unite.slice("montant en ".length));
   if (ref.unite.startsWith("coefficient")) return signe(decimal.format(ref.valeur));
   if (ref.unite.startsWith("fraction")) return signe(pourcent.format(ref.valeur));
   if (ref.unite.startsWith("points de pourcentage")) return `${signe(decimal.format(ref.valeur))} pt`;
