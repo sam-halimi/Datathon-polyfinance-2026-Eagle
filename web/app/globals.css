@@ -170,6 +170,10 @@ ul, ol { list-style: none; }
 .carte__titre { font-size: 22px; letter-spacing: -0.01em; }
 .carte__chapeau { color: var(--encre-douce); font-size: 16px; }
 .carte__pied { margin-top: auto; color: var(--encre-douce); font-size: 14px; }
+.bouton-export {
+  flex: none; min-height: 36px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent-fond);
+  color: var(--accent); font-size: 14px; font-weight: 700; padding: 0 10px;
+}
 .carte__nom { font-size: 17px; font-weight: 700; line-height: 1.25; }
 .lien { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 
@@ -539,4 +543,60 @@ ul, ol { list-style: none; }
   .carte { padding: 26px 28px; }
   .tout { grid-template-columns: repeat(3, 1fr); }
   .etape__nom { font-size: 14px; }
+}
+
+/* ---------- Dossier imprimable (/rapport) ----------
+   Un document, pas un écran d'appel : il se lit en défilant à l'écran et
+   s'imprime sur plusieurs pages. La mention de simulation est en tête et en
+   pied de chaque page imprimée. */
+
+.rapport__ecran { height: 100dvh; overflow-y: auto; background: var(--surface); }
+.rapport { max-width: 820px; margin: 0 auto; padding: 16px; display: grid; gap: 22px; font-size: 15px; line-height: 1.4; }
+.rapport h1 { font-size: 28px; }
+.rapport h2 { font-size: 19px; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 8px; }
+.rapport h3 { font-size: 15px; margin: 10px 0 4px; }
+.rapport section { display: grid; gap: 6px; }
+.rapport__titre { display: grid; gap: 6px; }
+.rapport__surtitre { font-size: 13px; color: var(--encre-douce); text-transform: uppercase; letter-spacing: 0.06em; }
+.rapport__imprimer { justify-self: start; min-height: 46px; font-size: 16px; }
+.rapport__mention { text-align: center; font-size: 12.5px; color: var(--encre-douce); padding: 8px 16px; background: var(--fond); }
+.rapport__table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rapport__table th, .rapport__table td { text-align: left; padding: 6px 6px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+.rapport__table thead th { font-size: 12.5px; color: var(--encre-douce); }
+.rapport__table--profil th { width: 12em; color: var(--encre-douce); font-weight: 500; }
+.rapport__total td { font-weight: 700; border-bottom: 0; }
+.rapport__petit { font-size: 12.5px; color: var(--encre-douce); }
+.rapport__notes, .rapport__liste { list-style: disc; padding-left: 20px; display: grid; gap: 4px; }
+.rapport__notes { font-size: 13px; color: var(--encre-douce); }
+.rapport__camemberts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.rapport__camemberts figure { margin: 0; display: grid; gap: 8px; justify-items: start; }
+.rapport__camemberts figcaption { font-weight: 700; }
+.rapport__camemberts .camembert { width: 110px; height: 110px; }
+.rapport__camemberts .legende-parts { width: 100%; font-size: 13px; }
+.rapport .cours { max-width: 620px; }
+.rapport__controles { display: grid; gap: 5px; }
+.rapport__statut { display: inline-block; width: 1.4em; font-weight: 800; }
+.rapport__controle--ok .rapport__statut { color: var(--ok); }
+.rapport__controle--alerte .rapport__statut { color: var(--alerte); }
+.rapport__controle--echec .rapport__statut { color: var(--echec); }
+.rapport__sujet { color: var(--encre-douce); }
+
+@media print {
+  @page {
+    size: letter;
+    margin: 18mm 14mm 18mm;
+    @top-center { content: "Simulation, ne constitue pas un conseil en placement"; font: 9pt sans-serif; color: #555; }
+    @bottom-center { content: "Simulation, ne constitue pas un conseil en placement · page " counter(page) " sur " counter(pages); font: 9pt sans-serif; color: #555; }
+  }
+  :root { color-scheme: light; }
+  html, body { height: auto; overflow: visible; background: #fff; color: #000; font-size: 11pt; }
+  .rapport__ecran { height: auto; overflow: visible; }
+  .rapport { max-width: none; padding: 0; gap: 14px; font-size: 10.5pt; }
+  .rapport__imprimer, .rapport__mention, .voile { display: none !important; }
+  .rapport { display: block; }
+  .rapport > *, .rapport section { display: block; margin-bottom: 12px; }
+  .rapport h2, .rapport h3 { break-after: avoid; page-break-after: avoid; }
+  .rapport h2 { margin-bottom: 6px; }
+  .rapport__bloc, .rapport__table tr, .rapport__camemberts figure, .rapport li { break-inside: avoid; }
+  .rapport .chiffre { text-decoration: none; }
 }

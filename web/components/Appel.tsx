@@ -55,6 +55,8 @@ export function Appel() {
 
   const ctx = useMemo(() => ({ chiffres: sortie?.chiffres ?? {}, ouvrir: setFiche }), [sortie]);
   const finAnalyse = useCallback(() => setAnalyseFinie(true), []);
+  // Le dossier s'ouvre dans un nouvel onglet et lance l'impression (PDF).
+  const exporter = persona ? () => window.open(`/rapport?persona=${persona.id}`, "_blank") : undefined;
 
   const aller = (v: Vue) => {
     setReponse(null);
@@ -166,7 +168,7 @@ export function Appel() {
     switch (vue.type) {
       case "recap":
         message = "Voici ce que j'ai compris. C'est bien ça ?";
-        carte = <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} />;
+        carte = <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} exporter={exporter} />;
         libelleRetour = "Changer";
         libelleSuivant = "C'est bien ça";
         break;
@@ -181,7 +183,7 @@ export function Appel() {
         etape = ETAPE_DE_CARTE[vue.carte];
         message = vue.carte === "profil" ? `Le profil de ${persona.nom}, tel qu'il l'a validé.` : sortie.messages[vue.carte];
         const cartes: Record<Carte, React.ReactNode> = {
-          profil: <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} />,
+          profil: <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} exporter={exporter} />,
           repartition: <CarteRepartition sortie={sortie} ptf={ptf} choisir={setPtfId} />,
           risque: <CarteRisque sortie={sortie} ptf={ptf} choisir={setPtfId} />,
           verifications: <CarteVerifications sortie={sortie} />,

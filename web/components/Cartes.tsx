@@ -31,7 +31,7 @@ function liste(v: string[], vide: string) {
 
 // ---------- Profil ----------
 
-export function CarteProfil({ profil, titre, notes = [] }: { profil: Profil; titre: string; notes?: string[] }) {
+export function CarteProfil({ profil, titre, notes = [], exporter }: { profil: Profil; titre: string; notes?: string[]; exporter?: () => void }) {
   const lignes: [string, string][] = [
     ["Horizon", formaterHorizon(profil.horizon_annees)],
     ["But", majuscule(profil.objectif) || "—"],
@@ -52,7 +52,9 @@ export function CarteProfil({ profil, titre, notes = [] }: { profil: Profil; tit
   ];
   return (
     <article className="carte">
-      <Entete titre={titre} />
+      <Entete titre={titre}>
+        {exporter ? <button type="button" className="bouton-export" onClick={exporter}>Exporter le dossier</button> : null}
+      </Entete>
       <Pages elements={elements} classe="profil" />
     </article>
   );
