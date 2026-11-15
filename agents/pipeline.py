@@ -37,6 +37,7 @@ from agents.journal import Journal, cle
 from agents.modele import creer_agent
 from agents.profil import Profil
 from tools.bedrock import modele_bedrock
+from tools import esg as esg_outils
 from tools.donnees import univers
 from tools.gouvernance import SECTEURS
 from tools.portefeuille import parts_du_risque, stats_portefeuille
@@ -124,6 +125,10 @@ class Explication(BaseModel):
 def _normaliser(texte: str) -> str:
     t = unicodedata.normalize("NFKD", texte).encode("ascii", "ignore").decode().lower()
     return " ".join(t.replace("-", " ").split())
+
+
+def table_index(table) -> set[str]:
+    return set(table.index)
 
 
 def _lignes_univers(symboles) -> str:
@@ -223,6 +228,12 @@ class Session:
             self.mesures[s] = {"vol": j.mesurer("volatilite", cle("vol", s), symbole=s)["valeur"],
                                "pb": j.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"]}
 
+        # Point faible du thème : sa corrélation avec la techno déjà présente dans un FNB large.
+        self.corr_theme: dict[str, str] = {}
+        if self.theme and "QQQ" in table_index(self.table):
+            for m in self.theme["symboles"]:
+                self.corr_theme[m] = j.mesurer("correlations", cle("corr", m, "QQQ"), symboles=[m, "QQQ"])["valeur"]
+
         @tool
         def correlation(symbole_a: str, symbole_b: str) -> str:
             """Corrélation des rendements quotidiens de deux actifs (tools.correlations). Renvoie le repère et la valeur."""
@@ -250,6 +261,147 @@ class Session:
         self.constats_marche = [t for i, t in enumerate(o.constats) if self._propre(t, f"marche.constats[{i}]")]
         self.journal.etape("Marché et risque", (
             f"Mesure la volatilité et la pire baisse de {len(self.mesures)} actifs sur la fenêtre de données."))
+
+    # -- 2 bis. Spécialiste ESG et qualité ---------------------------------------
+
+    def _criteres_esg(self) -> list[str]:
+        prefs = [_normaliser(x) for x in self.profil.preferences]
+        excl = [_normaliser(x) for x in self.profil.exclusions]
+        criteres = []
+        if any("fossil" in x or "petrol" in x for x in excl):
+            criteres.append("activite_fossile")
+        if any("esg" in x or "controvers" in x for x in prefs + excl):
+            criteres.append("controverse")
+        return criteres
+
+    def esg_et_qualite(self) -> None:
+        j, table = self.journal, self.table
+        j.agent_courant = "ESG et qualité"
+        self.criteres_esg = self._criteres_esg()
+        self.esg = {"criteres": self.criteres_esg, "fiches": {}, "expositions_fnb": {}, "constats": []}
+        if not self.criteres_esg:
+            j.etape("ESG et qualité", "Aucune préférence ni exclusion ESG dans le profil : rien à écarter.")
+            return
+        actions = [x for x in table.index if table.at[x, "asset_class"] == "equity"]
+        for x in actions:
+            f = esg_outils.fiche_esg(x)
+            self.esg["fiches"][x] = f
+            for crit in self.criteres_esg:
+                if f.get(crit) == "oui":
+                    url = f[f"source_{'fossile' if crit == 'activite_fossile' else 'controverse'}_url"]
+                    date_s = f[f"source_{'fossile' if crit == 'activite_fossile' else 'controverse'}_date"]
+                    self.exclus[x] = (f"{'activité fossile' if crit == 'activite_fossile' else 'controverse documentée'} "
+                                      f"selon {esg_outils.FICHIER_ESG} (source : {url}, {date_s})")
+                    break
+            if "activite_fossile" in self.criteres_esg and table.at[x, "sector"] == "Energy" and x not in self.exclus:
+                self.exclus[x] = "secteur Energy (data/assets_universe.csv) et exclusion des énergies fossiles"
+        self.candidats = [x for x in table.index if x not in self.exclus]
+        for fnb in esg_outils.fnb_connus():
+            for crit in self.criteres_esg:
+                self.esg["expositions_fnb"][f"{fnb}|{crit}"] = self._exposition_fnb(fnb, crit)
+
+        @tool
+        def fiche_esg(symbole: str) -> str:
+            """Fiche ESG sourcée d'une action (data/esg_actions.csv) : activité fossile, controverse, résumé,
+            source et date. Statut « information manquante » si l'action n'est pas dans la table."""
+            f = esg_outils.fiche_esg(symbole)
+            return json.dumps(f, ensure_ascii=False)
+
+        expos = "\n".join(f"{k} : {j.apercu(v['valeur'])} ; part non jugée {j.apercu(v['inconnue'])}"
+                           for k, v in self.esg["expositions_fnb"].items())
+        agent = creer_agent("ESG et qualité", (
+            "Tu es le spécialiste ESG et qualité. Tu ne juges jamais une société de mémoire : seulement avec "
+            "l'outil fiche_esg, qui lit une table sourcée et datée. Si la fiche dit « information manquante », "
+            "tu le dis. Tu signales qu'un FNB large peut contenir des sociétés exclues. " + REGLE_CHIFFRES + " " + VOCABULAIRE),
+            [fiche_esg])
+        demandes = [d["symbole"] for d in self.demande["symboles"]]
+        o = self._demander(agent, (
+            f"Profil : préférences {self.profil.preferences}, exclusions {self.profil.exclusions}.\n"
+            f"Demande : « {self.demande_texte} » (actifs nommés : {demandes}).\n"
+            f"Critères appliqués : {self.criteres_esg}. Actions écartées : {sorted(self.exclus)}.\n"
+            f"Expositions des FNB larges (repères) :\n{expos}\n\n"
+            "Consulte la fiche des actifs demandés, puis écris deux à quatre constats courts : ce que disent les "
+            "fiches sur les actifs demandés (sans dates ni montants, la source est affichée à part), et ce que "
+            "contiennent les FNB larges."), Constats, lambda o: o.constats)
+        self.esg["constats"] = [t for i, t in enumerate(o.constats) if self._propre(t, f"esg.constats[{i}]")]
+        n = sum(1 for v in self.exclus.values() if "esg_actions" in v or "Energy" in v)
+        j.etape("ESG et qualité", f"Consulte la table ESG sourcée : {n} action(s) écartée(s) selon vos critères, "
+                                  "et mesure ce que contiennent les FNB larges.")
+
+    def _exposition_fnb(self, fnb: str, crit: str) -> dict[str, str]:
+        j = self.journal
+        res = esg_outils.exposition_fnb(fnb, crit)
+        base = cle("expo", fnb, crit)
+        v = j.enregistrer(base, {**{k: res[k] for k in ("outil", "parametres", "periode", "unite", "formule",
+                                                          "sources", "details")}, "valeur": res["valeur"]})
+        inc = j.enregistrer(cle("inconnu", fnb, crit), {
+            **{k: res[k] for k in ("outil", "parametres", "periode", "formule", "sources", "details")},
+            "valeur": res["details"]["part_inconnue"], "champ": "part_inconnue",
+            "unite": "fraction de l'actif net du FNB non jugée par la table ESG"})
+        return {"valeur": v, "inconnue": inc, "titres": list(res["details"]["titres_signales"]),
+                "date": res["details"]["date_composition"]}
+
+    def controles_esg(self, ptf: dict[str, Any]) -> list[dict[str, Any]]:
+        """Contrôles ajoutés à la gouvernance quand le profil a des critères ESG."""
+        if not self.criteres_esg:
+            return []
+        j, table = self.journal, self.table
+        poids = ptf["poids"]
+        controles = []
+        for crit in self.criteres_esg:
+            libelle = "activité fossile" if crit == "activite_fossile" else "controverse documentée"
+            directs = [x for x in poids if table.at[x, "asset_class"] == "equity"
+                       and esg_outils.fiche_esg(x).get(crit) == "oui"]
+            inconnus = [x for x in poids if table.at[x, "asset_class"] == "equity"
+                        and esg_outils.fiche_esg(x).get(crit, "inconnu") == "inconnu"]
+            statut = "non conforme" if directs else ("information manquante" if inconnus else "conforme")
+            msg = (f"Actions détenues en direct avec {libelle} : {directs}." if directs else
+                   f"Statut inconnu dans la table ESG pour : {inconnus}." if inconnus else
+                   f"Aucune action détenue en direct avec {libelle} selon {esg_outils.FICHIER_ESG}.")
+            controles.append({"controle": "exclusion_esg", "statut": statut, "bloquant": statut == "non conforme",
+                              "message": msg, "actifs": directs or inconnus, "source": esg_outils.FICHIER_ESG,
+                              "critere": crit})
+            for fnb in [x for x in poids if table.at[x, "asset_class"] == "etf_equity"]:
+                cle_e = f"{fnb}|{crit}"
+                if cle_e not in self.esg["expositions_fnb"]:
+                    controles.append({"controle": "transparence_fnb", "statut": "information manquante",
+                                      "bloquant": False, "actifs": [fnb], "source": esg_outils.FICHIER_FNB,
+                                      "message": f"{fnb} : composition absente de {esg_outils.FICHIER_FNB}, "
+                                                 f"il peut contenir des sociétés avec {libelle}."})
+                    continue
+                e = self.esg["expositions_fnb"][cle_e]
+                titres = f" ({', '.join(e['titres'])})" if e["titres"] else ""
+                controles.append({
+                    "controle": "transparence_fnb", "statut": "à signaler", "bloquant": False,
+                    "actifs": [fnb], "source": esg_outils.FICHIER_FNB, "critere": crit,
+                    "chiffres": [e["valeur"], e["inconnue"]],
+                    "message": (f"{fnb} (composition du {e['date']}) : {{{e['valeur']}}} de l'actif net dans des "
+                                f"actions avec {libelle} de la table{titres} ; {{{e['inconnue']}}} du fonds n'est pas "
+                                f"jugé par la table ESG.")})
+        return controles
+
+    # -- 2 ter. Spécialiste macro et taux -------------------------------------------
+
+    def macro_et_taux(self) -> None:
+        j, table = self.journal, self.table
+        j.agent_courant = "Macro et taux"
+        self.sensibilites: dict[str, str] = {}
+        for x in [c for c in self.candidats if table.at[c, "asset_class"] == "etf_bond"]:
+            serie = ("BD.CDN.2YR.DQ.YLD" if x == "ZST.TO" else "BD.CDN.10YR.DQ.YLD") if x.endswith(".TO") else "DGS10"
+            self.sensibilites[x] = j.mesurer("sensibilite_taux", cle("sens", x), symbole=x, serie_taux=serie)["valeur"]
+        pentes = {pays: j.mesurer("pente_courbe", cle("pente", pays), pays=pays)["valeur"] for pays in ("Canada", "États-Unis")}
+        agent = creer_agent("Macro et taux", (
+            "Tu es le spécialiste macro et taux. Tu décris comment les obligations ont réagi aux taux sur la "
+            "fenêtre et l'état de la courbe des taux, sans prévoir les taux. " + REGLE_CHIFFRES + " " + VOCABULAIRE), [])
+        ids = list(self.sensibilites.values()) + list(pentes.values())
+        o = self._demander(agent, (
+            f"Profil : horizon {self.profil.horizon_annees} ans, objectif {self.profil.objectif}.\n"
+            f"Chiffres disponibles :\n{j.catalogue(ids)}\n\nÉcris deux ou trois constats courts pour le constructeur : "
+            "quelles obligations sont sensibles aux taux, lesquelles le sont peu, et ce que dit la courbe."),
+            Constats, lambda o: o.constats)
+        self.constats_macro = [t for i, t in enumerate(o.constats) if self._propre(t, f"macro.constats[{i}]")]
+        j.etape("Macro et taux", f"Mesure la sensibilité aux taux de {len(self.sensibilites)} FNB obligataires "
+                                 "et la pente des courbes canadienne et américaine.")
 
     # -- 3. Constructeur, 4. Gouvernance ---------------------------------------
 
@@ -291,8 +443,19 @@ class Session:
             "Vérifie chaque portefeuille avec l'outil essayer avant de le proposer. Les poids sont des "
             "fractions dont la somme vaut exactement 1. Le nom et l'intention ne contiennent aucun chiffre. "
             + VOCABULAIRE), [essayer])
+        demande = []
+        if self.theme:
+            demande.append("Au moins un portefeuille contient le thème (rôle « theme »), au plafond ou en dessous.")
+        if "crypto" in self.demande["classes"] and lim["max_crypto"] > 0:
+            demande.append("La crypto est demandée et permise : au moins un portefeuille en contient, sous son plafond.")
+        if self.criteres_esg:
+            demande.append("Profil ESG : un FNB large peut contenir des sociétés exclues (voir les constats ESG) ; "
+                           "préfère le FNB filtré ESGV aux FNB larges quand c'est possible.")
         prompt = (f"Profil : {self.profil.model_dump_json()}\nDemande : « {self.demande_texte} »\n{consignes}\n"
+                  + " ".join(demande) + "\n"
                   f"Constats du spécialiste marché et risque : {self.constats_marche}\n"
+                  f"Constats du spécialiste macro et taux : {self.constats_macro}\n"
+                  f"Constats du spécialiste ESG : {self.esg['constats']}\n"
                   f"Candidats (symbole | nom | classe | secteur | volatilité | pire baisse) :\n{catalogue}")
         self.historique: list[dict[str, Any]] = []
         acceptes: dict[str, dict[str, Any]] = {}
@@ -303,7 +466,7 @@ class Session:
             rejets_texte = []
             for p in props.portefeuilles[:3]:
                 ptf = self._normaliser_ptf(p)
-                verdict = gv.controler(ptf, self.profil, self.c)
+                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf))
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
                 if verdict["accepte"]:
@@ -381,6 +544,10 @@ class Session:
             f"pire baisse {{{retenu['pire_baisse']}}}, parts du risque {retenu['parts_du_risque']}.\n"
             f"Contrôles sur la demande : {[c['message'] for c in controles_demande]}\n"
             f"Constats du spécialiste marché et risque : {self.constats_marche}\n"
+            f"Constats du spécialiste macro et taux : {self.constats_macro}\n"
+            f"Constats du spécialiste ESG : {self.esg['constats']}\n"
+            f"Fiches ESG des actifs demandés : {[self.esg['fiches'].get(d['symbole']) for d in self.demande['symboles']]}\n"
+            f"Contrôles du portefeuille retenu : {[c['detail'] for c in retenu['controles'] if c['statut'] != 'ok']}\n"
             f"Chiffres disponibles :\n{j.catalogue()}\n\n"
             "Rédige l'explication. Le sujet répond à la tension principale entre la demande et le profil. "
             "Les messages sont dits par l'assistant à l'ouverture de chaque carte : une phrase courte chacun.")
@@ -437,7 +604,19 @@ class Session:
                     d = j.chiffres[self.mesures[s]["pb"]]["details"]
                     faits.append(f"{table.at[s, 'name']} ({s}) : pire baisse {{{self.mesures[s]['pb']}}} sur la fenêtre, "
                                  f"du {d['date_pic']} au {d['date_creux']}. Les obligations n'ont pas toujours protégé.")
-        per = next((r["periode"] for r in j.chiffres.values() if r["periode"].get("debut")), {})
+                    if s in self.sensibilites:
+                        faits.append(f"Quand le taux de référence monte d'un point, {s} a varié d'environ "
+                                     f"{{{self.sensibilites[s]}}} (régression sur la fenêtre, pas une prévision).")
+        if self.corr_theme and any(l["role_code"] == "theme" for p in portefeuilles for l in p["lignes"]):
+            faits.append("Point faible du thème : il bouge avec la techno déjà présente dans les FNB larges. "
+                         "Corrélation avec QQQ : " + ", ".join(f"{m} {{{i}}}" for m, i in self.corr_theme.items()) + ".")
+        for d in self.demande["symboles"]:
+            f = self.esg.get("fiches", {}).get(d["symbole"])
+            if f and f["statut"] == "connu":
+                faits.append(f"{d['symbole']} selon {f['fichier']} : activité fossile « {f['activite_fossile']} », "
+                             f"controverse « {f['controverse']} ». {f['resume_controverse']} "
+                             f"(source : {f['source_url']}, {f['source_date']}).")
+        per = next((r["periode"] for r in j.chiffres.values() if r["outil"] == "volatilite"), {})
         if per:
             faits.insert(0, f"Prix quotidiens du {per['debut']} au {per['fin']} (data/prices_daily.csv, adj_close).")
         hypotheses = [
@@ -446,22 +625,35 @@ class Session:
             "(data/fx_usdcad_daily.csv) pour un profil en CAD.",
             f"Les plafonds du profil sont des {self.c['nature']}.",
         ]
-        limites = ["Univers de trente et un actifs choisi en 2026 : biais du survivant.", *limites_outil]
+        limites = ["Univers de trente et un actifs choisi en 2026 : biais du survivant.",
+                   "Les plafonds par titre et par secteur portent sur les actions détenues en direct ; ce que "
+                   "contiennent les FNB n'est mesuré que pour les critères ESG (data/fnb_composition.csv).",
+                   *[t for t in limites_outil if "transparence" not in t]]
+        if self.criteres_esg:
+            limites += [
+                "Données ESG : 20 actions seulement (data/esg_actions.csv), sources consultées le 2026-11-15 ; "
+                "aucune note ESG chiffrée de fournisseur ; « non » veut dire qu'aucune controverse n'apparaît dans "
+                "le dernier dépôt annuel, pas qu'il n'y en a aucune.",
+                "Composition des FNB : SPY, QQQ, XIU.TO au 2026-11-12, ESGV au 2026-08-31 et seulement pour nos titres ; "
+                "le reste de chaque fonds n'est pas jugé.",
+            ]
         return {"faits": faits, "hypotheses": hypotheses, "limites": limites}
 
     def executer(self) -> dict[str, Any]:
         debut = time.time()
         self.orchestrer()
+        self.esg_et_qualite()
         self.journal.agent_courant = "Gouvernance"
         controles_demande = gv.demande_hors_profil(self.demande, self.c, self.journal, self.ids_limites)
         self.marche_et_risque()
+        self.macro_et_taux()
         self.construire_et_verifier()
         if not self.acceptes:
             raise RuntimeError(f"Aucun portefeuille accepté après {gv.ESSAIS_MAX} essais : {self.historique}")
         portefeuilles = self.mesurer_portefeuilles()
         exp = self.expliquer(portefeuilles, controles_demande)
         retenu = portefeuilles[0]
-        limites_outil = gv.controler(self.acceptes[0]["ptf"], self.profil, self.c)["limites_outil"]
+        limites_outil = self.acceptes[0]["verdict"]["limites_outil"]
         calc = self.limites_calculees(portefeuilles, limites_outil)
         controles = ([gv.pour_interface(x) for x in controles_demande] + retenu["controles"]
                      + [{"statut": "ok", "titre": gv.TITRES["simulation"], "detail": "Aucune transaction réelle.",
@@ -486,7 +678,7 @@ class Session:
             "contraintes": {"limites": self.c["limites"], "origine": self.c["origine"],
                             "exclusions": self.c["exclusions"], "nature": self.c["nature"],
                             "seuils_risque": {k: self.c["seuils_outil"][self.c["tolerance"]][k] for k in ("volatilite", "pire_baisse")}},
-            "specialistes": {"marche_et_risque": self.constats_marche},
+            "specialistes": {"marche_et_risque": self.constats_marche, "macro": self.constats_macro, "esg": self.esg},
             "theme": self.theme,
             "exclus": self.exclus,
             "journal": {"appels": self.journal.appels, "textes_retires": self.textes_retires},
