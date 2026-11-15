@@ -18,6 +18,7 @@ from typing import Any
 
 from agents.adequation import _ref, mesures_portefeuille, normaliser
 from agents.journal import Journal, cle
+from agents.lignes import statut_fondamentaux
 from agents.profil import Profil
 from tools import esg as esg_outils
 from tools.donnees import univers
@@ -283,7 +284,7 @@ def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: 
             f = esg_outils.fiche_esg(s)
             if f["statut"] != "connu" or f.get("controverse") == "inconnu":
                 manque.append("controverse inconnue dans data/esg_actions.csv")
-            manque.append("fondamentaux (bénéfices, dette, dividendes) : data/fondamentaux.csv absent")
+            manque.append(f"fondamentaux (bénéfices, dette, dividendes) : {statut_fondamentaux()} (data/fondamentaux.csv)")
         elif classe == "etf_equity":
             if s not in connus:
                 manque.append("composition absente de data/fnb_composition.csv")

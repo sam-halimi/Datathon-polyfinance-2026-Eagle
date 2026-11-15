@@ -27,7 +27,6 @@ from tools.gouvernance import SEUILS_PAR_TOLERANCE
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHIER_THEMES = RACINE / "data" / "themes.csv"
-FICHIER_FONDAMENTAUX = RACINE / "data" / "fondamentaux.csv"
 RESPECTE, PARTIEL, NON_COUVERT = "respecté", "partiel", "non couvert"
 CLASSES_RISQUEES = ("equity", "etf_equity", "crypto")
 
@@ -200,9 +199,8 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         "Σ poids des actions, FNB d'actions et cryptoactifs", [f"{SOURCE_UNIVERS} (asset_class)"],
         "calcul sur les poids décidés par le constructeur"))
     if profil.objectif == "revenu":
-        raison = ("aucune donnée de dividendes ni de fondamentaux dans data/ "
-                  + ("(data/fondamentaux.csv présent mais non branché)" if FICHIER_FONDAMENTAUX.is_file()
-                     else "(data/fondamentaux.csv absent : information manquante)"))
+        from agents.lignes import statut_fondamentaux
+        raison = f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
         entrees.append(_entree("objectif", None, "Tirer un revenu régulier du capital.",
                                f"Le rendement en revenu des lignes n'est pas mesurable. Part risquée : {{{rid}}}.",
                                NON_COUVERT, [rid], "revenu mesuré par les dividendes", raison))
@@ -266,6 +264,11 @@ def _verdict_transparence(d: dict, valeur: float) -> str:
     return RESPECTE
 
 
+def _raison_fondamentaux() -> str:
+    from agents.lignes import statut_fondamentaux
+    return f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
+
+
 def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.preferences:
@@ -284,7 +287,7 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
         elif contient(pref, MOTS_REVENU):
             sortie.append(_entree("preferences", pref, f"« {pref} ».", "Les dividendes ne sont pas mesurés.", NON_COUVERT,
                                   [], "revenu mesuré par les dividendes",
-                                  "aucune donnée de dividendes ; data/fondamentaux.csv absent : information manquante"))
+                                  _raison_fondamentaux()))
         elif contient(pref, MOTS_CANADA):
             cad = sum(w for s, w in poids.items() if table.at[s, "currency"] == "CAD")
             cid = j.enregistrer(cle("expo_cad", ident), _ref(

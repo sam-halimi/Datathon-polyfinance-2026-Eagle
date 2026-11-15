@@ -59,12 +59,18 @@ def _couverture() -> pd.DataFrame | None:
     return pd.read_csv(FICHIER_COUVERTURE, dtype=str, keep_default_na=False).set_index("ticker")
 
 
+def statut_fondamentaux() -> str:
+    """« information manquante » tant que data/fondamentaux.csv n'existe pas. S'il apparaît, il n'est pas
+    lu en silence : le pipeline dit qu'il est présent mais pas encore branché."""
+    return "fichier présent, non branché" if FICHIER_FONDAMENTAUX.is_file() else "information manquante"
+
+
 def fondamentaux(symbole: str) -> dict[str, Any]:
-    """Statut des fondamentaux d'une action : « information manquante » tant que data/fondamentaux.csv n'existe pas."""
+    """Statut des fondamentaux d'une action, avec ce qu'en dit data/base/couverture.csv."""
     present = FICHIER_FONDAMENTAUX.is_file()
     cv = _couverture()
     note = cv.at[symbole, "fondamentaux_source"] if cv is not None and symbole in cv.index else None
-    return {"statut": "fichier présent, non branché" if present else "information manquante",
+    return {"statut": statut_fondamentaux(),
             "fichier": "data/fondamentaux.csv", "couverture": note,
             "source_couverture": "data/base/couverture.csv" if note else None}
 
