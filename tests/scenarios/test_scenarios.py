@@ -17,6 +17,12 @@ TYPES = {"plafond_poids", "diversification", "presence_min", "controle_gouvernan
          "exclu_ou_signale", "esg_source_ou_inconnu", "transparence_fnb"}
 OUTILS_DISPONIBLES = {"volatilite": mesures.volatilite, "pire_baisse": mesures.pire_baisse,
                       "rendement_annualise": mesures.rendement_annualise}
+# Outils arrivés avec la branche outils : ajoutés dès qu'ils existent.
+for _module, _nom in (("tools.mesures", "gain_de_rattrapage"), ("tools.portefeuille", "correlations")):
+    try:
+        OUTILS_DISPONIBLES[_nom] = getattr(__import__(_module, fromlist=[_nom]), _nom)
+    except (ImportError, AttributeError):
+        pass
 
 with open(RACINE / "data/assets_universe.csv", encoding="utf-8") as f:
     UNIVERS = {ligne["ticker"]: ligne for ligne in csv.DictReader(f)}
@@ -71,7 +77,15 @@ def test_chiffres_attendus_retrouves_par_tools(nom, ident, appel):
     outil = OUTILS_DISPONIBLES.get(appel["outil"])
     if outil is None:
         pytest.skip(f"{appel['outil']} n'est pas encore dans tools/ (branche outils)")
-    valeur = outil(**appel["parametres"])["valeur"]
+    parametres = dict(appel["parametres"])
+    perte = parametres.get("perte")
+    if isinstance(perte, str) and perte.startswith("pire_baisse(") and perte.endswith(")"):
+        # « pire_baisse(TSLA) » : le scénario chaîne deux outils, comme le fera l'agent.
+        parametres["perte"] = mesures.pire_baisse(perte[len("pire_baisse("):-1])
+    valeur = outil(**parametres)["valeur"]
+    if isinstance(valeur, dict):  # correlations renvoie une matrice : on lit la paire demandée
+        premier, second = parametres["symboles"]
+        valeur = valeur[premier][second]
     assert valeur == pytest.approx(appel["valeur_attendue"], abs=appel["tolerance"])
 
 
@@ -79,7 +93,7 @@ def test_robert_les_limites_contredisent_la_demande():
     c = contraintes(Profil(**SCENARIOS["robert"]["profil"]))
     assert c["limites"]["max_titre_individuel"] == 0.05 < 0.40  # la demande : 40 % sur TSLA
     assert c["limites"]["max_crypto"] == 0 and c["limites"]["plafond_theme"] == 0
-    assert c["niveau_explication_par_defaut"] == 1
+    assert c["niveau_explication_par_defaut"] == 3  # énoncé : expérience avancée
 
 
 def test_amira_le_risque_est_permis_mais_plafonne():

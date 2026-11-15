@@ -11,7 +11,7 @@ from tools.macro import SerieInconnue, pente_courbe, sensibilite_taux, serie_mac
 
 def test_serie_macro_dgs10():
     s = serie_macro("DGS10")
-    assert len(s) == 1248
+    assert len(s) == 1249  # instantané data/base : FRED jusqu'au 12 novembre 2026
     assert s.iloc[0] == 1.58
     assert s.index.is_monotonic_increasing
 
@@ -37,9 +37,9 @@ def test_tlt_du_contexte():
     s = sensibilite_taux("TLT")
     assert round(s["valeur"] * 100, 1) == -14.3
     d = s["details"]
-    assert d["jours"] == 1244
-    # Le 10 ans est passé de 1,58 % à 4,98 %.
-    assert (d["taux_debut"], d["taux_fin"]) == (1.58, 4.98)
+    assert d["jours"] == 1245
+    # Le 10 ans est passé de 1,58 % à 5,10 % (instantané data/base, FRED jusqu'au 12 novembre 2026).
+    assert (d["taux_debut"], d["taux_fin"]) == (1.58, 5.10)
     assert d["duration_implicite_annees"] == pytest.approx(-s["valeur"] * 100)
     # R² 0,83 : le contexte donne 0,82 parce que analyses/exemples_explications.py
     # apparie des rendements et des variations de taux calculés sur des calendriers
@@ -80,13 +80,13 @@ def test_sensibilite_refuse_ce_qui_n_est_pas_un_taux_quotidien():
 # --- pente_courbe --------------------------------------------------------------
 
 def test_pente_etats_unis_du_contexte():
-    # Négative 541 jours sur 1 248, minimum −1,08 point le 3 juillet 2023.
+    # Négative 541 jours sur 1 249, minimum −1,08 point le 3 juillet 2023.
     p = pente_courbe("États-Unis")
     d = p["details"]
-    assert (d["jours_negatifs"], d["jours"]) == (541, 1248)
+    assert (d["jours_negatifs"], d["jours"]) == (541, 1249)
     assert round(d["minimum"], 2) == -1.08
     assert d["date_minimum"] == "2023-07-03"
-    assert round(p["valeur"], 2) == 0.25
+    assert round(p["valeur"], 2) == 0.24
     assert p["valeur"] == pytest.approx(d["taux_10_ans"] - d["taux_2_ans"])
 
 

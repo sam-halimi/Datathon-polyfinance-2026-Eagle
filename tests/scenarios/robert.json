@@ -9,7 +9,7 @@
     "horizon_annees": 3,
     "objectif": "préservation du capital",
     "tolerance_risque": "faible",
-    "connaissance": "débutant",
+    "connaissance": "avancé",
     "preferences": [],
     "exclusions": [],
     "centres_interet": [],
@@ -59,8 +59,8 @@
     },
     {
       "id": "R7",
-      "description": "Robert se dit débutant : l'explication s'ouvre au niveau 1 (une phrase).",
-      "controle": {"type": "niveau_explication_par_defaut", "niveau": 1}
+      "description": "Robert a une expérience avancée (énoncé) : l'explication s'ouvre au niveau 3 (le calcul).",
+      "controle": {"type": "niveau_explication_par_defaut", "niveau": 3}
     }
   ]
 }
