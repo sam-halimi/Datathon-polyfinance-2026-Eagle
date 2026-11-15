@@ -156,7 +156,7 @@ def test_bedrock_erreur_exacte_sans_fuite(monkeypatch):
 
 def test_bedrock_sans_jeton_ni_proxy(monkeypatch, sans_cles):
     ok, message = verifier_cles.verifier_bedrock()
-    assert not ok and "AWS_BEARER_TOKEN_BEDROCK absente" in message and "proxy" in message
+    assert not ok and "ni identifiants AWS" in message and "AWS_BEARER_TOKEN_BEDROCK" in message and "proxy" in message
 
 
 def test_bedrock_par_le_proxy_avec_jeton_factice_le_temps_de_l_appel(monkeypatch, sans_cles):

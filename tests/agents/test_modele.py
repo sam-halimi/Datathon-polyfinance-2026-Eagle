@@ -20,7 +20,7 @@ def faux_strands(monkeypatch):
     monkeypatch.setitem(sys.modules, "strands", types.SimpleNamespace(Agent=Agent))
     monkeypatch.setattr(modele, "_mode", None)
     monkeypatch.setattr(bedrock, "charger_env", lambda: [])
-    for nom in (bedrock.VARIABLE_JETON, "BEDROCK_MODEL_ID") + bedrock.VARIABLES_PROXY:
+    for nom in (bedrock.VARIABLE_JETON, "BEDROCK_MODEL_ID") + bedrock.VARIABLES_PROXY + bedrock.VARIABLES_IAM:
         monkeypatch.delenv(nom, raising=False)
     return crees
 

@@ -7,7 +7,7 @@ from tools import bedrock
 
 @pytest.fixture
 def sans_cles(monkeypatch):
-    for nom in (bedrock.VARIABLE_JETON,) + bedrock.VARIABLES_PROXY:
+    for nom in (bedrock.VARIABLE_JETON,) + bedrock.VARIABLES_PROXY + bedrock.VARIABLES_IAM:
         monkeypatch.delenv(nom, raising=False)
     monkeypatch.setattr(bedrock, "charger_env", lambda: [])  # ne pas lire le .env de la machine
 
@@ -40,7 +40,7 @@ def test_preparer_ne_remplace_pas_un_vrai_jeton(monkeypatch, sans_cles):
 
 
 def test_preparer_sans_jeton_ni_proxy(sans_cles):
-    with pytest.raises(RuntimeError, match="aucun proxy"):
+    with pytest.raises(RuntimeError, match="Aucune authentification Bedrock"):
         bedrock.preparer_bedrock()
 
 
@@ -61,3 +61,28 @@ def test_jeton_temporaire_sans_rien(sans_cles):
 def test_aide_proxy_cite_l_hote(monkeypatch):
     monkeypatch.setenv("AWS_REGION", "us-west-2")
     assert "bedrock-runtime.us-west-2.amazonaws.com" in bedrock.aide_proxy()
+
+
+def test_identifiants_aws_prioritaires_et_jeton_retire(monkeypatch, sans_cles):
+    """Les identifiants AWS de l'environnement cloud passent avant tout jeton, qui est retiré."""
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    monkeypatch.setenv(bedrock.VARIABLE_JETON, "ancien-jeton")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret-exemple")
+    assert bedrock.mode_bedrock() == "iam"
+    assert bedrock.preparer_bedrock() == "iam"
+    assert bedrock.VARIABLE_JETON not in os.environ
+
+
+def test_jeton_temporaire_en_mode_iam(monkeypatch, sans_cles):
+    monkeypatch.setenv(bedrock.VARIABLE_JETON, "ancien-jeton")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret-exemple")
+    with bedrock.jeton_temporaire() as mode:
+        assert mode == "iam" and bedrock.VARIABLE_JETON not in os.environ
+    assert os.environ[bedrock.VARIABLE_JETON] == "ancien-jeton"
+
+
+def test_un_seul_identifiant_ne_suffit_pas(monkeypatch, sans_cles):
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    assert bedrock.mode_bedrock() is None
