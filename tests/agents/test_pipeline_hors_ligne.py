@@ -33,7 +33,12 @@ def reponse(modele, prompt):
     raise AssertionError(nom)
 
 
-REPONSES_LIGNES: dict = {}
+def _justif(s, critere="tolerance", autre="AGG"):
+    return {"critere_profil": critere, "pourquoi": f"Volatilité {{vol_{s.lower().replace('.', '_')}}}, adaptée au profil.",
+            "plutot_que": autre if s != autre else "TLT", "raison_plutot_que": f"Pire baisse {{pb_{s.lower().replace('.', '_')}}}."}
+
+
+REPONSES_LIGNES: dict = {s: _justif(s) for s, _, _ in LIGNES}
 EXPLICATION = dict(
     sujet="Pourquoi pas une grosse part sur Tesla", niveau1="TSLA a perdu jusqu'à {pb_tsla}.",
     niveau2=["Le plafond par titre du profil est {lim_max_titre_individuel}."], chiffre_central="pb_tsla",
@@ -42,6 +47,8 @@ EXPLICATION = dict(
 
 
 class FauxAgent:
+    repondre = staticmethod(reponse)
+
     def __init__(self, nom, consigne, outils=None):
         self.nom, self.consigne = nom, consigne
 
@@ -49,7 +56,7 @@ class FauxAgent:
         class R:
             pass
         r = R()
-        r.structured_output = reponse(structured_output_model, prompt)
+        r.structured_output = self.repondre(structured_output_model, prompt)
         return r
 
 
@@ -69,3 +76,44 @@ def test_format_v2_sans_bedrock(sortie):
     for e in sortie["adequation"]:
         for i in REPERE.findall(e["reponse"]):
             assert i in sortie["chiffres"], i
+
+
+def test_lignes_detaillees_et_sourcees(sortie):
+    for p in sortie["portefeuilles"]:
+        for l in p["lignes"]:
+            assert l["secteur"] and l["pays"] and l["devise"] in ("CAD", "USD")
+            assert set(l["chiffres"]) == {"volatilite", "pire_baisse", "part_du_risque"}
+            assert all(i in sortie["chiffres"] for i in l["chiffres"].values())
+            assert l["pourquoi"] and l["critere_profil"] and l["plutot_que"]["symbole"]
+            fichiers = {s["fichier"] for s in l["sources"]}
+            assert {"data/assets_universe.csv", "data/prices_daily.csv"} <= fichiers
+            if l["devise"] == "USD":
+                assert "data/fx_usdcad_daily.csv" in fichiers
+            if l["classe_code"] == "equity":
+                assert any(s["fichier"] == "data/esg_actions.csv" and s["url"] for s in l["sources"])
+    pays = {l["symbole"]: l["pays"] for l in sortie["portefeuilles"][0]["lignes"]}
+    assert pays["XIU.TO"] == "Canada" and pays["JNJ"] == "États-Unis"
+
+
+def test_ligne_mal_justifiee_rejetee_puis_corrigee(monkeypatch):
+    """Une ligne sans repère ni critère du profil fait rejeter le portefeuille ; le constructeur corrige."""
+    appels = []
+    mauvaise = {"critere_profil": "centres_interet", "pourquoi": "Parce que c'est bien.",
+                "plutot_que": "JNJ", "raison_plutot_que": "Moins cher."}
+
+    def reponse_avec_retour(modele, prompt):
+        if modele.__name__ == "Propositions":
+            appels.append(prompt)
+            if len(appels) == 1:
+                lignes = [{"symbole": s, "poids": w, "role": r, **(mauvaise if s == "GLD" else REPONSES_LIGNES[s])}
+                          for s, w, r in LIGNES]
+                return modele(portefeuilles=[{"id": "A", "nom": "Prudent", "intention": "Préserver.", "lignes": lignes}])
+        return reponse(modele, prompt)
+
+    monkeypatch.setattr(FauxAgent, "repondre", staticmethod(reponse_avec_retour))
+    monkeypatch.setattr(pipeline, "creer_agent", FauxAgent)
+    s = pipeline.Session(Profil(**ROBERT["profil"]), ROBERT["demande"], "Robert").executer()
+    premier = [h for h in s["gouvernance"]["historique"] if h["essai"] == 1]
+    assert premier and not premier[0]["accepte"] and "justification_lignes" in premier[0]["rejets"]
+    assert "GLD" in appels[1] and "critère « centres_interet » absent de ce profil" in appels[1]
+    assert s["gouvernance"]["essai"] == 2 and all(h["accepte"] for h in s["gouvernance"]["historique"] if h["essai"] == 2)

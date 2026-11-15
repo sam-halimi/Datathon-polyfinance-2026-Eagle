@@ -34,6 +34,7 @@ from strands import tool
 
 from agents import adequation as adq
 from agents import gouvernance as gv
+from agents import lignes as lg
 from agents.journal import Journal, cle
 from agents.modele import creer_agent
 from agents.profil import Profil
@@ -89,6 +90,14 @@ class LigneProposee(BaseModel):
     symbole: str
     poids: float = Field(description="Fraction du capital, entre 0 et 1")
     role: Role
+    critere_profil: Literal["horizon", "objectif", "tolerance", "preferences", "exclusions", "centres_interet",
+                            "capital", "demande"] = Field(description="Le critère du profil de cette personne que la ligne sert")
+    pourquoi: str = Field(description=(
+        "Une phrase : pourquoi cette ligne pour cette personne, liée au critère choisi, avec au moins un repère "
+        "{id} de la liste des candidats, sans chiffre écrit"))
+    plutot_que: str = Field(description="Symbole d'un autre candidat comparable, écarté au profit de celui-ci")
+    raison_plutot_que: str = Field(description=(
+        "Une phrase : pourquoi ce symbole plutôt que l'autre candidat, avec au moins un repère {id}, sans chiffre écrit"))
 
 
 class Proposition(BaseModel):
@@ -456,7 +465,11 @@ class Session:
             "l'utilisateur qui dépasse une limite est ramenée sous la limite, jamais acceptée telle quelle. "
             "Vérifie chaque portefeuille avec l'outil essayer avant de le proposer. Les poids sont des "
             "fractions dont la somme vaut exactement 1. Le nom et l'intention ne contiennent aucun chiffre. "
-            + VOCABULAIRE), [essayer])
+            "Chaque ligne se justifie par rapport à CETTE personne : le critère de son profil qu'elle sert "
+            "(horizon, objectif, tolérance, préférences, exclusions, centres d'intérêt, capital, ou sa demande), "
+            "une phrase « pourquoi » avec un repère {id} de la liste des candidats, et le candidat comparable que "
+            "tu as écarté (plutot_que) avec la raison, elle aussi avec un repère. Une ligne mal justifiée fait "
+            "rejeter le portefeuille par la gouvernance. " + REGLE_CHIFFRES + " " + VOCABULAIRE), [essayer])
         demande = []
         if self.theme:
             demande.append("Au moins un portefeuille contient le thème (rôle « theme »), au plafond ou en dessous.")
@@ -480,7 +493,9 @@ class Session:
             rejets_texte = []
             for p in props.portefeuilles[:3]:
                 ptf = self._normaliser_ptf(p)
-                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf), self.exclusions_traitees())
+                justif = lg.controle_justifications(p.lignes, self.profil, self.demande, self.candidats, self.journal)
+                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf) + [justif],
+                                       self.exclusions_traitees())
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
                 if verdict["accepte"]:
@@ -507,10 +522,11 @@ class Session:
             if l.poids > 0:
                 poids[l.symbole] = poids.get(l.symbole, 0.0) + float(l.poids)
         roles = {l.symbole: l.role for l in p.lignes}
+        justifications = {l.symbole: l for l in p.lignes}
         membres = [s for s, r in roles.items() if r == "theme"]
         theme = {"nom": self.theme["nom"], "symboles": membres} if self.theme and membres else (
             {"nom": "thème", "symboles": membres} if membres else None)
-        return {"poids": poids, "roles": roles, "theme": theme}
+        return {"poids": poids, "roles": roles, "theme": theme, "justifications": justifications}
 
     # -- mesures des portefeuilles retenus --------------------------------------
 
@@ -523,9 +539,22 @@ class Session:
             p, ptf = a["proposition"], a["ptf"]
             m = adq.mesures_portefeuille(j, p.id, ptf["poids"], devise)
             st, parts = m["stats"], m["parts"]
-            lignes = [{"symbole": s, "nom": table.at[s, "name"], "classe": CLASSE_LIBELLE[table.at[s, "asset_class"]],
-                       "classe_code": table.at[s, "asset_class"], "role": ROLE_LIBELLE[ptf["roles"][s]],
-                       "role_code": ptf["roles"][s], "poids": w} for s, w in sorted(ptf["poids"].items(), key=lambda x: -x[1])]
+            lignes = []
+            for s, w in sorted(ptf["poids"].items(), key=lambda x: -x[1]):
+                jl = ptf["justifications"][s]
+                poids_id = j.enregistrer(cle("poids", p.id, s), adq._ref(
+                    "constructeur", {"portefeuille": p.id, "symbole": s}, w, "fraction du capital",
+                    "poids décidé par le constructeur, vérifié par la gouvernance", ["agents/pipeline.py (constructeur)"],
+                    "décision du constructeur"))
+                lignes.append({
+                    "symbole": s, "nom": table.at[s, "name"], "classe": CLASSE_LIBELLE[table.at[s, "asset_class"]],
+                    "classe_code": table.at[s, "asset_class"], "role": ROLE_LIBELLE[ptf["roles"][s]],
+                    "role_code": ptf["roles"][s], "poids": w, "poids_id": poids_id,
+                    **lg.detail_ligne(s, self.profil.devise, {"volatilite": self.mesures[s]["vol"],
+                                                              "pire_baisse": self.mesures[s]["pb"],
+                                                              "part_du_risque": parts[s]}),
+                    "pourquoi": jl.pourquoi, "critere_profil": jl.critere_profil,
+                    "plutot_que": {"symbole": jl.plutot_que, "raison": jl.raison_plutot_que}})
             sortie.append({
                 "id": p.id, "nom": self._propre(p.nom, f"portefeuille {p.id}.nom") or f"Portefeuille {p.id}",
                 "intention": self._propre(p.intention, f"portefeuille {p.id}.intention") or "",
