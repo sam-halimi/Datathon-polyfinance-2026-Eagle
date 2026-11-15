@@ -7,7 +7,8 @@ from tools import bedrock
 
 @pytest.fixture
 def sans_cles(monkeypatch):
-    for nom in (bedrock.VARIABLE_JETON,) + bedrock.VARIABLES_PROXY:
+    for nom in ((bedrock.VARIABLE_JETON, "BEDROCK_AUTH", "BEDROCK_REGION") + bedrock.VARIABLES_PROXY
+                + bedrock.VARIABLES_IDENTIFIANTS):
         monkeypatch.delenv(nom, raising=False)
     monkeypatch.setattr(bedrock, "charger_env", lambda: [])  # ne pas lire le .env de la machine
 
@@ -61,3 +62,35 @@ def test_jeton_temporaire_sans_rien(sans_cles):
 def test_aide_proxy_cite_l_hote(monkeypatch):
     monkeypatch.setenv("AWS_REGION", "us-west-2")
     assert "bedrock-runtime.us-west-2.amazonaws.com" in bedrock.aide_proxy()
+
+
+def test_identifiants_aws_passent_avant_le_proxy(monkeypatch, sans_cles):
+    """Rôle temporaire (atelier AWS) : boto3 signe lui-même, aucun jeton factice n'est posé."""
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret-exemple")
+    assert bedrock.mode_bedrock() == "identifiants"
+    monkeypatch.setenv(bedrock.VARIABLE_JETON, bedrock.JETON_FACTICE)  # reste d'un passage en mode proxy
+    assert bedrock.preparer_bedrock() == "identifiants" and bedrock.VARIABLE_JETON not in os.environ
+    monkeypatch.setenv(bedrock.VARIABLE_JETON, "cle-bedrock-secrete")
+    assert bedrock.mode_bedrock() == "jeton"  # un vrai jeton passe toujours en premier
+
+
+def test_bedrock_auth_impose_le_mode(monkeypatch, sans_cles):
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret-exemple")
+    monkeypatch.setenv("BEDROCK_AUTH", "proxy")
+    assert bedrock.preparer_bedrock() == "proxy" and os.environ[bedrock.VARIABLE_JETON] == bedrock.JETON_FACTICE
+
+
+def test_bedrock_region(monkeypatch, sans_cles):
+    monkeypatch.setenv("AWS_REGION", "us-east-1")
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+    monkeypatch.setenv("BEDROCK_REGION", "us-west-2")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "ASIAEXEMPLE")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret-exemple")
+    with bedrock.jeton_temporaire() as mode:
+        assert mode == "identifiants" and os.environ["AWS_DEFAULT_REGION"] == "us-west-2"
+    assert os.environ["AWS_REGION"] == os.environ["AWS_DEFAULT_REGION"] == "us-east-1"  # remis en état
+    bedrock.preparer_bedrock()
+    assert os.environ["AWS_REGION"] == os.environ["AWS_DEFAULT_REGION"] == "us-west-2"
