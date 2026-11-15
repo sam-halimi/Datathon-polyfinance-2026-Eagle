@@ -1,3 +1,4 @@
+import { profilPourAnalyse } from "./questions";
 import type { Profil, SortiePipeline } from "./types";
 
 // Le service du pipeline (agents/) : POST /analyse et GET /actif.
@@ -7,7 +8,7 @@ export async function analyser(profil: Profil, demande: string, prenom: string):
   const r = await fetch(`${API}/analyse`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profil, demande, prenom }),
+    body: JSON.stringify({ profil: profilPourAnalyse(profil), demande, prenom }),
   });
   if (!r.ok) throw new Error(`POST /analyse : ${r.status}`);
   return r.json();

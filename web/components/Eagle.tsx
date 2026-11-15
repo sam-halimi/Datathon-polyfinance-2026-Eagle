@@ -8,7 +8,8 @@ import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diap
 import { analyser, ADRESSE_API, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, PERSONAS, type Persona } from "@/lib/personas";
-import { complet, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
+import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
+import { Choix, Curseur } from "./Questions";
 import { chargerUnivers, completerGraphiques } from "@/lib/repartition";
 import type { Profil, Reference, SortiePipeline } from "@/lib/types";
 
@@ -78,7 +79,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setDernierChamp(champ);
     const q = QUESTIONS[question];
     if (titre) dire(titre, "vous");
-    if (q && q.champ === champ && !q.multiple) suivante();
+    if (q && q.champ === champ && q.type === "choix" && !q.multiple) suivante();
   };
 
   const suivante = () => {
@@ -177,16 +178,23 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     if (phase === "accueil") {
       const q = QUESTIONS[question];
       const t = normaliser(texte);
+      if (q.type === "curseur") {
+        const n = Number(texte.replace(/\s/g, "").match(/\d+/)?.[0]);
+        if (n >= q.min && n <= q.max) { repondre(q.champ, n); suivante(); return; }
+        dire(`Indiquez une valeur entre ${q.min} et ${q.max}, ou utilisez le curseur.`);
+        return;
+      }
       const o = q.options.find((x) => normaliser(x.titre).includes(t) || t.includes(normaliser(String(x.valeur))) || (x.detail && normaliser(x.detail).includes(t)));
       if (o) {
         repondre(q.champ, o.valeur);
         if (q.multiple) suivante();
         return;
       }
-      if (q.champ === "horizon_annees" || q.champ === "capital_fictif") {
+      if (q.champ === "horizon_annees") {
         const n = Number(texte.replace(/\s/g, "").match(/\d+/)?.[0]);
         if (n > 0) { repondre(q.champ, n); return; }
       }
+      if (q.multiple && q.libre) { repondre(q.champ, texte); return; }
       dire("Je n'ai pas reconnu cette réponse. Choisissez une option au centre, ou reformulez-la.");
       return;
     }
@@ -218,8 +226,14 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
       // La voix apprend ce qui manque encore, dans l'ordre des questions.
       const apres = noter(profil, champ, valeur);
       const manque = QUESTIONS.filter((q) => q.champ !== champ && (apres[q.champ] === undefined || apres[q.champ] === ""));
-      return manque.length
-        ? `Noté : ${champ}. Question suivante (${manque[0].champ}) : ${manque[0].texte} Choix : ${manque[0].options.map((o) => `${o.titre} = ${o.valeur}`).join(" ; ")}.`
+      const m = manque[0];
+      const choix = !m ? "" : m.type === "choix"
+        ? `Choix : ${m.options.map((o) => `${o.titre} = ${o.valeur}`).join(" ; ")}${m.multiple ? " (plusieurs réponses possibles, ou une réponse libre)" : ""}.`
+        : m.crans
+          ? `Curseur de ${m.min} à ${m.max} : ${Object.entries(m.crans).map(([k, t]) => `${k} = « ${t} »`).join(" ; ")}.`
+          : `Curseur de montant, de ${m.min} à ${m.max} dollars canadiens, par pas de ${m.pas}.`;
+      return m
+        ? `Noté : ${champ}. Question suivante (${m.champ}) : ${m.texte} ${choix}`
         : `Noté : ${champ}. Le profil est complet : demande le prénom et la demande en ses mots, puis appelle lancer_analyse.`;
     },
     lancerAnalyse: lancer,
@@ -248,31 +262,21 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     const choisis = ([] as unknown[]).concat(profil[q.champ] ?? []);
     titre = q.texte;
     justification = <>Question {question + 1} sur {QUESTIONS.length}{q.aide ? ` · ${q.aide}` : ""}</>;
-    contenu = (
-      <div className={`choix choix--${q.options.length}`}>
-        {q.options.map((o) => {
-          const actifChoix = choisis.includes(o.valeur);
-          return (
-            <button key={String(o.valeur)} type="button" className={actifChoix ? "choix__bouton choix__bouton--actif" : "choix__bouton"}
-              aria-pressed={actifChoix} onClick={() => repondre(q.champ, o.valeur, o.titre)}>
-              <span className="choix__titre">{o.titre}</span>
-              {o.detail ? <span className="choix__detail">{o.detail}</span> : null}
-            </button>
-          );
-        })}
-        {q.multiple ? (
-          <button type="button" className={choisis.length === 0 ? "choix__bouton choix__bouton--actif" : "choix__bouton"}
-            onClick={() => { setProfil((p) => ({ ...p, [q.champ]: [] })); setDernierChamp(q.champ); }}>
-            <span className="choix__titre">{q.aucun}</span>
-          </button>
-        ) : null}
-      </div>
+    contenu = q.type === "curseur" ? (
+      <Curseur q={q} valeur={profil[q.champ] as number | undefined} devise={profil.devise ?? "CAD"}
+        changer={(v) => { setProfil((p) => noter(p, q.champ, v)); setDernierChamp(q.champ); }} />
+    ) : (
+      <Choix q={q} choisis={choisis} choisir={(v, t) => repondre(q.champ, v, t)}
+        vider={() => { setProfil((p) => ({ ...p, [q.champ]: [] })); setDernierChamp(q.champ); }} />
     );
     navigation = (
       <>
         <button type="button" className="bouton bouton--secondaire" disabled={question === 0}
           onClick={() => { setQuestion(question - 1); dire(QUESTIONS[question - 1].texte); }}>Précédente</button>
-        {q.multiple ? <button type="button" className="bouton bouton--principal" onClick={suivante}>Continuer</button> : null}
+        {q.type === "curseur" ? (
+          <button type="button" className="bouton bouton--principal"
+            onClick={() => { if (!estRepondue(profil, q)) { setProfil((p) => noter(p, q.champ, q.depart)); setDernierChamp(q.champ); } suivante(); }}>Valider</button>
+        ) : q.multiple ? <button type="button" className="bouton bouton--principal" onClick={suivante}>Continuer</button> : null}
       </>
     );
   } else if (phase === "recap") {
@@ -325,7 +329,9 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     ["horizon_annees", "Horizon", profil.horizon_annees ? formaterHorizon(profil.horizon_annees) : undefined],
     ["objectif", "Objectif", profil.objectif ? majuscule(profil.objectif) : undefined],
     ["tolerance_risque", "Tolérance", profil.tolerance_risque ? majuscule(profil.tolerance_risque) : undefined],
-    ["connaissance", "Connaissance", profil.connaissance ? majuscule(profil.connaissance) : undefined],
+    ["connaissance_niveau", "Connaissance", profil.connaissance_niveau
+      ? `Niveau ${profil.connaissance_niveau} sur 5`
+      : profil.connaissance ? majuscule(profil.connaissance) : undefined],
     ["preferences", "Préférences", question > 4 || profil.preferences?.length ? (profil.preferences?.join(", ") || "Rien de particulier") : undefined],
     ["exclusions", "Exclusions", question > 5 || profil.exclusions?.length ? (profil.exclusions?.join(", ") || "Rien") : undefined],
     ["centres_interet", "Intérêts", question > 6 || profil.centres_interet?.length ? (profil.centres_interet?.join(", ") || "Aucun") : undefined],

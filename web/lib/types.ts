@@ -19,7 +19,10 @@ export type Profil = {
   horizon_annees: number;
   objectif: string;
   tolerance_risque: string;
+  /** Déduite par le serveur de connaissance_niveau ; présente dans toute sortie du pipeline. */
   connaissance: string;
+  /** Curseur de 1 à 5 de l'accueil. */
+  connaissance_niveau?: number;
   preferences: string[];
   exclusions: string[];
   centres_interet: string[];
