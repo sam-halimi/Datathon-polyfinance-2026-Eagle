@@ -201,3 +201,20 @@ def test_theme_de_data_themes_csv_et_candidats_etendus(monkeypatch):
     espo = next(l for l in s["portefeuilles"][0]["lignes"] if l["symbole"] == "ESPO")
     assert espo["pays"] == "États-Unis" and any(x["fichier"] == "data/base/prix_etendus.csv" for x in espo["sources"])
     assert s["chiffres"][espo["chiffres"]["volatilite"]]["sources"][0] == "base/prix_etendus.csv (adj_close)"
+
+
+def test_gestionnaire_lambda(monkeypatch):
+    """Le point d'entrée Lambda sert les mêmes routes que le serveur local."""
+    from agents.lambda_eagle import gestionnaire
+
+    def evt(methode, chemin, corps=None, requete=""):
+        return {"rawPath": chemin, "rawQueryString": requete, "requestContext": {"http": {"method": methode}},
+                "body": json.dumps(corps) if corps is not None else None, "isBase64Encoded": False}
+
+    r = gestionnaire(evt("GET", "/sante"))
+    assert r["statusCode"] == 200 and json.loads(r["body"])["ok"]
+    assert gestionnaire(evt("POST", "/analyse", {"profil": {"inconnu": 1}, "demande": "x"}))["statusCode"] == 400
+    monkeypatch.setattr(pipeline, "creer_agent", FauxAgent)
+    r = gestionnaire(evt("POST", "/analyse", {"profil": ROBERT["profil"], "demande": ROBERT["demande"]}))
+    assert r["statusCode"] == 200 and json.loads(r["body"])["meta"]["version_format"] == 2
+    assert gestionnaire(evt("GET", "/actif", requete="symbole=tesla&tolerance=faible&horizon=3"))["statusCode"] == 200

@@ -9,3 +9,7 @@ web/.next/
 web/next-env.d.ts
 *.tsbuildinfo
 data/cache/
+
+# Déploiement : paquet Lambda et adresses générées
+deploiement/construction/
+web/out/
