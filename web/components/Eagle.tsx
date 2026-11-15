@@ -74,7 +74,10 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     ...(sortie ? lireEventail(sortie)?.chiffres ?? {} : {}),
     ...(actif?.verdict?.chiffres ?? {}),
   }), [sortie, actif]);
-  const ctx = useMemo(() => ({ chiffres, ouvrir: setFiche }), [chiffres]);
+  // Lexique au survol aux niveaux 1 et 2 seulement (registre renvoyé par le pipeline).
+  const registre = sortie?.explication?.registre;
+  const lexique = registre && registre.niveau <= 2 ? sortie?.explication?.lexique ?? [] : [];
+  const ctx = useMemo(() => ({ chiffres, ouvrir: setFiche, lexique }), [chiffres, lexique]);
 
   // ---------- Accueil ----------
 
@@ -376,11 +379,20 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
 
         <main className="eagle__centre">
           {phase === "presentation" && !actif ? (
+            <div className="diapo__haut">
             <ol className="diapo__plan" aria-label="Diapositives">
               {diapos.map((d, i) => (
                 <li key={d.id}><button type="button" className={i === diapo ? "diapo__point diapo__point--actif" : "diapo__point"} onClick={() => setDiapo(i)}>{d.court}</button></li>
               ))}
             </ol>
+            <p className="registre" tabIndex={0}>
+              {registre ? <>Registre {registre.nom} · niveau {registre.niveau} sur 5</> : "Registre : information manquante"}
+              <span className="terme__bulle registre__bulle" role="tooltip">
+                {registre ? typo(registre.description) : "La réponse du pipeline ne contient pas de registre de langage (format v2)."}
+                {registre && registre.niveau <= 2 ? (lexique.length ? ` ${lexique.length} terme${lexique.length > 1 ? "s" : ""} défini${lexique.length > 1 ? "s" : ""} au survol.` : " Lexique : information manquante.") : null}
+              </span>
+            </p>
+            </div>
           ) : null}
           <section className="diapo" key={actif ? `actif-${actif.symbole}` : `${phase}-${question}-${diapo}`}>
             {titre ? <h2 className="diapo__titre">{typo(titre)}</h2> : null}
