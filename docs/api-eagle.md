@@ -14,7 +14,7 @@ python -m agents.serveur        # http://localhost:8000
 | `GET /demonstration/robert` (ou `amira`, `mateo`) | Sortie enregistrée d'un persona, avec son éventail | Non |
 | `POST /analyse` avec `{"profil": {...}, "demande": "...", "prenom": "..."}` | Pipeline complet sur Bedrock pour n'importe quel profil, environ une minute | Oui |
 
-Le profil suit le schéma de `python -m agents.profil`. La réponse de `/analyse` suit `docs/sortie-pipeline.md`, avec un champ `scenarios` en plus.
+Le profil suit le schéma de `python -m agents.profil`. Le curseur de connaissance d'Eagle s'envoie dans `connaissance_niveau` (1 à 5) ; `connaissance` peut alors être omise, elle en découle (1-2 débutant, 3 intermédiaire, 4-5 avancé). Tout autre champ inconnu est refusé (400). La réponse de `/analyse` suit `docs/sortie-pipeline.md`, avec un champ `scenarios` en plus.
 
 ## Le champ `scenarios`
 
