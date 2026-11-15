@@ -55,6 +55,7 @@ SECTEURS = {
     "Information Technology": "Technologies de l'information",
     "Communication Services": "Communications",
     "Health Care": "Santé",
+    "Real Estate": "Immobilier",
     "Gold": "Or",
     "Crypto asset": "Crypto",
 }

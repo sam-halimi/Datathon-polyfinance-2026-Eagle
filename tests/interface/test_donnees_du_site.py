@@ -28,7 +28,8 @@ def table() -> dict:
 
 def test_tous_les_actifs_des_tables_sourcees_sont_dans_le_site(table):
     attendus = set(univers(etendu=True).index)
-    themes = set(pd.read_csv(RACINE / "data" / "themes.csv", dtype=str)["symbole"])
+    # Un thème sans actif (rôle « non_couvert », par exemple le luxe) n'a pas de symbole : ligne ignorée.
+    themes = set(pd.read_csv(RACINE / "data" / "themes.csv", dtype=str)["symbole"].dropna())
     assert themes <= attendus, f"symboles de data/themes.csv absents des tables d'univers : {sorted(themes - attendus)}"
     assert attendus <= set(table), f"absents de web/data/univers.json ({A_RELANCER}) : {sorted(attendus - set(table))}"
 
@@ -37,7 +38,11 @@ def test_chaque_actif_a_un_secteur_une_zone_et_un_cours(table):
     for symbole, a in table.items():
         assert a["nom"] and a["secteur"] and a["zone"] and a["devise"], symbole
         assert "Inconnu" not in a["secteur"] and "Inconnu" not in a["zone"], symbole
-        assert len(a["hebdo"]) > 50, f"{symbole} : cours hebdomadaire trop court ({len(a['hebdo'])} points)"
+        # Un FNB récent a un historique court (GOLS : depuis janvier 2026) : le pipeline le signale
+        # dans ses limites. Ici on vérifie seulement que la courbe existe et suit les données.
+        attendu = charger_prix(symbole)[symbole].dropna()
+        assert len(a["hebdo"]) >= 20, f"{symbole} : cours hebdomadaire trop court ({len(a['hebdo'])} points)"
+        assert a["hebdo"][0][0] <= (attendu.index[0] + pd.Timedelta(days=7)).date().isoformat(), symbole
 
 
 def test_le_dernier_cours_du_site_est_celui_des_donnees(table):
