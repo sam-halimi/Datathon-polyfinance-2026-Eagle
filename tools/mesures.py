@@ -146,3 +146,85 @@ def pire_baisse(
         details={**pb, "retour_au_sommet": pb["date_retour"] is not None},
         **_contexte(symbole, debut, fin, devise),
     )
+
+
+def gain_de_rattrapage(perte: float | dict[str, Any]) -> dict[str, Any]:
+    """Gain nécessaire pour revenir au niveau d'avant une perte : perte / (1 - perte).
+
+    `perte` : une fraction (-0,73 ou 0,73 pour une baisse de 73 %, le signe est
+    ignoré), ou directement le résultat de `pire_baisse`, dont la référence
+    d'appel est alors gardée dans `details["origine"]`.
+    """
+    origine = None
+    if isinstance(perte, dict):
+        origine = {k: perte.get(k) for k in ("outil", "parametres", "periode", "valeur")}
+        perte = perte["valeur"]
+    p = abs(float(perte))
+    if not 0 <= p < 1:
+        raise ValueError("La perte doit être une fraction strictement inférieure à 100 %.")
+    details: dict[str, Any] = {"perte": p}
+    if origine is not None:
+        details["origine"] = origine
+    return resultat(
+        outil="gain_de_rattrapage",
+        parametres={"perte": p},
+        periode=origine["periode"] if origine else {},
+        valeur=p / (1 - p),
+        unite="fraction",
+        formule="gain nécessaire = perte / (1 - perte)",
+        sources=[f"résultat de {origine['outil']}"] if origine else [],
+        details=details,
+    )
+
+
+def rendement_en_cad(
+    symbole: str, debut: str | None = None, fin: str | None = None
+) -> dict[str, Any]:
+    """Rendement d'un actif pour un investisseur en CAD, séparé en deux effets.
+
+    (1 + rendement en CAD) = (1 + rendement en devise de cotation) × (1 + effet de change).
+    L'effet de change est la variation du taux USD/CAD entre la première et la
+    dernière date de prix (dernier taux reporté si la Banque du Canada n'a pas
+    publié ce jour-là). Nul pour un actif coté en CAD. `valeur` est le rendement
+    annualisé en CAD ; le détail donne les rendements totaux et annualisés.
+    Décrit le passé de la fenêtre, ne prédit rien.
+    """
+    s = _prix_actif(symbole, debut, fin, "cotation")
+    d = devise_cotation(symbole)
+    debut_fin = s.index[[0, -1]]
+    if d == "CAD":
+        fx = pd.Series([1.0, 1.0], index=debut_fin)
+    else:
+        fx = convertir_cad(pd.Series([1.0, 1.0], index=debut_fin, name=symbole))
+    annees = (s.index[-1] - s.index[0]).days / 365.25
+    total_cotation = s.iloc[-1] / s.iloc[0] - 1
+    effet_change = fx.iloc[-1] / fx.iloc[0] - 1
+    total_cad = (1 + total_cotation) * (1 + effet_change) - 1
+
+    def annualise(total: float) -> float:
+        return float((1 + total) ** (1 / annees) - 1)
+
+    sources = [FICHIER_PRIX + " (adj_close)"]
+    if d == "USD":
+        sources.append(FICHIER_FX)
+    return resultat(
+        outil="rendement_en_cad",
+        parametres={"symbole": symbole, "debut": debut, "fin": fin},
+        periode=periode_de(s.index),
+        valeur=annualise(total_cad),
+        unite="fraction par an, en CAD",
+        formule="(1 + rendement CAD) = (1 + rendement en devise de cotation) × (1 + variation USD/CAD)",
+        sources=sources,
+        details={
+            "devise_cotation": d,
+            "annees": annees,
+            "rendement_total_cotation": float(total_cotation),
+            "effet_change_total": float(effet_change),
+            "rendement_total_cad": float(total_cad),
+            "rendement_annualise_cotation": annualise(total_cotation),
+            "effet_change_annualise": annualise(effet_change),
+            "taux_usdcad_debut": float(fx.iloc[0]) if d == "USD" else None,
+            "taux_usdcad_fin": float(fx.iloc[-1]) if d == "USD" else None,
+            "avertissement": "Rendement passé sur cette fenêtre ; ne prédit rien.",
+        },
+    )

@@ -1,0 +1,685 @@
+fnb,symbole_detenu,nom_detenu,poids,date,source_url
+SPY,AAPL,APPLE INC,0.07904389,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NVDA,NVIDIA CORP,0.06137977,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MSFT,MICROSOFT CORP,0.05926991,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMZN,AMAZON.COM INC,0.04006244,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GOOGL,ALPHABET INC CL A,0.02675267,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AVGO,BROADCOM INC,0.02645801,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GOOG,ALPHABET INC CL C,0.02142682,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,META,META PLATFORMS INC CLASS A,0.02098848,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LLY,ELI LILLY + CO,0.01740923,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TSLA,TESLA INC,0.01709578,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BRK.B,BERKSHIRE HATHAWAY INC CL B,0.01676579,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMD,ADVANCED MICRO DEVICES,0.01458239,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JPM,JPMORGAN CHASE + CO,0.01390797,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MU,MICRON TECHNOLOGY INC,0.01376268,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,V,VISA INC CLASS A SHARES,0.01093111,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,XOM,EXXONMOBIL HOLDINGS CORP,0.01065439,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JNJ,JOHNSON + JOHNSON,0.01042601,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WMT,WALMART INC,0.00858101,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MA,MASTERCARD INC   A,0.00805179,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ABBV,ABBVIE INC,0.00794399,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COST,COSTCO WHOLESALE CORP,0.00739492,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CVX,CHEVRON CORP,0.00652592,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CSCO,CISCO SYSTEMS INC,0.00613803,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PLTR,PALANTIR TECHNOLOGIES INC A,0.00602651,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PG,PROCTER + GAMBLE CO/THE,0.0059625,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KO,COCA COLA CO/THE,0.00576005,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UNH,UNITEDHEALTH GROUP INC,0.00555124,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MRK,MERCK + CO. INC.,0.00553463,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HD,HOME DEPOT INC,0.00529795,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GE,GENERAL ELECTRIC,0.00524034,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BAC,BANK OF AMERICA CORP,0.00501425,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PM,PHILIP MORRIS INTERNATIONAL,0.004679,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,INTC,INTEL CORP,0.00463982,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMAT,APPLIED MATERIALS INC,0.0046148,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LRCX,LAM RESEARCH CORP,0.0044633,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TXN,TEXAS INSTRUMENTS INC,0.00435712,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CAT,CATERPILLAR INC,0.00424502,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RTX,RTX CORP,0.00408178,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GS,GOLDMAN SACHS GROUP INC,0.0040613,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PANW,PALO ALTO NETWORKS INC,0.00401401,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NFLX,NETFLIX INC,0.00398256,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WFC,WELLS FARGO + CO,0.00395842,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TMO,THERMO FISHER SCIENTIFIC INC,0.00394552,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMGN,AMGEN INC,0.00385592,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ORCL,ORACLE CORP,0.00380831,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LIN,LINDE PLC,0.00367625,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CRWD,CROWDSTRIKE HOLDINGS INC   A,0.00357119,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IBM,INTL BUSINESS MACHINES CORP,0.0035195,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MS,MORGAN STANLEY,0.00344462,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GEV,GE VERNOVA INC,0.00332567,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ANET,ARISTA NETWORKS INC,0.00330253,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GILD,GILEAD SCIENCES INC,0.00317828,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,C,CITIGROUP INC,0.00317451,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KLAC,KLA CORP,0.00313793,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DIS,WALT DISNEY CO/THE,0.00311406,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ADI,ANALOG DEVICES INC,0.00304111,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APH,AMPHENOL CORP CL A,0.00299509,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PEP,PEPSICO INC,0.00296178,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MCD,MCDONALD S CORP,0.00295355,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VZ,VERIZON COMMUNICATIONS INC,0.00295012,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,QCOM,QUALCOMM INC,0.00288869,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ABT,ABBOTT LABORATORIES,0.00283352,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UNP,UNION PACIFIC CORP,0.00275612,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CRM,SALESFORCE INC,0.00272119,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NEE,NEXTERA ENERGY INC,0.00271368,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WELL,WELLTOWER INC,0.00269538,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BLK,BLACKROCK INC,0.00267513,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DE,DEERE + CO,0.00259908,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COP,CONOCOPHILLIPS,0.00256901,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AXP,AMERICAN EXPRESS CO,0.00255791,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PFE,PFIZER INC,0.00250632,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ISRG,INTUITIVE SURGICAL INC,0.00237264,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ACN,ACCENTURE PLC CL A,0.00233387,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,T,AT+T INC,0.00231787,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TJX,TJX COMPANIES INC,0.00229351,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SCHW,SCHWAB (CHARLES) CORP,0.00226587,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DHR,DANAHER CORP,0.00221779,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MRVL,MARVELL TECHNOLOGY INC,0.00220083,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SPGI,S+P GLOBAL INC,0.00216045,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UBER,UBER TECHNOLOGIES INC,0.00215558,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ETN,EATON CORP PLC,0.00212675,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VRTX,VERTEX PHARMACEUTICALS INC,0.0020998,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PGR,PROGRESSIVE CORP,0.0020903,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SNDK,SANDISK CORP,0.00208945,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BA,BOEING CO/THE,0.00207019,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CB,CHUBB LTD,0.0019902,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MO,ALTRIA GROUP INC,0.00198785,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LOW,LOWE S COS INC,0.00194652,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BMY,BRISTOL MYERS SQUIBB CO,0.00194463,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MCK,MCKESSON CORP,0.00191473,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,STX,SEAGATE TECHNOLOGY HOLDINGS,0.00188643,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MDT,MEDTRONIC PLC,0.00188584,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LMT,LOCKHEED MARTIN CORP,0.00187395,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ADP,AUTOMATIC DATA PROCESSING,0.00186776,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PLD,PROLOGIS INC,0.00186525,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SBUX,STARBUCKS CORP,0.00185683,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BKNG,BOOKING HOLDINGS INC,0.00184747,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PH,PARKER HANNIFIN CORP,0.00184191,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COF,CAPITAL ONE FINANCIAL CORP,0.00181107,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NEM,NEWMONT CORP,0.00181036,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MPC,MARATHON PETROLEUM CORP,0.00176781,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CVS,CVS HEALTH CORP,0.00175338,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CME,CME GROUP INC,0.00172987,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DELL,DELL TECHNOLOGIES  C,0.00171316,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WDC,WESTERN DIGITAL CORP,0.00171315,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SYK,STRYKER CORP,0.00166489,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VLO,VALERO ENERGY CORP,0.00164829,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APP,APPLOVIN CORP CLASS A,0.00162874,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SO,SOUTHERN CO/THE,0.00162413,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EQIX,EQUINIX INC,0.00161832,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PSX,PHILLIPS 66,0.00159991,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NOW,SERVICENOW INC,0.00158894,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BNY,BANK OF NEW YORK MELLON CORP,0.00158085,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ICE,INTERCONTINENTAL EXCHANGE IN,0.00152448,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DUK,DUKE ENERGY CORP,0.00151833,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MRSH,MARSH + MCLENNAN COS,0.0014987,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CSX,CSX CORP,0.00147994,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MMM,3M CO,0.00145812,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ADBE,ADOBE INC,0.00144591,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GLW,CORNING INC,0.00144251,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,USB,US BANCORP,0.00143849,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TT,TRANE TECHNOLOGIES PLC,0.00142198,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,REGN,REGENERON PHARMACEUTICALS,0.00142166,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ELV,ELEVANCE HEALTH INC,0.00142134,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CEG,CONSTELLATION ENERGY,0.00142076,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,INTU,INTUIT INC,0.00141853,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EMR,EMERSON ELECTRIC CO,0.00141417,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PNC,PNC FINANCIAL SERVICES GROUP,0.00140731,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GD,GENERAL DYNAMICS CORP,0.00140538,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CDNS,CADENCE DESIGN SYS INC,0.00140147,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PWR,QUANTA SERVICES INC,0.0013892,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WM,WASTE MANAGEMENT INC,0.00138551,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MAR,MARRIOTT INTERNATIONAL  CL A,0.00138405,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BX,BLACKSTONE INC,0.00135855,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HWM,HOWMET AEROSPACE INC,0.00135654,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SNPS,SYNOPSYS INC,0.00135277,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMT,AMERICAN TOWER CORP,0.00134788,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MSI,MOTOROLA SOLUTIONS INC,0.00133807,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CMCSA,COMCAST CORP CLASS A,0.001338,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FCX,FREEPORT MCMORAN INC,0.00132371,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JCI,JOHNSON CONTROLS INTERNATION,0.00131614,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MRNA,MODERNA INC,0.00131155,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WMB,WILLIAMS COS INC,0.00129802,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MDLZ,MONDELEZ INTERNATIONAL INC A,0.00129495,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TRV,TRAVELERS COS INC/THE,0.00128199,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HLT,HILTON WORLDWIDE HOLDINGS IN,0.00127839,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UPS,UNITED PARCEL SERVICE CL B,0.00126186,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TMUS,T MOBILE US INC,0.00126047,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EOG,EOG RESOURCES INC,0.00124627,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VRT,VERTIV HOLDINGS CO A,0.00123231,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RCL,ROYAL CARIBBEAN CRUISES LTD,0.00122033,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SHW,SHERWIN WILLIAMS CO/THE,0.00121937,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FTNT,FORTINET INC,0.00121895,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CI,THE CIGNA GROUP,0.00119534,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CTAS,CINTAS CORP,0.00119278,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CL,COLGATE PALMOLIVE CO,0.00119158,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ECL,ECOLAB INC,0.00117046,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ROST,ROSS STORES INC,0.00115991,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ABNB,AIRBNB INC CLASS A,0.00115904,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SPG,SIMON PROPERTY GROUP INC,0.00115402,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GM,GENERAL MOTORS CO,0.00115353,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MCO,MOODY S CORP,0.00115186,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SLB,SLB LTD,0.00115172,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NSC,NORFOLK SOUTHERN CORP,0.00114323,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ITW,ILLINOIS TOOL WORKS,0.00113471,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ORLY,O REILLY AUTOMOTIVE INC,0.00113092,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HCA,HCA HEALTHCARE INC,0.00112533,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NOC,NORTHROP GRUMMAN CORP,0.00111716,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TGT,TARGET CORP,0.00111684,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MPWR,MONOLITHIC POWER SYSTEMS INC,0.00108805,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AJG,ARTHUR J GALLAGHER + CO,0.00108504,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,URI,UNITED RENTALS INC,0.00108255,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AON,AON PLC CLASS A,0.00107775,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HON,HONEYWELL INTERNATIONAL INC,0.00107555,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AEP,AMERICAN ELECTRIC POWER,0.00107388,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FDX,FEDEX CORP,0.00107311,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APD,AIR PRODUCTS + CHEMICALS INC,0.00107276,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NXPI,NXP SEMICONDUCTORS NV,0.00102914,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ALL,ALLSTATE CORP,0.00102751,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KKR,KKR + CO INC,0.00102345,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HPE,HEWLETT PACKARD ENTERPRISE,0.0010162,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COR,CENCORA INC,0.00101594,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TDG,TRANSDIGM GROUP INC,0.00101315,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KMB,KIMBERLY CLARK CORP,0.00100271,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MNST,MONSTER BEVERAGE CORP,0.00099575,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GWW,WW GRAINGER INC,0.00099409,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DASH,DOORDASH INC   A,0.00099145,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CAH,CARDINAL HEALTH INC,0.00098519,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DLR,DIGITAL REALTY TRUST INC,0.0009847,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HOOD,ROBINHOOD MARKETS INC   A,0.00098306,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BSX,BOSTON SCIENTIFIC CORP,0.00097604,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FAST,FASTENAL CO,0.00097087,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TRGP,TARGA RESOURCES CORP,0.00097006,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TEL,TE CONNECTIVITY PLC,0.00096277,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,USD_CASH,US DOLLAR,0.00096144,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KMI,KINDER MORGAN INC,0.00095953,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CMI,CUMMINS INC,0.00095563,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CRH,CRH PLC,0.00094795,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DDOG,DATADOG INC   CLASS A,0.00094326,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EW,EDWARDS LIFESCIENCES CORP,0.00093277,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TFC,TRUIST FINANCIAL CORP,0.00091884,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BE,BLOOM ENERGY CORP  A,0.00090803,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,D,DOMINION ENERGY INC,0.00090426,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NUE,NUCOR CORP,0.00090128,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BDX,BECTON DICKINSON AND CO,0.0008948,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APO,APOLLO GLOBAL MANAGEMENT INC,0.00087531,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AFL,AFLAC INC,0.00086187,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,OKE,ONEOK INC,0.00085714,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PCAR,PACCAR INC,0.00085673,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,O,REALTY INCOME CORP,0.00085613,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PSA,PUBLIC STORAGE,0.00085594,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AME,AMETEK INC,0.00084591,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LITE,LUMENTUM HOLDINGS INC,0.00084491,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IDXX,IDEXX LABORATORIES INC,0.00083761,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ADSK,AUTODESK INC,0.00083365,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MET,METLIFE INC,0.00082823,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HUM,HUMANA INC,0.00081551,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AZO,AUTOZONE INC,0.00080961,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HONA,HONEYWELL AEROSPACE INC,0.00080443,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ETR,ENTERGY CORP,0.00079278,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KEYS,KEYSIGHT TECHNOLOGIES IN,0.00079159,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SRE,SEMPRA,0.0007905,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DAL,DELTA AIR LINES INC,0.0007844,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,XEL,XCEL ENERGY INC,0.00077902,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CVNA,CARVANA CO,0.00077695,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DVN,DEVON ENERGY CORP,0.00077457,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WAB,WABTEC CORP,0.00077297,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LHX,L3HARRIS TECHNOLOGIES INC,0.00077058,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PYPL,PAYPAL HOLDINGS INC,0.00075931,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RSG,REPUBLIC SERVICES INC,0.00075472,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FERG,FERGUSON ENTERPRISES INC,0.00075285,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FITB,FIFTH THIRD BANCORP,0.00074611,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,A,AGILENT TECHNOLOGIES INC,0.00074385,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BKR,BAKER HUGHES CO,0.00074228,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KDP,KEURIG DR PEPPER INC,0.00073783,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EBAY,EBAY INC,0.00073463,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NDAQ,NASDAQ INC,0.00073252,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VYLR,VYLOR INC,0.00073225,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,STT,STATE STREET CORP,0.0007267,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GRMN,GARMIN LTD,0.00072472,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ROP,ROPER TECHNOLOGIES INC,0.00072155,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EXC,EXELON CORP,0.00071917,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MSCI,MSCI INC,0.00071867,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,F,FORD MOTOR CO,0.0007131,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VTR,VENTAS INC,0.0007021,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VMRK,VIVMARK RESIDENTIAL,0.00070043,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COHR,COHERENT CORP,0.00069508,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WAT,WATERS CORP,0.00069395,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NKE,NIKE INC  CL B,0.00069352,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMP,AMERIPRISE FINANCIAL INC,0.00069066,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VEEV,VEEVA SYSTEMS INC CLASS A,0.00068996,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CARR,CARRIER GLOBAL CORP,0.00068429,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ROK,ROCKWELL AUTOMATION INC,0.00068334,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IQV,IQVIA HOLDINGS INC,0.00067934,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,XYZ,BLOCK INC,0.00067927,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CMG,CHIPOTLE MEXICAN GRILL INC,0.00067744,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ED,CONSOLIDATED EDISON INC,0.00067361,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,YUM,YUM  BRANDS INC,0.00066393,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AIG,AMERICAN INTERNATIONAL GROUP,0.00065919,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,OXY,OCCIDENTAL PETROLEUM CORP,0.00064933,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VST,VISTRA CORP,0.0006479,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PRU,PRUDENTIAL FINANCIAL INC,0.00064276,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CIEN,CIENA CORP,0.00063504,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TER,TERADYNE INC,0.00063176,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TTWO,TAKE TWO INTERACTIVE SOFTWRE,0.00060909,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FIX,COMFORT SYSTEMS USA INC,0.00060658,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KR,KROGER CO,0.00060638,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CBOE,CBOE GLOBAL MARKETS INC,0.00058623,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WDAY,WORKDAY INC CLASS A,0.00058316,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CCI,CROWN CASTLE INC,0.00058262,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WEC,WEC ENERGY GROUP INC,0.0005811,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CBRE,CBRE GROUP INC   A,0.00057486,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PEG,PUBLIC SERVICE ENTERPRISE GP,0.00057067,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CCL,CARNIVAL CORP LTD,0.00057061,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FANG,DIAMONDBACK ENERGY INC,0.00056864,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BIIB,BIOGEN INC,0.00056705,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ACGL,ARCH CAPITAL GROUP LTD,0.00056458,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GEHC,GE HEALTHCARE TECHNOLOGY,0.00056439,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HIG,HARTFORD INSURANCE GROUP INC,0.00056424,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IBKR,INTERACTIVE BROKERS GRO CL A,0.00056262,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PAYX,PAYCHEX INC,0.00056101,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DHI,DR HORTON INC,0.00055933,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,P,EVERPURE INC A,0.00055877,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SYY,SYSCO CORP,0.00055818,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NTAP,NETAPP INC,0.00055746,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VMC,VULCAN MATERIALS CO,0.00055657,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UAL,UNITED AIRLINES HOLDINGS INC,0.00055285,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CNC,CENTENE CORP,0.00053002,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MTD,METTLER TOLEDO INTERNATIONAL,0.00052718,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RMD,RESMED INC,0.00052608,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ADM,ARCHER DANIELS MIDLAND CO,0.00052367,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ZTS,ZOETIS INC,0.00052342,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IRM,IRON MOUNTAIN INC,0.00052191,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MCHP,MICROCHIP TECHNOLOGY INC,0.00051443,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EXR,EXTRA SPACE STORAGE INC,0.00051165,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EQT,EQT CORP,0.00050141,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FISV,FISERV INC,0.00049721,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NTRS,NORTHERN TRUST CORP,0.00049633,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TWLO,TWILIO INC   A,0.00049536,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ODFL,OLD DOMINION FREIGHT LINE,0.00048914,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,STLD,STEEL DYNAMICS INC,0.00048775,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HBAN,HUNTINGTON BANCSHARES INC,0.00048312,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ILMN,ILLUMINA INC,0.00048308,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MTB,M + T BANK CORP,0.00048273,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AEE,AMEREN CORPORATION,0.00048087,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MLM,MARTIN MARIETTA MATERIALS,0.00047571,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DXCM,DEXCOM INC,0.00046712,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WTW,WILLIS TOWERS WATSON PLC,0.00046627,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,OKTA,OKTA INC,0.00046248,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TDY,TELEDYNE TECHNOLOGIES INC,0.00045944,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LH,LABCORP HOLDINGS INC,0.0004588,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EXPE,EXPEDIA GROUP INC,0.00045755,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CPAY,CORPAY INC,0.00045642,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ARES,ARES MANAGEMENT CORP   A,0.00045579,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DG,DOLLAR GENERAL CORP,0.00045439,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ATO,ATMOS ENERGY CORP,0.00045394,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WSM,WILLIAMS SONOMA INC,0.00045132,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AWK,AMERICAN WATER WORKS CO INC,0.0004478,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IR,INGERSOLL RAND INC,0.00044751,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EME,EMCOR GROUP INC,0.00044642,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CINF,CINCINNATI FINANCIAL CORP,0.00044599,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,OTIS,OTIS WORLDWIDE CORP,0.00044579,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COIN,COINBASE GLOBAL INC  CLASS A,0.00044501,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RJF,RAYMOND JAMES FINANCIAL INC,0.00044433,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DTE,DTE ENERGY COMPANY,0.0004434,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DGX,QUEST DIAGNOSTICS INC,0.00044003,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FLEX,FLEX LTD,0.00043981,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WST,WEST PHARMACEUTICAL SERVICES,0.00043977,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ON,ON SEMICONDUCTOR,0.00043825,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VLTO,VERALTO CORP,0.00043734,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PCG,P G + E CORP,0.00043731,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LYV,LIVE NATION ENTERTAINMENT IN,0.00043651,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CTSH,COGNIZANT TECH SOLUTIONS A,0.00043615,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DOV,DOVER CORP,0.00043222,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ULTA,ULTA BEAUTY INC,0.000425,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HAL,HALLIBURTON CO,0.00041884,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PPG,PPG INDUSTRIES INC,0.00041748,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EL,ESTEE LAUDER COMPANIES CL A,0.00041711,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VICI,VICI PROPERTIES INC,0.00041692,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JBL,JABIL INC,0.00041598,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CFG,CITIZENS FINANCIAL GROUP,0.00041495,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DLTR,DOLLAR TREE INC,0.0004145,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CNP,CENTERPOINT ENERGY INC,0.00041006,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CPRT,COPART INC,0.00040945,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ES,EVERSOURCE ENERGY,0.00040911,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VRSK,VERISK ANALYTICS INC,0.00040805,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PPL,PPL CORP,0.00040557,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HPQ,HP INC,0.00040465,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CHD,CHURCH + DWIGHT CO INC,0.00040318,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TPR,TAPESTRY INC,0.00040152,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CASY,CASEY S GENERAL STORES INC,0.00040041,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DRI,DARDEN RESTAURANTS INC,0.00039513,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,Q,QNITY ELECTRONICS INC,0.00039298,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VRSN,VERISIGN INC,0.00038773,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EXPD,EXPEDITORS INTL WASH INC,0.00038648,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HSY,HERSHEY CO/THE,0.00038515,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AXON,AXON ENTERPRISE INC,0.00038093,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,STE,STERIS PLC,0.00037518,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RF,REGIONS FINANCIAL CORP,0.00037249,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FE,FIRSTENERGY CORP,0.00037063,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DOW,DOW INC,0.00036455,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,OMC,OMNICOM GROUP,0.00036378,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PHM,PULTEGROUP INC,0.00036316,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,VTRS,VIATRIS INC,0.00036249,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TROW,T ROWE PRICE GROUP INC,0.00035494,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HUBB,HUBBELL INC,0.00035454,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SYF,SYNCHRONY FINANCIAL,0.0003541,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EIX,EDISON INTERNATIONAL,0.00035342,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SW,SMURFIT WESTROCK PLC,0.00034332,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PKG,PACKAGING CORP OF AMERICA,0.00033962,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LUV,SOUTHWEST AIRLINES CO,0.00033838,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PFG,PRINCIPAL FINANCIAL GROUP,0.00033609,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NI,NISOURCE INC,0.00033531,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,XYL,XYLEM INC,0.00033521,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EFX,EQUIFAX INC,0.00033505,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BR,BROADRIDGE FINANCIAL SOLUTIO,0.00033335,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,STZ,CONSTELLATION BRANDS INC A,0.00033175,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CMS,CMS ENERGY CORP,0.00033139,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FOXA,FOX CORP   CLASS A,0.00032941,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CDW,CDW CORP/DE,0.00032753,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KHC,KRAFT HEINZ CO/THE,0.00032355,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PTC,PTC INC,0.00032231,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DD,DUPONT DE NEMOURS INC,0.00032118,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NRG,NRG ENERGY INC,0.00031667,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,INCY,INCYTE CORP,0.00031634,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IFF,INTL FLAVORS + FRAGRANCES,0.00031492,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SWKS,SKYWORKS SOLUTIONS INC,0.00031427,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EVRG,EVERGY INC,0.00031159,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BBY,BEST BUY CO INC,0.00031145,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FTV,FORTIVE CORP,0.0003109,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BRO,BROWN + BROWN INC,0.00030995,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EXE,EXPAND ENERGY CORP,0.00030841,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AMCR,AMCOR PLC,0.00030787,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ZBH,ZIMMER BIOMET HOLDINGS INC,0.00030448,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SBAC,SBA COMMUNICATIONS CORP,0.00030288,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GPN,GLOBAL PAYMENTS INC,0.00029929,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KEY,KEYCORP,0.0002954,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SNA,SNAP ON INC,0.00029178,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TSCO,TRACTOR SUPPLY COMPANY,0.00028934,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CF,CF INDUSTRIES HOLDINGS INC,0.00028866,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LNT,ALLIANT ENERGY CORP,0.00028727,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FSLR,FIRST SOLAR INC,0.00028321,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,J,JACOBS SOLUTIONS INC,0.0002815,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,L,LOEWS CORP,0.00028073,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IP,INTERNATIONAL PAPER CO,0.00027455,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FFIV,F5 INC,0.00027408,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GIS,GENERAL MILLS INC,0.00027389,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IEX,IDEX CORP,0.00026976,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RVTY,REVVITY INC,0.00026819,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ESS,ESSEX PROPERTY TRUST INC,0.00026732,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HST,HOST HOTELS + RESORTS INC,0.00026695,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WRB,WR BERKLEY CORP,0.00026675,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NDSN,NORDSON CORP,0.0002651,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BALL,BALL CORP,0.00026454,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,KIM,KIMCO REALTY CORP,0.00026286,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HAS,HASBRO INC,0.00026163,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JBHT,HUNT (JB) TRANSPRT SVCS INC,0.00025953,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GPC,GENUINE PARTS CO,0.00025887,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SWK,STANLEY BLACK + DECKER INC,0.00025809,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TSN,TYSON FOODS INC CL A,0.00025598,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LYB,LYONDELLBASELL INDU CL A,0.00025343,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APA,APA CORP,0.00025272,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LDOS,LEIDOS HOLDINGS INC,0.00025252,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MAS,MASCO CORP,0.00025192,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TPL,TEXAS PACIFIC LAND CORP,0.00025172,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ALLE,ALLEGION PLC,0.00024715,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CRL,CHARLES RIVER LABORATORIES,0.00024637,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TYL,TYLER TECHNOLOGIES INC,0.00024631,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LEN,LENNAR CORP A,0.00024509,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GEN,GEN DIGITAL INC,0.00024421,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AIZ,ASSURANT INC,0.00024372,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CHRW,C.H. ROBINSON WORLDWIDE INC,0.0002425,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BG,BUNGE GLOBAL SA,0.00024048,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FDXF,FEDEX FREIGHT HOLDING CO,0.00023924,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FICO,FAIR ISAAC CORP,0.00023632,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SMCI,SUPER MICRO COMPUTER INC,0.00023253,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ZBRA,ZEBRA TECHNOLOGIES CORP CL A,0.0002317,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,EG,EVEREST GROUP LTD,0.00023004,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NVR,NVR INC,0.00022674,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CHTR,CHARTER COMMUNICATIONS INC A,0.00022647,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RL,RALPH LAUREN CORP,0.00022501,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FIS,FIDELITY NATIONAL INFO SERV,0.00022443,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WY,WEYERHAEUSER CO,0.00022418,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TXT,TEXTRON INC,0.00022387,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,RDDT,REDDIT INC CL A,0.00022203,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AVY,AVERY DENNISON CORP,0.00021889,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,INVH,INVITATION HOMES INC,0.0002187,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GDDY,GODADDY INC   CLASS A,0.0002172,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SJM,JM SMUCKER CO/THE,0.00021327,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DOC,HEALTHPEAK PROPERTIES INC,0.00021213,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MAA,MID AMERICA APARTMENT COMM,0.00020763,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ECHO,ECHOSTAR CORP A,0.00020743,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BAX,BAXTER INTERNATIONAL INC,0.00020447,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CLX,CLOROX COMPANY,0.0002014,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TRMB,TRIMBLE INC,0.00019926,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PNW,PINNACLE WEST CAPITAL,0.00019871,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SOLV,SOLVENTUM CORP,0.00019622,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AKAM,AKAMAI TECHNOLOGIES INC,0.0001926,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IVZ,INVESCO LTD,0.00019215,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,JKHY,JACK HENRY + ASSOCIATES INC,0.00019145,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,REG,REGENCY CENTERS CORP,0.00019115,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GL,GLOBE LIFE INC,0.00019024,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CSGP,COSTAR GROUP INC,0.00018817,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,COO,COOPER COS INC/THE,0.00018574,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HII,HUNTINGTON INGALLS INDUSTRIE,0.00018516,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,IT,GARTNER INC,0.000182,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MKC,MCCORMICK + CO NON VTG SHRS,0.00018103,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FDS,FACTSET RESEARCH SYSTEMS INC,0.00018023,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TKO,TKO GROUP HOLDINGS INC,0.0001757,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,TECH,BIO TECHNE CORP,0.00017469,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DECK,DECKERS OUTDOOR CORP,0.0001737,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,GNRC,GENERAC HOLDINGS INC,0.00017223,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ALB,ALBEMARLE CORP,0.00017103,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ROL,ROLLINS INC,0.00017055,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LII,LENNOX INTERNATIONAL INC,0.00016864,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PNR,PENTAIR PLC,0.00016853,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ALGN,ALIGN TECHNOLOGY INC,0.00016836,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DPZ,DOMINO S PIZZA INC,0.00016828,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LULU,LULULEMON ATHLETICA INC,0.00016744,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UDR,UDR INC,0.0001635,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AES,AES CORP,0.0001628,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BEN,FRANKLIN TEMPLETON INC,0.00015921,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,PODD,INSULET CORP,0.00015831,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,LVS,LAS VEGAS SANDS CORP,0.00015368,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BXP,BXP INC,0.0001533,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,UHS,UNIVERSAL HEALTH SERVICES B,0.00015299,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,CPT,CAMDEN PROPERTY TRUST,0.00015141,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NWSA,NEWS CORP   CLASS A,0.0001467,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FRT,FEDERAL REALTY INVS TRUST,0.00013591,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NCLH,NORWEGIAN CRUISE LINE HOLDIN,0.00012782,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HSIC,HENRY SCHEIN INC,0.00012763,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,APTV,APTIV PLC,0.00012112,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,FOX,FOX CORP   CLASS B,0.00012044,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,AOS,SMITH (A.O.) CORP,0.0001096,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MOS,MOSAIC CO/THE,0.00010666,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ARE,ALEXANDRIA REAL ESTATE EQUIT,0.00010599,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,ERIE,ERIE INDEMNITY COMPANY CL A,0.00010497,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,HRL,HORMEL FOODS CORP,9.748e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,WYNN,WYNN RESORTS LTD,9.063e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,DVA,DAVITA INC,8.993e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,MGM,MGM RESORTS INTERNATIONAL,8.938e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,BF.B,BROWN FORMAN CORP CLASS B,8.123e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,SKYD,SKYDANCE CORP,6.318e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,NWS,NEWS CORP   CLASS B,5.445e-05,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+SPY,2602335D,CONTRA HOLOGIC INCORPO,3e-08,2026-11-12,https://www.ssga.com/us/en/intermediary/library-content/products/fund-data/etfs/us/holdings-daily-us-en-spy.xlsx
+QQQ,AAPL,Apple Inc,0.08446411,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NVDA,NVIDIA Corp,0.06526865,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MSFT,Microsoft Corp,0.06328562,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AMZN,Amazon.com Inc,0.04700953,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AMD,Advanced Micro Devices Inc,0.04298326,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MU,Micron Technology Inc,0.04056818,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TSLA,Tesla Inc,0.03402266,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,META,Meta Platforms Inc,0.03021693,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,GOOGL,Alphabet Inc Class A,0.02856179,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AVGO,Broadcom Inc,0.02824764,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,WMT,Walmart Inc,0.027608,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,SPCX,Space Exploration Technologies Corp,0.02700632,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,GOOG,Alphabet Inc Class C,0.02660051,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,COST,Costco Wholesale Corp,0.02181907,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CSCO,Cisco Systems Inc,0.01808756,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PLTR,Palantir Technologies Inc,0.01775878,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,INTC,Intel Corp,0.01446653,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AMAT,Applied Materials Inc,0.013601,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,LRCX,Lam Research Corp,0.01316058,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TXN,Texas Instruments Inc,0.0128379,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PANW,Palo Alto Networks Inc,0.01183059,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NFLX,Netflix Inc,0.01174322,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AMGN,Amgen Inc,0.01135992,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,LIN,Linde PLC,0.01083529,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CRWD,Crowdstrike Holdings Inc,0.01058845,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,GILD,Gilead Sciences Inc,0.0093688,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,KLAC,KLA Corp,0.0092456,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ADI,Analog Devices Inc,0.00892196,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PEP,PepsiCo Inc,0.00873453,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,QCOM,QUALCOMM Inc,0.00836902,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TMUS,T-Mobile US Inc,0.00825282,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,SHOP,Shopify Inc,0.0079803,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ISRG,Intuitive Surgical Inc,0.00699096,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MRVL,Marvell Technology Inc,0.0064874,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ASML,ASML Holding NV,0.00633233,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,VRTX,Vertex Pharmaceuticals Inc,0.0061869,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,SNDK,Sandisk Corp,0.00617494,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,STX,Seagate Technology Holdings PLC,0.00555809,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ADP,Automatic Data Processing Inc,0.00550307,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,SBUX,Starbucks Corp,0.0055009,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,BKNG,Booking Holdings Inc,0.00544893,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,APP,AppLovin Corp,0.00539177,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,WDC,Western Digital Corp,0.00504759,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MAR,Marriott International Inc/MD,0.00498194,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CEG,Constellation Energy Corp,0.00450109,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CSX,CSX Corp,0.00436606,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,REGN,Regeneron Pharmaceuticals Inc,0.00432734,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,FTNT,Fortinet Inc,0.004275,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ADBE,Adobe Inc,0.0042655,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,INTU,Intuit Inc,0.00418587,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MRNA,Moderna Inc,0.00415471,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CDNS,Cadence Design Systems Inc,0.00412866,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CTAS,Cintas Corp,0.00409525,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MNST,Monster Beverage Corp,0.00400918,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,SNPS,Synopsys Inc,0.00398827,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CMCSA,Comcast Corp,0.00394784,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ARM,ARM Holdings PLC,0.0039188,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MDLZ,Mondelez International Inc,0.00382098,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ROST,Ross Stores Inc,0.00342303,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ABNB,Airbnb Inc,0.00341781,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MELI,MercadoLibre Inc,0.00336311,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ORLY,O'Reilly Automotive Inc,0.00333145,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MPWR,Monolithic Power Systems Inc,0.00319928,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,HON,Honeywell International Inc,0.00318543,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AEP,American Electric Power Co Inc,0.00318062,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,DASH,DoorDash Inc,0.0031754,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NXPI,NXP Semiconductors NV,0.00303164,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,FAST,Fastenal Co,0.00288035,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,DDOG,Datadog Inc,0.00277853,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PCAR,PACCAR Inc,0.00252567,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,LITE,Lumentum Holdings Inc,0.00252025,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,IDXX,IDEXX Laboratories Inc,0.00247379,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ADSK,Autodesk Inc,0.00243951,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,HONA,Honeywell Aerospace Inc,0.00236896,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PDD,PDD Holdings Inc,0.00232922,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,FANG,Diamondback Energy Inc,0.00230978,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,XEL,Xcel Energy Inc,0.0022896,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CCEP,Coca-Cola Europacific Partners PLC,0.0022884,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PYPL,PayPal Holdings Inc,0.00224361,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,BKR,Baker Hughes Co,0.00219186,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,KDP,Keurig Dr Pepper Inc,0.00216836,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ROP,Roper Technologies Inc,0.00212616,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,EXC,Exelon Corp,0.00211901,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,FER,Ferrovial NV,0.00203625,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TTWO,Take-Two Interactive Software Inc,0.00190803,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MSTR,Strategy Inc,0.00187619,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,PAYX,Paychex Inc,0.00186049,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TER,Teradyne Inc,0.00185471,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,TRI,Thomson Reuters Corp,0.00185099,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ALAB,Astera Labs Inc,0.0017776,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,RKLB,Rocket Lab Corp,0.00172409,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,WDAY,Workday Inc,0.00168009,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,GEHC,GE HealthCare Technologies Inc,0.00166296,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ODFL,Old Dominion Freight Line Inc,0.00160054,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,MCHP,Microchip Technology Inc,0.00151575,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,USD,CASH & EQUIVALENTS,0.00139587,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,DXCM,Dexcom Inc,0.00138102,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NBIS,Nebius Group NV,0.00138011,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NQZ6,CME E-Mini NASDAQ 100 Index Future,0.00134134,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CPRT,Copart Inc,0.00133193,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,CRWV,CoreWeave Inc,0.00116846,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,AXON,Axon Enterprise Inc,0.00112189,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,ALNY,Alnylam Pharmaceuticals Inc,0.00094252,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,USDMTM,CASH COLLATERAL,0.00017521,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+QQQ,NQZ6_CONTRA,CONTRA FUTURE FUTURE DEC 18 26,-0.00134134,2026-11-12,https://dng-api.invesco.com/cache/v1/accounts/en_US/shareclasses/QQQ/holdings/fund?idType=ticker&interval=monthly&productType=ETF
+XIU.TO,RY.TO,ROYAL BANK OF CANADA,0.0958,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,TD.TO,TORONTO DOMINION,0.0694,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,SHOP.TO,SHOPIFY SUBORDINATE VOTING CLASS A,0.0605,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BMO,BANK OF MONTREAL,0.0413,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BNS,BANK OF NOVA SCOTIA,0.0385,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CM,CANADIAN IMPERIAL BANK OF COMMERCE,0.0361,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,ENB.TO,ENBRIDGE,0.0359,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CNQ.TO,CANADIAN NATURAL RESOURCES LTD,0.0345,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,AEM,AGNICO EAGLE MINES,0.0308,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BN,BROOKFIELD CLASS A,0.0303,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CP,CANADIAN PACIFIC KANSAS CITY,0.0283,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,SU,SUNCOR ENERGY INC,0.0276,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,MFC.TO,MANULIFE FINANCIAL,0.0249,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CNR.TO,CANADIAN NATIONAL RAILWAY,0.0239,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,TRP,TC ENERGY,0.0229,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,ABX,BARRICK MINING,0.0212,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,WPM,WHEATON PRECIOUS METALS,0.0204,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,NA,NATIONAL BANK OF CANADA,0.0199,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CSU.TO,CONSTELLATION SOFTWARE,0.0177,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,WCN,WASTE CONNECTIONS,0.0166,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,FNV,FRANCO NEVADA,0.0163,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,ATD.TO,ALIMENTATION COUCHE TARD INC,0.0146,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,DOL,DOLLARAMA,0.0142,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,SLF,SUN LIFE FINANCIAL INC,0.0138,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CVE,CENOVUS ENERGY,0.0129,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,FFH,FAIRFAX FINANCIAL HOLDINGS SUB VOT,0.0126,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,IFC,INTACT FINANCIAL CORP,0.0118,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,NTR,NUTRIEN LTD,0.0116,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,POW,POWER CORPORATION OF CANADA,0.0116,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CLS,CELESTICA,0.0109,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CCO,CAMECO,0.0106,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,FTS.TO,FORTIS,0.0103,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,TECK.B,TECK RESOURCES SUBORDINATE VOTING,0.0101,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,PPL,PEMBINA PIPELINE,0.0099,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,L,LOBLAW COMPANIES LTD,0.009,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,QSR,RESTAURANTS BRANDS INTERNATIONAL,0.009,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,K,KINROSS GOLD,0.0084,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BCE,BCE INC,0.0068,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BAM,BROOKFIELD ASSET MANAGEMENT VOTING,0.0066,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,IMO,IMPERIAL OIL LTD,0.0065,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,BIP.UN,BROOKFIELD INFRASTRUCTURE PARTNERS,0.0061,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,WSP,WSP GLOBAL INC,0.0059,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,TOU,TOURMALINE OIL CORP,0.0058,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,FM,FIRST QUANTUM MINERALS,0.0053,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,MG,MAGNA INTERNATIONAL,0.0053,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,EMA,EMERA INC,0.0053,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,GIB.A,CGI INC CLASS A,0.0051,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,MRU,METRO,0.0049,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,TRI,THOMSON REUTERS CORP,0.0047,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,T,TELUS,0.0046,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,H,HYDRO ONE,0.0043,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,RCI.B,ROGERS COMMUNICATIONS NON-VOTING I,0.0043,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,WN,GEORGE WESTON,0.0041,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CCL.B,CCL INDUSTRIES CLASS B,0.0034,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CAE,CAE,0.0031,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CTC.A,CANADIAN TIRE LTD CLASS A,0.0026,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,SAP,SAPUTO,0.0025,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,GIL,GILDAN ACTIVEWEAR,0.0022,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,FSV,FIRSTSERVICE SUBORDINATE VOTING,0.0022,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,OTEX,OPEN TEXT,0.002,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,CAD,CAD CASH,0.002,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,USD,USD CASH,0.0004,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,MLPFT,CASH COLLATERAL CAD MLPFT,0.0001,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,2299955D,CONSTELLATION SOFTWARE INC,0.0,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+XIU.TO,PTZ6,S&P/TSE 60 INDEX DEC 26,0.0,2026-11-12,https://www.blackrock.com/ca/investors/en/products/239832/ishares-sptsx-60-index-etf/1464253357814.ajax?fileType=csv&fileName=XIU_holdings&dataType=fund
+ESGV,PG,Procter & Gamble Co/The,0.00565554231059,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,AAPL,Apple Inc,0.07656637703038,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,AMZN,Amazon.com Inc,0.04212070009954,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,MSFT,Microsoft Corp,0.06299037804365,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,GOOG,Alphabet Inc,0.02665413218787,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,TSLA,Tesla Inc,0.01797034040097,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,NVDA,NVIDIA Corp,0.08607536898784,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,JPM,JPMorgan Chase & Co,0.01590806436322,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml
+ESGV,GOOGL,Alphabet Inc,0.03304805160979,2026-08-31,https://www.sec.gov/Archives/edgar/data/52848/000005284826001209/primary_doc.xml

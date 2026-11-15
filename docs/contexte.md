@@ -74,12 +74,14 @@ Produits par `analyses/exemples_explications.py`. Ils servent de modèle pour le
 
 | Fiche | Formule | Exemple sur nos données |
 | --- | --- | --- |
-| Taux et obligations | variation de prix ≈ −duration × variation du taux | TLT : −14,3 % par point de hausse du 10 ans américain (R² 0,82). AGG : −5,9 % (R² 0,91). Le 10 ans est passé de 1,58 % à 4,98 % |
+| Taux et obligations | variation de prix ≈ −duration × variation du taux | TLT : −14,3 % par point de hausse du 10 ans américain (R² 0,83). AGG : −5,9 % (R² 0,92). Le 10 ans est passé de 1,58 % à 5,10 % |
 | Part du risque | poids × contribution à la variance | 60 % SPY, 30 % AGG, 10 % BTC : volatilité 13,9 %. Le Bitcoin pèse 10 % du capital et 25,7 % du risque |
 | Diversification | variance du portefeuille avec les corrélations | AGG et SPY : 0,22. BTC et SPY : 0,42. BTC et AGG : 0,09 |
 | Perte et rattrapage | gain nécessaire = perte / (1 − perte) | Après −73 % (TSLA), il faut +270 % pour revenir |
 | Thème et concentration | corrélation avec un indice | NVDA et QQQ : 0,78. MSFT et QQQ : 0,71 |
-| Pente de la courbe | taux 10 ans − taux 2 ans | États-Unis : négative 541 jours sur 1 248, minimum −1,08 point le 3 juillet 2023. Canada : négative 549 jours sur 1 245, minimum −1,32 point le 30 juin 2023 |
+| Pente de la courbe | taux 10 ans − taux 2 ans | États-Unis : négative 541 jours sur 1 249, minimum −1,08 point le 3 juillet 2023. Canada : négative 549 jours sur 1 245, minimum −1,32 point le 30 juin 2023 |
+
+Les chiffres de taux viennent de l'instantané `data/base/` (FRED en direct jusqu'au 12 novembre 2026, prix des organisateurs). Les R² sont calculés sur les jours communs aux prix et au taux, comme dans `tools/macro.py`. Si on relance l'ingestion, ces chiffres et les tests qui les vérifient sont à mettre à jour ensemble.
 
 ## Données à ajouter
 
