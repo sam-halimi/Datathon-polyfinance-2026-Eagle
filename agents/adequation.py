@@ -22,6 +22,7 @@ import pandas as pd
 from agents.journal import Journal, cle
 from agents.profil import Profil
 from tools import esg as esg_outils
+from tools import activites as act
 from tools import repartition
 from tools.dividendes import rendement_dividende
 from tools.donnees import univers
@@ -52,8 +53,9 @@ MOTS_CLES_SECTEUR: dict[str, tuple[str, ...]] = {
     "Utilities": ("services publics", "electricite", "utilites"),
     "Consumer Staples": ("consommation de base", "alimentation", "epicerie", "depanneur", "biens de consommation"),
     "Consumer Discretionary": ("automobile", "voiture", "voitures", "vehicule electrique", "vehicules electriques",
-                               "commerce en ligne"),
-    "Communication Services": ("internet", "moteur de recherche", "reseaux sociaux", "publicite en ligne"),
+                               "commerce en ligne", "consommation discretionnaire"),
+    "Communication Services": ("internet", "moteur de recherche", "reseaux sociaux", "publicite en ligne",
+                               "communication", "telecommunications"),
     "Industrials": ("rail", "chemin de fer", "transport", "industrie", "industriel"),
 }
 MOTS_CLES_CRYPTO = ("crypto", "cryptos", "cryptomonnaie", "cryptomonnaies", "cryptoactif", "cryptoactifs",
@@ -70,6 +72,73 @@ MOTS_FAIBLE_VOL = ("faible volatilite", "peu volatil", "peu volatile", "volatili
 MOTS_FNB = ("fnb", "etf", "fnb indiciels", "fnb indiciel", "indiciel", "indiciels", "fonds indiciels", "gestion passive")
 MOTS_ETABLIES = ("societes etablies", "entreprises etablies", "etablies", "etablie", "grandes societes",
                  "valeurs sures", "blue chip", "blue chips")
+MOTS_OR = ("or", "l or", "or physique", "lingot", "lingots", "metaux precieux")
+MOTS_ACTIVITES: dict[str, tuple[str, ...]] = {
+    "tabac": ("tabac", "cigarette", "cigarettes", "tobacco", "cigare", "cigares"),
+    "armement": ("armement", "armements", "arme", "armes", "armes a feu", "militaire", "weapons", "industrie militaire"),
+    "jeux_argent": ("jeux d argent", "jeu d argent", "casino", "casinos", "paris sportifs", "loterie", "loteries",
+                    "gambling", "pari", "paris"),
+    "alcool": ("alcool", "alcools", "boissons alcoolisees", "biere", "bieres", "vin", "vins", "spiritueux"),
+}
+
+# Critères connus, et seulement eux : l'orchestrateur relie un texte libre à l'un d'eux ou répond
+# « non couvert ». Il ne crée jamais de critère.
+CRITERES_PREFERENCES = ("ESG", "dividendes", "Canada", "États-Unis", "FNB indiciels", "sociétés établies",
+                        "faible volatilité", "diversification")
+CRITERES_EXCLUSIONS = ("énergies fossiles", "controverses", "crypto", "or", "tabac", "armement", "jeux d'argent",
+                       "alcool", "finance", "technologie", "énergie", "santé", "services publics", "industrie",
+                       "consommation de base", "consommation discrétionnaire", "communication")
+
+
+def critere_connu(texte: str, genre: str) -> str | None:
+    """Le critère connu qu'un texte désigne par mots-clés, ou None (à relier par l'orchestrateur)."""
+    if genre == "preference":
+        for nom, mots in (("ESG", MOTS_CONTROVERSE), ("dividendes", MOTS_REVENU), ("États-Unis", MOTS_ETATS_UNIS),
+                          ("Canada", MOTS_CANADA), ("faible volatilité", MOTS_FAIBLE_VOL), ("FNB indiciels", MOTS_FNB),
+                          ("sociétés établies", MOTS_ETABLIES), ("diversification", MOTS_DIVERSIFICATION)):
+            if contient(texte, mots):
+                return nom
+        return None
+    if contient(texte, MOTS_FOSSILE):
+        return "énergies fossiles"
+    if contient(texte, MOTS_CONTROVERSE):
+        return "controverses"
+    if contient(texte, MOTS_CLES_CRYPTO):
+        return "crypto"
+    if contient(texte, MOTS_OR):
+        return "or"
+    for a, mots in MOTS_ACTIVITES.items():
+        if contient(texte, mots):
+            return act.LIBELLES[a]
+    for secteur, mots in MOTS_CLES_SECTEUR.items():
+        if contient(texte, mots):
+            return secteur
+    t = univers(etendu=True)
+    if texte.strip().upper() in t.index or _symbole_par_nom(texte):
+        return "symbole"
+    return None
+
+
+def _symbole_par_nom(texte: str) -> str | None:
+    """Symbole dont le nom contient tous les mots du texte (mots entiers : « or » n'est pas « Toronto »)."""
+    mots = normaliser(texte).split()
+    if not mots:
+        return None
+    t = univers(etendu=True)
+    for s in t.index:
+        nom = normaliser(t.at[s, "name"]).split()
+        if all(m in nom for m in mots):
+            return s
+    return None
+
+
+def activite_de(texte: str) -> str | None:
+    for a, mots in MOTS_ACTIVITES.items():
+        if contient(texte, mots):
+            return a
+    return None
+
+
 PART_PREFERENCE = 0.5
 """Une préférence de marché ou de FNB est respectée si au moins la moitié du capital y est (hypothèse de l'équipe)."""
 
@@ -248,8 +317,13 @@ def _entree(critere: str, element: str | None, attente: str, reponse: str, statu
 # --- critères ---------------------------------------------------------------------------------
 
 def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
-            ids_limites: dict[str, str] | None = None) -> list[dict[str, Any]]:
-    """Adéquation d'un portefeuille simulé (`poids`) au profil. Écrit ses chiffres dans `j`."""
+            ids_limites: dict[str, str] | None = None,
+            liens: dict[str, dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    """Adéquation d'un portefeuille simulé (`poids`) au profil. Écrit ses chiffres dans `j`.
+
+    `liens` : pour une préférence ou une exclusion en texte libre, le critère connu auquel
+    l'orchestrateur l'a reliée ({"critere": ..., "raison": ...}), ou critere None avec la raison.
+    """
     table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
@@ -316,8 +390,8 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         f"Sur la fenêtre, la pire baisse aurait représenté {{{montant}}} {profil.devise} pour ce capital.",
         RESPECTE, [montant, pb], "le capital fixe l'échelle ; la perte en dollars est montrée telle quelle"))
 
-    entrees += _preferences(profil, poids, j, ident, m)
-    entrees += _exclusions(profil, poids, j, ident)
+    entrees += _preferences(profil, poids, j, ident, m, liens or {})
+    entrees += _exclusions(profil, poids, j, ident, liens or {})
     entrees += _interets(profil, poids, j, ident, m)
     return entrees
 
@@ -340,14 +414,35 @@ def _verdict_transparence(d: dict, valeur: float) -> str:
     return RESPECTE
 
 
-def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict) -> list[dict[str, Any]]:
+def _cible(texte: str, genre: str, liens: dict[str, dict[str, Any]]) -> tuple[str, str]:
+    """(texte à interpréter, note) : le texte lui-même s'il désigne un critère connu, sinon le critère
+    auquel l'orchestrateur l'a relié."""
+    if critere_connu(texte, genre):
+        return texte, ""
+    lien = liens.get(texte) or {}
+    if lien.get("critere"):
+        return lien["critere"], f" Relié par l'orchestrateur au critère « {lien['critere']} » : {lien.get('raison', '')}"
+    return texte, ""
+
+
+def _raison_non_couvert(texte: str, genre: str, liens: dict[str, dict[str, Any]]) -> str:
+    connus = CRITERES_PREFERENCES if genre == "preference" else CRITERES_EXCLUSIONS
+    lien = liens.get(texte) or {}
+    pourquoi = lien.get("raison") or "l'orchestrateur ne l'a relié à aucun critère"
+    return (f"« {texte} » ne correspond à aucun critère vérifiable de l'assistant ({', '.join(connus)}) : {pourquoi}")
+
+
+def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict,
+                 liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.preferences:
         return [_entree("preferences", None, "Aucune préférence déclarée.",
                         f"Rien à vérifier. Volatilité du portefeuille : {{{m['stats']['volatilite']}}}.",
                         RESPECTE, [m["stats"]["volatilite"]], "aucune")]
     sortie = []
-    for pref in profil.preferences:
+    for texte in profil.preferences:
+        pref, note = _cible(texte, "preference", liens)
+        avant = len(sortie)
         if contient(pref, MOTS_CONTROVERSE):
             v, inc, d = _transparence(j, ident, poids, "controverse")
             sortie.append(_entree(
@@ -422,22 +517,69 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
                                   "bougeaient ensemble.", RESPECTE if gain and len(poids) >= 5 else PARTIEL,
                                   [m["stats"]["volatilite"], sans], "les corrélations réduisent la volatilité, cinq lignes au moins"))
         else:
-            sortie.append(_entree("preferences", pref, f"« {pref} ».", "Cette préférence n'est pas vérifiable.",
-                                  NON_COUVERT, [], "aucune",
-                                  f"aucune donnée de data/ ne permet de vérifier « {pref} »"))
+            sortie.append(_entree("preferences", texte, f"« {texte} ».", "Cette préférence n'est pas vérifiable.",
+                                  NON_COUVERT, [], "aucune", _raison_non_couvert(texte, "preference", liens)))
+        for e in sortie[avant:]:
+            e["element"] = texte
+            if note:
+                e["regle"] += note
     return sortie
 
 
-def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str) -> list[dict[str, Any]]:
+def _activite(j: Journal, ident: str, poids: dict[str, float], terme: str, a: str) -> dict[str, Any]:
+    res = act.exposition_activite(poids, a)
+    base = {k: res[k] for k in ("outil", "parametres", "periode", "unite", "formule", "sources", "details")}
+    v = j.enregistrer(cle("activite", ident, a), {**base, "valeur": res["valeur"]})
+    inc = j.enregistrer(cle("activite", ident, a, "inconnu"), {
+        **base, "valeur": res["details"]["part_inconnue"], "champ": "part_inconnue",
+        "unite": "fraction du capital dont le statut n'est pas connu"})
+    d = res["details"]
+    oui = [s for s, x in d["lignes"].items() if x.get("valeur") == "oui"] + [
+        f"{s} (via {', '.join(x['titres_oui'])})" for s, x in d["lignes"].items() if x.get("titres_oui")]
+    return _entree(
+        "exclusions", terme, f"Écarter « {terme} » ({act.LIBELLES[a]}).",
+        f"Exposition au {act.LIBELLES[a]}, en direct et à travers les FNB : {{{v}}} du capital"
+        + (f" ({', '.join(oui)})" if oui else "") + f" ; statut inconnu : {{{inc}}}.",
+        _verdict_transparence(d, res["valeur"]), [v, inc],
+        f"respecté si aucune exposition, directe ou via un FNB, et aucune part inconnue ({act.FICHIER}, "
+        "data/fnb_composition.csv)")
+
+
+def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
+                liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.exclusions:
         return [_entree("exclusions", None, "Aucune exclusion déclarée.", "Rien à écarter.", RESPECTE, [], "aucune")]
     sortie = []
-    noms = {normaliser(table.at[s, "name"]): s for s in table.index}
-    for terme in profil.exclusions:
-        symbole = terme.strip().upper() if terme.strip().upper() in table.index else next(
-            (s for n, s in noms.items() if normaliser(terme) and normaliser(terme) in n), None)
-        if contient(terme, MOTS_FOSSILE) or contient(terme, MOTS_CONTROVERSE) and not symbole:
+    for texte in profil.exclusions:
+        terme, note = _cible(texte, "exclusion", liens)
+        avant = len(sortie)
+        sortie += _une_exclusion(terme, texte, poids, j, ident, table, liens)
+        for e in sortie[avant:]:
+            e["element"] = texte
+            if note:
+                e["regle"] += note
+    return sortie
+
+
+def _une_exclusion(terme: str, texte: str, poids: dict[str, float], j: Journal, ident: str, table,
+                   liens: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    sortie = []
+    if True:
+        symbole = terme.strip().upper() if terme.strip().upper() in table.index else _symbole_par_nom(terme)
+        a = activite_de(terme)
+        if a and not symbole:
+            sortie.append(_activite(j, ident, poids, terme, a))
+        elif contient(terme, MOTS_OR) and not symbole:
+            gid = j.enregistrer(cle("or", ident), _ref(
+                "agents.adequation.part_classe", {"portefeuille": ident, "classe": "etf_commodity"},
+                sum(w for s, w in poids.items() if table.at[s, "asset_class"] == "etf_commodity"), "fraction du capital",
+                "Σ poids des FNB d'or (asset_class etf_commodity)", [f"{SOURCE_UNIVERS} (asset_class)"],
+                "calcul sur les poids décidés"))
+            sortie.append(_entree("exclusions", terme, f"Écarter « {terme} ».", f"FNB d'or : {{{gid}}} du capital.",
+                                  RESPECTE if j.chiffres[gid]["valeur"] == 0 else PARTIEL, [gid],
+                                  "respecté si aucun FNB d'or (GLD, asset_class etf_commodity)"))
+        elif contient(terme, MOTS_FOSSILE) or contient(terme, MOTS_CONTROVERSE) and not symbole:
             critere = "activite_fossile" if contient(terme, MOTS_FOSSILE) else "controverse"
             v, inc, d = _transparence(j, ident, poids, critere)
             libelle = "activité fossile" if critere == "activite_fossile" else "controverse documentée"
@@ -464,10 +606,9 @@ def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str)
         else:
             secteur = next((s for s, mots in MOTS_CLES_SECTEUR.items() if contient(terme, mots)), None)
             if secteur is None:
-                sortie.append(_entree("exclusions", terme, f"Écarter « {terme} ».", "Exclusion non vérifiable.",
-                                      NON_COUVERT, [], "aucune",
-                                      f"aucune donnée de data/ ne dit quels actifs relèvent de « {terme} »"))
-                continue
+                sortie.append(_entree("exclusions", texte, f"Écarter « {texte} ».", "Exclusion non vérifiable.",
+                                      NON_COUVERT, [], "aucune", _raison_non_couvert(texte, "exclusion", liens)))
+                return sortie
             direct = sum(w for s, w in poids.items() if table.at[s, "sector"] == secteur and table.at[s, "asset_class"] == "equity")
             fnb = [s for s in poids if table.at[s, "asset_class"] == "etf_equity"]
             sid = j.enregistrer(cle("secteur", ident, secteur), _ref(

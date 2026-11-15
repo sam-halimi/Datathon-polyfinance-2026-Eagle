@@ -62,7 +62,8 @@ def test_chaque_entree_est_chiffree_ou_dit_pourquoi_non():
             assert e["chiffres"] and set(REPERE.findall(e["reponse"])) <= set(j.chiffres), e
             assert any(j.chiffres[i]["outil"] in ("stats_portefeuille", "parts_du_risque", "exposition_transparente",
                                                   "exposition_titre", "rendement_dividende",
-                                                  "rendement_dividende_portefeuille")
+                                                  "rendement_dividende_portefeuille", "exposition_activite",
+                                                  "part_par_marche", "part_fnb", "part_societes_etablies")
                        or j.chiffres[i]["outil"].startswith("agents.")
                        for i in e["chiffres"])
     assert a[("centres_interet", "la pêche à la mouche")]["statut"] == NON_COUVERT

@@ -36,6 +36,7 @@ TITRES = {
     "plafond_par_secteur": "Plafond par secteur",
     "plafond_theme": "Thème plafonné",
     "plafond_par_theme": "Plafond de chaque thème",
+    "exclusion_activite": "Activité exclue",
     "theme_actions_et_fnb": "Thème sur actions et FNB",
     "volatilite_max": "Volatilité historique",
     "pire_baisse_max": "Pire baisse historique",
