@@ -37,3 +37,15 @@ def test_plafond_theme_parametre():
     assert contraintes(p, plafond_theme=0.05)["limites"]["plafond_theme"] == 0.05
     with pytest.raises(ValueError):
         contraintes(p, plafond_theme=1.5)
+
+
+def test_connaissance_niveau_de_1_a_5():
+    """Le curseur d'Eagle : la connaissance en découle si elle n'est pas donnée, et 6 est refusé."""
+    sans = {k: v for k, v in BASE.items() if k != "connaissance"}
+    attendu = {1: "débutant", 2: "débutant", 3: "intermédiaire", 4: "avancé", 5: "avancé"}
+    for niveau, connaissance in attendu.items():
+        assert Profil(**sans, connaissance_niveau=niveau).connaissance == connaissance
+    assert Profil(**BASE).connaissance_niveau is None
+    assert Profil(**BASE, connaissance_niveau=2).connaissance == BASE["connaissance"]
+    with pytest.raises(ValidationError):
+        Profil(**sans, connaissance_niveau=6)
