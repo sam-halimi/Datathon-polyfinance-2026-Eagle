@@ -478,11 +478,11 @@ class Session:
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
                 if verdict["accepte"]:
-                    acceptes.setdefault(p.id, {"proposition": p, "ptf": ptf, "verdict": verdict, "essai": essai})
+                    acceptes[p.id] = {"proposition": p, "ptf": ptf, "verdict": verdict, "essai": essai}
                 else:
                     msgs = [x["message"] for x in verdict["controles"] if x["statut"] == "non conforme"]
                     rejets_texte.append(f"Portefeuille {p.id} rejeté : " + " ; ".join(msgs))
-            if len(acceptes) >= 2 or essai == gv.ESSAIS_MAX:
+            if not rejets_texte or essai == gv.ESSAIS_MAX:  # tout rejet retourne au constructeur
                 break
             prompt = ("La gouvernance a rejeté des portefeuilles. Corrige-les et renvoie deux ou trois "
                       "portefeuilles complets (les acceptés peuvent rester identiques) :\n" + "\n".join(rejets_texte))

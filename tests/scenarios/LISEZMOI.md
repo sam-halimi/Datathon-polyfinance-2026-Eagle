@@ -7,9 +7,13 @@ piège, le piège à éviter et les comportements attendus. À relancer après c
 python -m pytest tests/scenarios
 ```
 
-Étape 1 : les tests vérifient que les scénarios sont cohérents (profil valide, limites et symboles
-existants, chiffres attendus retrouvés par `tools/`). Étape 2 : ils lancent le pipeline et appliquent
-chaque `controle` à sa sortie.
+`test_scenarios.py` vérifie que les scénarios sont cohérents (profil valide, limites et symboles
+existants, chiffres attendus retrouvés par `tools/`). `test_bout_en_bout.py` applique chaque `controle`
+à la vraie sortie du pipeline, enregistrée dans `agents/sorties/`. Pour la régénérer (Bedrock requis) :
+
+```bash
+python -m agents.pipeline robert amira mateo
+```
 
 ## Vocabulaire des contrôles
 

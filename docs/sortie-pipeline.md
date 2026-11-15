@@ -38,7 +38,7 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `messages` | {`analyse`, `repartition`, `risque`, `verifications`, `pourquoi`, `limites`, `tout`} | Une phrase de l'assistant par carte |
 | `chiffres` | {id: Reference} | Table des chiffres |
 | `contraintes` | objet | **nouveau** : `limites`, `origine` de chaque limite, `exclusions`, `nature`, `seuils_risque` |
-| `specialistes` | objet | **nouveau** : constats de chaque spécialiste (`marche_et_risque`, puis `macro`, `esg`) |
+| `specialistes` | objet | **nouveau** : `marche_et_risque` et `macro` (constats, string[]), `esg` : {`criteres`, `fiches` (une par action : valeurs, résumé, `source_url`, `source_date`, ou `statut` « information manquante »), `expositions_fnb`, `constats`} |
 | `theme` | objet ou null | **nouveau** : `nom`, `secteur`, `symboles`, `source` |
 | `exclus` | {symbole: raison} | **nouveau** : candidats écartés avant construction |
 | `journal` | objet | **nouveau** : `appels` (chaque appel d'outil : `agent`, `id`, `outil`, `parametres`) et `textes_retires` |
@@ -97,7 +97,7 @@ Champs de `agents/profil.py`, plus `demande` et `prenom`.
 | `statut` | `ok`, `alerte` ou `echec` | Pour l'affichage. `alerte` couvre « à signaler » et « information manquante » |
 | `titre` | string | Court |
 | `detail` | string | Peut contenir des repères `{id}` |
-| `controle` | string | **nouveau** : nom technique (`plafond_par_titre`, `demande_hors_profil`, `diversification`…) |
+| `controle` | string | **nouveau** : nom technique (`plafond_par_titre`, `demande_hors_profil`, `diversification`, `exclusion_esg`, `transparence_fnb`…) |
 | `statut_outil` | string | **nouveau** : `conforme`, `non conforme`, `à signaler` ou `information manquante` |
 | `symboles`, `actifs` | string[] | **nouveau**, facultatif : actifs concernés |
 | `chiffres` | id[] | **nouveau**, facultatif : chiffres cités dans `detail` |
@@ -134,5 +134,9 @@ Mêmes champs que `web/lib/types.ts` : `outil`, `parametres`, `periode` {`debut`
 | `ptf_<id>_<champ>` | `ptf_a_volatilite` | `stats_portefeuille` |
 | `part_<id>_<symbole>` | `part_a_tsla` | `parts_du_risque` |
 | `lim_<limite>`, `seuil_<mesure>` | `lim_max_crypto` | limites du profil |
+| `sens_<symbole>` | `sens_xbb_to` | `sensibilite_taux` (FNB obligataires) |
+| `pente_<pays>` | `pente_canada` | `pente_courbe` |
+| `expo_<fnb>_<critere>` | `expo_esgv_controverse` | `tools.esg.exposition_fnb` : part du FNB dans des titres signalés |
+| `inconnu_<fnb>_<critere>` | `inconnu_esgv_controverse` | même appel, `champ` = `part_inconnue` : part du FNB non jugée |
 
 Dans un symbole, tout caractère autre qu'une lettre ou un chiffre devient `_`, en minuscules : `BTC-USD` donne `btc_usd`, `XBB.TO` donne `xbb_to`.
