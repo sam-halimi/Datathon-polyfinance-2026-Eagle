@@ -87,3 +87,22 @@ Octobre 2025 manque dans l'IPC américain (`CPIAUCSL`) et le chômage américain
 `panel_quotidien.csv` est la table d'entrée : une ligne par jour, toutes les séries alignées, chaque valeur étant la dernière connue ce jour-là.
 
 L'énoncé ne demande pas de prédire les rendements et rappelle que les performances passées ne garantissent rien. Les usages qui tiennent face au jury sont descriptifs : regrouper les périodes en régimes macro (taux en hausse, inflation élevée), regrouper les actifs qui bougent ensemble, mesurer la sensibilité d'un actif à une série. Chaque résultat passe par une fonction de `tools/` avec sa référence d'appel.
+
+## Sources par API (yfinance, SEC EDGAR, Finnhub, CoinGecko)
+
+Ce sont les seules sources retenues, en plus de FRED et de la Banque du Canada. Vérification en une commande : `python -m tools.verifier_cles`, qui fait un appel réel par source.
+
+| Source | Clé | Code | Ce qui est versé dans le dépôt |
+| --- | --- | --- | --- |
+| yfinance | aucune | `tools/cours.py` : cours de `data/univers_etendu.csv` dans `data/base/prix_etendus.csv`, avec les contrôles de `build_dataset.py` | les cours, comme `prices_daily.csv` |
+| SEC EDGAR | `SEC_USER_AGENT` : un nom et une adresse de contact, exigés par la SEC | pas encore branché | rien |
+| Finnhub | `FINNHUB_API_KEY`, ou secret réseau sur `finnhub.io` | `tools/nouvelles.py` : fiche de société et nouvelles des actions américaines | rien : l'offre gratuite est réservée à l'usage personnel |
+| CoinGecko | `COINGECKO_API_KEY` (démo), ou secret réseau sur `api.coingecko.com` | `tools/crypto.py` : prix, capitalisation et volume du jour de BTC et ETH | rien : cache de 24 h au plus, mention « Powered by CoinGecko » |
+
+Fonctionnement commun (`tools/api.py`) :
+
+- Chaque réponse est mise en cache dans `data/cache/<source>/`, un dossier ignoré par git.
+- Les clés passent par un en-tête, jamais par l'adresse.
+- Une clé n'est jamais affichée.
+
+Un nouveau symbole s'ajoute par une ligne dans `data/univers_etendu.csv`, avec le document de l'émetteur (URL, extrait, date), puis `python -m tools.cours`. Un thème s'ajoute dans `data/themes.csv`. Après chaque ajout, relancer `python -m tools.couverture` et lire `data/base/couverture.csv`.

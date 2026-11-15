@@ -32,7 +32,11 @@ from typing import Any, Callable, Literal
 from pydantic import BaseModel, Field
 from strands import tool
 
+from agents import adequation as adq
 from agents import gouvernance as gv
+from agents import langage as lgg
+from agents import limites as lm
+from agents import lignes as lg
 from agents.journal import Journal, cle
 from agents.modele import creer_agent
 from agents.profil import Profil
@@ -88,6 +92,14 @@ class LigneProposee(BaseModel):
     symbole: str
     poids: float = Field(description="Fraction du capital, entre 0 et 1")
     role: Role
+    critere_profil: Literal["horizon", "objectif", "tolerance", "preferences", "exclusions", "centres_interet",
+                            "capital", "demande"] = Field(description="Le critère du profil de cette personne que la ligne sert")
+    pourquoi: str = Field(description=(
+        "Une phrase : pourquoi cette ligne pour cette personne, liée au critère choisi, avec au moins un repère "
+        "{id} de la liste des candidats, sans chiffre écrit"))
+    plutot_que: str = Field(description="Symbole d'un autre candidat comparable, écarté au profit de celui-ci")
+    raison_plutot_que: str = Field(description=(
+        "Une phrase : pourquoi ce symbole plutôt que l'autre candidat, avec au moins un repère {id}, sans chiffre écrit"))
 
 
 class Proposition(BaseModel):
@@ -152,12 +164,16 @@ class Session:
     # -- textes de modèle : vérification mécanique --------------------------
 
     def _demander(self, agent, prompt: str, modele: type[BaseModel],
-                  textes: Callable[[Any], list[str]]) -> BaseModel:
+                  textes: Callable[[Any], list[str]],
+                  autres: Callable[[Any], list[str]] | None = None) -> BaseModel:
+        def erreurs(o):
+            return [e for t in textes(o) for e in self.journal.verifier_texte(t)] + (autres(o) if autres else [])
+
         obj = agent(prompt, structured_output_model=modele).structured_output
-        erreurs = [e for t in textes(obj) for e in self.journal.verifier_texte(t)]
-        if erreurs:
-            obj = agent("Ta réponse ne respecte pas la règle des chiffres. Corrige exactement ces points et "
-                        "renvoie la réponse complète :\n- " + "\n- ".join(erreurs),
+        e = erreurs(obj)
+        if e:
+            obj = agent("Ta réponse ne respecte pas les règles. Corrige exactement ces points et "
+                        "renvoie la réponse complète :\n- " + "\n- ".join(e),
                         structured_output_model=modele).structured_output
         return obj
 
@@ -196,13 +212,18 @@ class Session:
                         "symboles": symboles, "classes": list(d.classes), "part_risquee": d.part_risquee}
 
         # Thème : un centre d'intérêt devient un secteur de la table sourcée, plafonné.
+        # Texte libre : relié à un secteur de la table par agents.adequation.relier_interet.
         self.theme = None
+        self.interets_non_couverts = []
         for interet in self.profil.centres_interet:
-            secteur = SECTEURS.get(_normaliser(interet))
-            if secteur and self.c["limites"]["plafond_theme"] > 0:
-                membres = [s for s in table.index if table.at[s, "sector"] == secteur and table.at[s, "asset_class"] == "equity"]
-                self.theme = {"nom": interet, "secteur": secteur, "symboles": membres, "source": "data/assets_universe.csv"}
-                break
+            lien = adq.relier_interet(interet)
+            if lien["type"] == "non couvert":
+                self.interets_non_couverts.append({"interet": interet, "raison": lien["raison"]})
+            elif lien["type"] in ("secteur", "table_themes") and self.c["limites"]["plafond_theme"] > 0 and not self.theme:
+                membres = [s for s in lien["symboles"] if table.at[s, "asset_class"] in ("equity", "etf_equity")]
+                if membres:
+                    self.theme = {"nom": interet, "secteur": lien.get("secteur"), "symboles": membres,
+                                  "source": lien["source"]}
 
         # Univers des candidats : la table, moins les exclusions et les classes plafonnées à zéro.
         exclus: dict[str, str] = {}
@@ -450,7 +471,11 @@ class Session:
             "l'utilisateur qui dépasse une limite est ramenée sous la limite, jamais acceptée telle quelle. "
             "Vérifie chaque portefeuille avec l'outil essayer avant de le proposer. Les poids sont des "
             "fractions dont la somme vaut exactement 1. Le nom et l'intention ne contiennent aucun chiffre. "
-            + VOCABULAIRE), [essayer])
+            "Chaque ligne se justifie par rapport à CETTE personne : le critère de son profil qu'elle sert "
+            "(horizon, objectif, tolérance, préférences, exclusions, centres d'intérêt, capital, ou sa demande), "
+            "une phrase « pourquoi » avec un repère {id} de la liste des candidats, et le candidat comparable que "
+            "tu as écarté (plutot_que) avec la raison, elle aussi avec un repère. Une ligne mal justifiée fait "
+            "rejeter le portefeuille par la gouvernance. " + REGLE_CHIFFRES + " " + VOCABULAIRE), [essayer])
         demande = []
         if self.theme:
             demande.append("Au moins un portefeuille contient le thème (rôle « theme »), au plafond ou en dessous.")
@@ -474,7 +499,9 @@ class Session:
             rejets_texte = []
             for p in props.portefeuilles[:3]:
                 ptf = self._normaliser_ptf(p)
-                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf), self.exclusions_traitees())
+                justif = lg.controle_justifications(p.lignes, self.profil, self.demande, self.candidats, self.journal)
+                verdict = gv.controler(ptf, self.profil, self.c, self.controles_esg(ptf) + [justif],
+                                       self.exclusions_traitees())
                 self.historique.append({"essai": essai, "portefeuille": p.id, "nom": p.nom,
                                         "poids": ptf["poids"], "accepte": verdict["accepte"], "rejets": verdict["rejets"]})
                 if verdict["accepte"]:
@@ -501,10 +528,11 @@ class Session:
             if l.poids > 0:
                 poids[l.symbole] = poids.get(l.symbole, 0.0) + float(l.poids)
         roles = {l.symbole: l.role for l in p.lignes}
+        justifications = {l.symbole: l for l in p.lignes}
         membres = [s for s, r in roles.items() if r == "theme"]
         theme = {"nom": self.theme["nom"], "symboles": membres} if self.theme and membres else (
             {"nom": "thème", "symboles": membres} if membres else None)
-        return {"poids": poids, "roles": roles, "theme": theme}
+        return {"poids": poids, "roles": roles, "theme": theme, "justifications": justifications}
 
     # -- mesures des portefeuilles retenus --------------------------------------
 
@@ -515,12 +543,24 @@ class Session:
         sortie = []
         for a in self.acceptes:
             p, ptf = a["proposition"], a["ptf"]
-            base = cle("ptf", p.id)
-            st = j.mesurer("stats_portefeuille", base, poids=ptf["poids"], devise=devise)
-            parts = j.mesurer("parts_du_risque", cle("part", p.id), poids=ptf["poids"], devise=devise)
-            lignes = [{"symbole": s, "nom": table.at[s, "name"], "classe": CLASSE_LIBELLE[table.at[s, "asset_class"]],
-                       "classe_code": table.at[s, "asset_class"], "role": ROLE_LIBELLE[ptf["roles"][s]],
-                       "role_code": ptf["roles"][s], "poids": w} for s, w in sorted(ptf["poids"].items(), key=lambda x: -x[1])]
+            m = adq.mesures_portefeuille(j, p.id, ptf["poids"], devise)
+            st, parts = m["stats"], m["parts"]
+            lignes = []
+            for s, w in sorted(ptf["poids"].items(), key=lambda x: -x[1]):
+                jl = ptf["justifications"][s]
+                poids_id = j.enregistrer(cle("poids", p.id, s), adq._ref(
+                    "constructeur", {"portefeuille": p.id, "symbole": s}, w, "fraction du capital",
+                    "poids décidé par le constructeur, vérifié par la gouvernance", ["agents/pipeline.py (constructeur)"],
+                    "décision du constructeur"))
+                lignes.append({
+                    "symbole": s, "nom": table.at[s, "name"], "classe": CLASSE_LIBELLE[table.at[s, "asset_class"]],
+                    "classe_code": table.at[s, "asset_class"], "role": ROLE_LIBELLE[ptf["roles"][s]],
+                    "role_code": ptf["roles"][s], "poids": w, "poids_id": poids_id,
+                    **lg.detail_ligne(s, self.profil.devise, {"volatilite": self.mesures[s]["vol"],
+                                                              "pire_baisse": self.mesures[s]["pb"],
+                                                              "part_du_risque": parts[s]}),
+                    "pourquoi": jl.pourquoi, "critere_profil": jl.critere_profil,
+                    "plutot_que": {"symbole": jl.plutot_que, "raison": jl.raison_plutot_que}})
             sortie.append({
                 "id": p.id, "nom": self._propre(p.nom, f"portefeuille {p.id}.nom") or f"Portefeuille {p.id}",
                 "intention": self._propre(p.intention, f"portefeuille {p.id}.intention") or "",
@@ -530,21 +570,27 @@ class Session:
                 "volatilites": {s: self.mesures[s]["vol"] for s in ptf["poids"]},
                 "theme": ptf["theme"], "essai": a["essai"],
                 "controles": [gv.pour_interface(x) for x in a["verdict"]["controles"]],
+                "adequation": adq.evaluer(self.profil, ptf["poids"], j, p.id, self.ids_limites),
             })
         return sortie
 
     # -- 5. Explication -------------------------------------------------------
 
-    def expliquer(self, portefeuilles: list[dict[str, Any]], controles_demande: list[dict[str, Any]]) -> dict[str, Any]:
+    def expliquer(self, portefeuilles: list[dict[str, Any]], controles_demande: list[dict[str, Any]],
+                  limites_propres: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         j = self.journal
         j.agent_courant = "Explication"
         retenu = portefeuilles[0]
+        niveau = lgg.niveau_effectif(self.profil)
+        obligations = any(l["classe_code"] == "etf_bond" for l in retenu["lignes"])
         agent = creer_agent("Explication", (
-            "Tu es l'agent d'explication. Tu expliques le portefeuille simulé retenu à l'utilisateur, en trois "
-            "niveaux : une phrase, puis le pourquoi chiffré, puis le calcul. Tu distingues faits, hypothèses et "
-            "limites. Tu n'inventes aucune justification : tu t'appuies sur les contrôles et les chiffres fournis. "
+            "Tu es l'agent d'explication. Tu expliques le portefeuille simulé retenu à CETTE personne, en trois "
+            "niveaux : une phrase, puis le pourquoi chiffré, puis le calcul. Tu relies chaque choix à son profil "
+            "(horizon, objectif, tolérance, préférences, exclusions, centres d'intérêt, capital) et tu dis ce que "
+            "le portefeuille ne couvre pas. Tu distingues faits, hypothèses et limites. Tu n'inventes aucune "
+            "justification : tu t'appuies sur les contrôles et les chiffres fournis. "
             "Si la demande de l'utilisateur dépasse son profil, tu le dis clairement et tu n'acquiesces pas. "
-            + PORTEE_SEUILS + " " + REGLE_CHIFFRES + " " + VOCABULAIRE), [])
+            + lgg.consigne(niveau) + " " + PORTEE_SEUILS + " " + REGLE_CHIFFRES + " " + VOCABULAIRE), [])
         lignes = ", ".join(f"{l['symbole']} ({l['role_code']})" for l in retenu["lignes"])
         prompt = (
             f"Profil : {self.profil.model_dump_json()}\nDemande : « {self.demande_texte} »\n"
@@ -556,6 +602,12 @@ class Session:
             f"Constats du spécialiste ESG : {self.esg['constats']}\n"
             f"Fiches ESG des actifs demandés : {[self.esg['fiches'].get(d['symbole']) for d in self.demande['symboles']]}\n"
             f"Contrôles du portefeuille retenu : {[c['detail'] for c in retenu['controles'] if c['statut'] != 'ok']}\n"
+            f"Pourquoi chaque ligne (constructeur) : {[(l['symbole'], l['critere_profil'], l['pourquoi']) for l in retenu['lignes']]}\n"
+            f"Adéquation au profil (vérifiée par le code) : "
+            f"{[(a['critere'], a['element'], a['statut'], a['reponse'], a.get('raison')) for a in retenu['adequation']]}\n"
+            f"Limites propres à ce portefeuille, déjà affichées (ne les répète pas mot pour mot) : "
+            f"{[x['texte'] for x in (limites_propres or [])[:4]]}\n"
+            f"Niveau de connaissance de la personne : {niveau} sur 5.\n"
             f"Chiffres disponibles :\n{j.catalogue()}\n\n"
             "Rédige l'explication. Le sujet répond à la tension principale entre la demande et le profil. "
             "Les messages sont dits par l'assistant à l'ouverture de chaque carte : une phrase courte chacun.")
@@ -564,7 +616,9 @@ class Session:
             return ([o.sujet, o.niveau1, *o.niveau2, *o.faits, *o.hypotheses, *o.limites]
                     + list(o.messages.model_dump().values()) + [f"{{{o.chiffre_central}}}"])
 
-        o = self._demander(agent, prompt, Explication, textes)
+        o = self._demander(agent, prompt, Explication, textes,
+                           lambda o: lgg.problemes(niveau, textes(o)[:-1], obligations))
+        ecarts = lgg.problemes(niveau, textes(o)[:-1], obligations)
         central = o.chiffre_central if o.chiffre_central in j.chiffres else retenu["volatilite"]
         ref = j.chiffres[central]
         n3 = [f"Outil : {ref['outil']}" + (f" ({ref['champ']})" if ref.get("champ") else "")
@@ -592,6 +646,8 @@ class Session:
                 "niveau2": garder(o.niveau2, "explication.niveau2"),
                 "niveau3": {"formule": ref["formule"], "lignes": n3},
                 "chiffre_central": central,
+                "registre": {**lgg.registre(niveau), "ecarts": ecarts},
+                "lexique": lgg.lexique(niveau, [t for t in textes(o)[:-1]]),
             },
             "limites_modele": {"faits": garder(o.faits, "faits"), "hypotheses": garder(o.hypotheses, "hypotheses"),
                                "limites": garder(o.limites, "limites")},
@@ -659,14 +715,20 @@ class Session:
         if not self.acceptes:
             raise RuntimeError(f"Aucun portefeuille accepté après {gv.ESSAIS_MAX} essais : {self.historique}")
         portefeuilles = self.mesurer_portefeuilles()
-        exp = self.expliquer(portefeuilles, controles_demande)
         retenu = portefeuilles[0]
         limites_outil = self.acceptes[0]["verdict"]["limites_outil"]
         calc = self.limites_calculees(portefeuilles, limites_outil)
+        poids_retenu = {l["symbole"]: l["poids"] for l in retenu["lignes"]}
+        self.journal.agent_courant = "Gouvernance"
+        lim_spec = lm.limites_specifiques(self.profil, poids_retenu, retenu["id"], self.journal, self.mesures,
+                                          self.ids_limites, self.interets_non_couverts)
+        hyp_spec = lm.hypotheses_specifiques(self.profil, poids_retenu, retenu["id"], self.journal, self.ids_limites, self.c)
+        exp = self.expliquer(portefeuilles, controles_demande, lim_spec)
         controles = ([gv.pour_interface(x) for x in controles_demande] + retenu["controles"]
                      + [{"statut": "ok", "titre": gv.TITRES["simulation"], "detail": "Aucune transaction réelle.",
                          "controle": "simulation", "statut_outil": "conforme"}])
-        profil = {**self.profil.model_dump(), "demande": self.demande_texte}
+        profil = {**self.profil.model_dump(), "demande": self.demande_texte,
+                  "connaissance_niveau": lgg.niveau_effectif(self.profil)}
         if self.prenom:
             profil["prenom"] = self.prenom
         return {
@@ -680,7 +742,14 @@ class Session:
                             "statut": "accepte", "portefeuille_retenu": retenu["id"],
                             "controles": controles, "historique": self.historique},
             "explication": exp["explication"],
-            "limites": {k: calc[k] + exp["limites_modele"][k] for k in ("faits", "hypotheses", "limites")},
+            "limites": {
+                "faits": calc["faits"] + exp["limites_modele"]["faits"],
+                "hypotheses": [f"{h['texte']} {h['si_elle_tombe']}" for h in hyp_spec] + exp["limites_modele"]["hypotheses"],
+                "limites": [x["texte"] for x in lim_spec] + exp["limites_modele"]["limites"],
+                "methode": calc["hypotheses"] + calc["limites"],
+                "limites_specifiques": lim_spec,
+                "hypotheses_specifiques": hyp_spec,
+            },
             "messages": exp["messages"],
             "chiffres": self.journal.chiffres,
             "contraintes": {"limites": self.c["limites"], "origine": self.c["origine"],
@@ -690,8 +759,9 @@ class Session:
             "theme": self.theme,
             "exclus": self.exclus,
             "journal": {"appels": self.journal.appels, "textes_retires": self.textes_retires},
+            "adequation": retenu["adequation"],
             "meta": {"modele": modele_bedrock() or "défaut de Strands", "duree_secondes": round(time.time() - debut, 1),
-                     "date": date.today().isoformat()},
+                     "date": date.today().isoformat(), "version_format": 2},
         }
 
 

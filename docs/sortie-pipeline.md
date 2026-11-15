@@ -34,7 +34,7 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `portefeuilles` | Portefeuille[] | 2 ou 3, le retenu en premier |
 | `gouvernance` | objet | Voir plus bas |
 | `explication` | objet | Voir plus bas |
-| `limites` | {`faits`, `hypotheses`, `limites`} : string[] | Textes avec repères |
+| `limites` | {`faits`, `hypotheses`, `limites`, `methode`} : string[], plus `limites_specifiques` et `hypotheses_specifiques` | Textes avec repères. **v2** : voir « Limites et hypothèses » |
 | `messages` | {`analyse`, `repartition`, `risque`, `verifications`, `pourquoi`, `limites`, `tout`} | Une phrase de l'assistant par carte |
 | `chiffres` | {id: Reference} | Table des chiffres |
 | `contraintes` | objet | **nouveau** : `limites`, `origine` de chaque limite, `exclusions`, `nature`, `seuils_risque` |
@@ -43,6 +43,7 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `exclus` | {symbole: raison} | **nouveau** : candidats écartés avant construction |
 | `journal` | objet | **nouveau** : `appels` (chaque appel d'outil : `agent`, `id`, `outil`, `parametres`) et `textes_retires` |
 | `meta` | objet | **nouveau** : `modele`, `duree_secondes`, `date` |
+| `adequation` | Adequation[] | **v2** : chaque critère du profil vérifié contre le portefeuille retenu. Voir plus bas |
 
 ## Profil
 
@@ -67,6 +68,7 @@ Champs de `agents/profil.py`, plus `demande` et `prenom`.
 | `theme` | {`nom`, `symboles`} ou null | **nouveau** : lignes du thème plafonné |
 | `essai` | 1 ou 2 | **nouveau** : essai où la gouvernance l'a accepté |
 | `controles` | Controle[] | **nouveau** : contrôles de ce portefeuille |
+| `adequation` | Adequation[] | **v2** : même vérification que `adequation` à la racine, pour ce portefeuille |
 
 ### Ligne
 
@@ -78,6 +80,15 @@ Champs de `agents/profil.py`, plus `demande` et `prenom`.
 | `role` | string | Libellé affiché, par exemple « L'amortisseur » |
 | `role_code` | string | **nouveau** : `coeur`, `amortisseur`, `diversification`, `theme`, `audace` |
 | `poids` | number | Fraction du capital (0,05 = 5 %), à formater avec `formaterPoids` |
+| `poids_id` | id | **v2** : le poids comme chiffre citable (nature « décision du constructeur ») |
+| `secteur` | string | **v2** : colonne `sector` de `data/assets_universe.csv` |
+| `pays` | string | **v2** : pays de cotation, tiré de la colonne `market` (TSX : Canada ; NASDAQ, NYSE, NYSE Arca, Cboe BZX : États-Unis ; cryptoactif : « sans pays, cotation continue ») |
+| `devise` | `CAD` ou `USD` | **v2** : devise de cotation |
+| `pourquoi` | string | **v2** : pourquoi cette ligne pour cette personne, avec repères. Écrit par le constructeur, contrôlé par la gouvernance |
+| `critere_profil` | string | **v2** : critère du profil que la ligne sert (`horizon`, `objectif`, `tolerance`, `preferences`, `exclusions`, `centres_interet`, `capital`, `demande`) |
+| `plutot_que` | {`symbole`, `raison`} | **v2** : le candidat écarté au profit de cette ligne, et pourquoi (texte avec repères) |
+| `chiffres` | {`volatilite`, `pire_baisse`, `part_du_risque`} : id | **v2** : repères des chiffres de la ligne |
+| `sources` | [{`fichier`, `url`, `date`, `objet`}] | **v2** : d'où vient chaque information de la ligne (univers, prix, change, ESG, composition du FNB). `url` et `date` viennent de `data/sources_metadata.csv` ou de la table ESG |
 
 ## Gouvernance
 
@@ -140,3 +151,62 @@ Mêmes champs que `web/lib/types.ts` : `outil`, `parametres`, `periode` {`debut`
 | `inconnu_<fnb>_<critere>` | `inconnu_esgv_controverse` | même appel, `champ` = `part_inconnue` : part du FNB non jugée |
 
 Dans un symbole, tout caractère autre qu'une lettre ou un chiffre devient `_`, en minuscules : `BTC-USD` donne `btc_usd`, `XBB.TO` donne `xbb_to`.
+
+## Format v2 (branche agents-eagle)
+
+`meta.version_format` vaut `2`. Les champs v2 s'ajoutent ; aucun champ v1 ne disparaît ni ne change de type. Une interface v1 continue de marcher.
+
+### Profil
+
+- `connaissance_niveau` (1 à 5) : curseur d'Eagle. Absent, il découle de `connaissance` (débutant 2, intermédiaire 3, avancé 4) et `profil.connaissance_niveau` est rempli dans la sortie.
+- `centres_interet` : texte libre (« les jeux vidéo », « l'IA »). Un centre d'intérêt que l'univers ne couvre pas donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+
+### Adequation
+
+Une entrée par critère du profil : `horizon`, `objectif`, `tolerance`, `capital`, puis une entrée par élément de `preferences`, `exclusions` et `centres_interet` (une entrée « aucun » si la liste est vide). Écrite par le code, pas par un modèle.
+
+| Champ | Type | Contenu |
+| --- | --- | --- |
+| `critere` | string | `horizon`, `objectif`, `tolerance`, `preferences`, `exclusions`, `centres_interet`, `capital` |
+| `element` | string ou null | L'élément de la liste (« ESG », « énergies fossiles »), null pour un critère simple |
+| `attente` | string | Ce que le profil demande, en clair |
+| `reponse` | string | Ce que fait le portefeuille, avec repères `{id}` |
+| `statut` | `respecté`, `partiel` ou `non couvert` | `non couvert` : l'univers ou les données ne permettent pas de répondre |
+| `raison` | string ou null | Obligatoire si `non couvert` : quelle donnée manque |
+| `chiffres` | id[] | Au moins un chiffre, sauf si `non couvert` ou si la liste du profil est vide (« aucune exclusion déclarée ») |
+| `regle` | string | La règle appliquée (hypothèse de l'équipe), par exemple « pire baisse du portefeuille au-dessus du seuil du profil » |
+
+### Limites et hypothèses
+
+| Champ | Type | Contenu |
+| --- | --- | --- |
+| `limites.limites_specifiques` | [{`texte`, `type`, `lignes`, `chiffres`, `importance`}] | Propres au portefeuille retenu, calculées par le code, triées de la plus à la moins importante pour ce profil (`importance` 1 = la première). Chaque `texte` nomme la ou les lignes et porte au moins un repère. `type` : `source_de_risque`, `dollar_americain`, `taux`, `duree_pire_baisse`, `recoupement_fnb`, `theme_non_couvert`, `donnee_manquante` |
+| `limites.hypotheses_specifiques` | [{`texte`, `si_elle_tombe`, `type`, `chiffres`, `lignes`}] | Hypothèses dont dépend ce portefeuille, avec ce qui changerait si elles tombaient, chiffré par `tools/`. `type` : `fenetre`, `correlations`, `conversion_cad`, `plafonds` |
+| `limites.methode` | string[] | Les phrases générales (biais du survivant, passé qui ne promet rien…), qui étaient avant dans `limites.limites` et `limites.hypotheses` |
+| `limites.limites`, `limites.hypotheses` | string[] | Gardés pour l'interface v1 : les `texte` spécifiques, dans l'ordre d'importance, puis ceux du modèle |
+
+### Explication
+
+| Champ | Type | Contenu |
+| --- | --- | --- |
+| `registre` | {`niveau`, `nom`, `description`} | `niveau` = `connaissance_niveau`. `nom` : `courant` (1-2), `usuel` (3), `professionnel` (4-5) |
+| `lexique` | [{`terme`, `definition`}] | Niveaux 1 et 2 : chaque terme technique employé dans l'explication, défini par le code (`agents/langage.py`). Vide aux niveaux 3 à 5 |
+
+Le texte de l'explication change avec le niveau : mots courants aux niveaux 1 et 2, termes usuels au niveau 3, vocabulaire de gestion de portefeuille aux niveaux 4 et 5 (contribution au risque, corrélation, duration, perte maximale, sensibilité aux taux). Vouvoiement à tous les niveaux.
+
+### Identifiants v2
+
+| Forme | Exemple | Outil |
+| --- | --- | --- |
+| `poids_<id>_<symbole>` | `poids_a_tsla` | poids décidé par le constructeur |
+| `ptf_<id>_duree_pire_baisse` | `ptf_a_duree_pire_baisse` | `stats_portefeuille`, durée du sommet au retour (ou à la fin de la fenêtre), en années |
+| `ptf_<id>_recent_<champ>` | `ptf_a_recent_volatilite` | `stats_portefeuille` sur les deux dernières années (hypothèse « fenêtre ») |
+| `ptf_<id>_cotation_<champ>` | `ptf_a_cotation_volatilite` | `stats_portefeuille` sans conversion en CAD (hypothèse « conversion ») |
+| `ptf_<id>_vol_sans_diversification` | | `stats_portefeuille`, volatilité si toutes les corrélations valaient 1 |
+| `expo_usd_<id>` | `expo_usd_a` | part du capital cotée en USD |
+| `sens_ptf_<id>` | | sensibilité aux taux pondérée des lignes obligataires |
+| `titre_<id>_<symbole>` | `titre_a_nvda` | `tools.esg.exposition_titre` : exposition réelle à un titre, en direct et via les FNB |
+| `transp_<id>_<critere>` | `transp_a_activite_fossile` | `tools.esg.exposition_transparente` |
+| `recoupement_<fnb_a>_<fnb_b>` | `recoupement_spy_qqq` | part de l'actif commune à deux FNB (`data/fnb_composition.csv`) |
+| `change_<symbole>` | `change_spy` | `rendement_en_cad`, effet du change seul sur la fenêtre |
+| `montant_pb_<id>` | | pire baisse du portefeuille appliquée au capital fictif, en dollars (`unite` « montant en CAD ») |

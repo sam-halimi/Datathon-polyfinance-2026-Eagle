@@ -45,6 +45,7 @@ TITRES = {
     "exclusion_esg": "Exclusion ESG",
     "transparence_fnb": "Contenu des FNB",
     "simulation": "Simulation seulement",
+    "justification_lignes": "Chaque ligne justifiée",
 }
 STATUT_INTERFACE = {"conforme": "ok", "à signaler": "alerte", "information manquante": "alerte",
                     "non conforme": "echec"}
