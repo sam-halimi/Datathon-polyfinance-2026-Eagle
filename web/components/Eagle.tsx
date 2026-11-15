@@ -5,12 +5,13 @@ import { Aigle } from "./Aigle";
 import { Voix } from "./Voix";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
-import { analyser, ADRESSE_API, verifierActif, type VerdictActif } from "@/lib/api";
+import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
 import { Choix, Curseur } from "./Questions";
 import { chargerUnivers, completerGraphiques } from "@/lib/repartition";
+import { lireEventail } from "@/lib/scenarios";
 import type { Profil, Reference, SortiePipeline } from "@/lib/types";
 
 // Eagle, sur ordinateur : un seul écran en trois colonnes.
@@ -27,6 +28,9 @@ const ETAT: Record<Phase, string> = {
   presentation: "Présentation",
   erreur: "Analyse indisponible",
 };
+
+/** Envoyée quand la personne n'écrit pas de demande : le serveur en exige une. Affichée telle quelle. */
+const DEMANDE_PAR_DEFAUT = "Aucune demande particulière : un portefeuille simulé adapté à mon profil.";
 
 function normaliser(t: string) {
   return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -67,7 +71,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
   const diapos = useMemo<Diapositive[]>(() => (sortie ? construireDiapositives(sortie) : []), [sortie]);
   const chiffres = useMemo<Record<string, Reference>>(() => ({
     ...(sortie?.chiffres ?? {}),
-    ...(sortie?.scenarios?.chiffres ?? {}),
+    ...(sortie ? lireEventail(sortie)?.chiffres ?? {} : {}),
     ...(actif?.verdict?.chiffres ?? {}),
   }), [sortie, actif]);
   const ctx = useMemo(() => ({ chiffres, ouvrir: setFiche }), [chiffres]);
@@ -111,14 +115,15 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setDebutAnalyse(Date.now());
     dire("Je transmets votre profil aux spécialistes. L'analyse prend environ une minute.");
     try {
-      const s = await analyser(profil, demande, prenom);
-      await presenter(s, "L'analyse est prête.");
+      const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom);
+      await presenter(s, "L'analyse de votre profil est prête.");
       return "Analyse terminée.";
     } catch (e) {
-      setErreur(`${(e as Error).message || "Service injoignable"} (${ADRESSE_API}).`);
+      const message = e instanceof ErreurService ? e.message : `L'analyse a échoué : ${(e as Error).message}.`;
+      setErreur(message);
       setPhase("erreur");
-      dire("Le service d'analyse ne répond pas. Aucun résultat ne vous est présenté à sa place.");
-      return "Le service d'analyse est injoignable.";
+      dire(message);
+      return message;
     }
   }, [profil, demande, prenom, dire, presenter]);
 
@@ -159,7 +164,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
       setActif({ symbole, verdict: v });
       dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.` : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
     } catch (e) {
-      setActif({ symbole, erreur: `${(e as Error).message || "Service injoignable"} (${ADRESSE_API}).` });
+      setActif({ symbole, erreur: e instanceof ErreurService ? e.message : (e as Error).message });
       dire(`Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);
     }
   };
@@ -289,7 +294,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
         </label>
         <label className="champ-texte">Votre demande, en vos propres termes
           <textarea value={demande} onChange={(e) => setDemande(e.target.value)} rows={4}
-            placeholder="Par exemple : « Je souhaite placer une part importante sur Tesla. »" />
+            placeholder={`Facultatif. Par exemple : « Je souhaite placer une part importante sur Tesla. » Sans demande, le service reçoit : « ${DEMANDE_PAR_DEFAUT} »`} />
         </label>
         <p className="recap__note">Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. Simulation seulement : aucune transaction réelle.</p>
       </div>
@@ -306,8 +311,15 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     contenu = <DiapositiveAttente debut={debutAnalyse} />;
   } else if (phase === "erreur") {
     titre = "Analyse indisponible";
-    justification = erreur;
-    contenu = <p className="diapo__texte">Le service du pipeline ne répond pas. Aucun résultat n&apos;est présenté à sa place.</p>;
+    justification = "Aucun portefeuille n'est affiché à la place du vôtre.";
+    contenu = (
+      <div className="panne">
+        <p className="diapo__manque">{erreur ? typo(erreur) : null}</p>
+        <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
+        <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
+        <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p>
+      </div>
+    );
     navigation = <button type="button" className="bouton bouton--principal" onClick={() => void lancer()}>Relancer</button>;
   } else if (phase === "presentation" && diapos[diapo]) {
     const d = diapos[diapo];
@@ -336,7 +348,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     ["exclusions", "Exclusions", question > 5 || profil.exclusions?.length ? (profil.exclusions?.join(", ") || "Rien") : undefined],
     ["centres_interet", "Intérêts", question > 6 || profil.centres_interet?.length ? (profil.centres_interet?.join(", ") || "Aucun") : undefined],
     ["capital_fictif", "Capital fictif", profil.capital_fictif ? formaterMontant(profil.capital_fictif, profil.devise ?? "CAD") : undefined],
-    ["demande", "Demande", demande ? `« ${demande} »` : undefined],
+    ["demande", "Demande", demande ? `« ${demande} »` : phase === "accueil" || phase === "recap" ? undefined : "Aucune demande particulière"],
   ];
 
   return (

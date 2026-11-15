@@ -806,3 +806,28 @@ ul, ol { list-style: none; }
 .curseur__graduation--actif button { background: var(--accent); color: var(--accent-encre); }
 .curseur__bornes { display: flex; justify-content: space-between; font-size: 14px; color: var(--encre-douce); }
 .curseur__aide { font-size: 14px; color: var(--encre-douce); }
+
+/* ---------- Attente, démarche, panne ---------- */
+
+.attente { display: grid; gap: 14px; max-width: 720px; }
+.attente__liste { display: grid; gap: 10px; }
+.attente .attente__agent { opacity: 1; font-size: 16.5px; }
+.attente .attente__puce { background: var(--accent-fond); color: var(--accent); font-size: 14px; }
+.attente__temps { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: var(--encre-douce); }
+.attente__indicateur {
+  flex: none; width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--accent-fond); border-top-color: var(--accent);
+  animation: tourne 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .attente__indicateur { animation: none; } }
+.demarche { display: grid; gap: 10px; }
+.demarche__etape { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; }
+.demarche__numero {
+  flex: none; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: var(--ok-fond); color: var(--ok); font-weight: 800; font-size: 14px;
+}
+.demarche__agent { font-weight: 700; }
+.demarche__fait { color: var(--encre-douce); }
+.panne { display: grid; gap: 10px; max-width: 720px; }
+.panne__aide { font-size: 14.5px; color: var(--encre-douce); }
+.panne__commande { margin: 0; background: var(--encre); color: var(--surface); border-radius: 12px; padding: 12px 16px; font-size: 16px; }
+.eventail__avertissement { font-size: 14.5px; font-weight: 600; }

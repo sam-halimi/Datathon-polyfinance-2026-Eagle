@@ -109,22 +109,9 @@ export type SortiePipeline = {
   scenarios?: Scenarios;
 };
 
-/** Format attendu du champ « scenarios » : une médiane et des bandes par
- *  date ou année, en valeur du capital fictif ou en multiple du départ.
- *  Chaque série peut renvoyer à un chiffre de la table (reference). */
-export type Scenarios = {
-  titre?: string;
-  unite?: string;
-  abscisses?: (string | number)[];
-  annees?: (string | number)[];
-  mediane: number[];
-  bandes?: { nom?: string; niveau?: number | string; bas: number[]; haut: number[] }[];
-  reference?: string;
-  chiffres?: Record<string, Reference>;
-  hypotheses?: string[];
-  methode?: string;
-  [cle: string]: unknown;
-};
+/** Champ « scenarios » de POST /analyse et GET /demonstration : référence
+ *  d'appel de tools.scenarios.eventail_scenarios (voir lib/scenarios.ts). */
+export type Scenarios = Omit<Reference, "valeur"> & { valeur: Record<string, number[]> };
 
 export const CARTES = ["profil", "repartition", "risque", "verifications", "pourquoi", "limites"] as const;
 export type Carte = (typeof CARTES)[number];
