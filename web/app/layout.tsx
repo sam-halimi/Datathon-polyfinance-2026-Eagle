@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AlphaForge",
-  description: "Un assistant qui construit un portefeuille simulé et explique chaque chiffre.",
+  title: "Eagle",
+  description: "Eagle, un assistant qui construit un portefeuille simulé et explique chaque chiffre.",
 };
 
 export const viewport: Viewport = {

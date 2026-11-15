@@ -58,7 +58,7 @@ export function Rapport() {
         <p className="rapport__mention rapport__mention--haut">{MENTION}</p>
         <main className="rapport">
           <header className="rapport__titre">
-            <p className="rapport__surtitre">AlphaForge · dossier de portefeuille simulé</p>
+            <p className="rapport__surtitre">Eagle · dossier de portefeuille simulé</p>
             <h1>{profil.prenom}{persona ? `, ${persona.age} ans` : ""}</h1>
             <p>Sortie du pipeline du {formaterDate(sortie.meta?.date ?? null)} (agents/sorties/{sortie.scenario}.json). Portefeuille simulé retenu : {ptf.id}, « {typo(ptf.nom)} ».</p>
             <button type="button" className="bouton bouton--principal rapport__imprimer" onClick={() => window.print()}>Imprimer ou enregistrer en PDF</button>

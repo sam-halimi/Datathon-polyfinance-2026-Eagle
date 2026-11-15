@@ -146,8 +146,44 @@ def cours(symbole, sortie, prix):
     }
 
 
+def tables_en_direct(univers):
+    """Pour les analyses en direct (POST /analyse) : secteur et zone de chaque
+    actif de l'univers, et son cours hebdomadaire ajusté."""
+    tous = {s: [] for s in univers}
+    with PRIX.open(encoding="utf-8") as f:
+        for l in csv.DictReader(f):
+            if l["ticker"] in tous and l["adj_close"]:
+                tous[l["ticker"]].append((l["date"], float(l["adj_close"]), l["currency"]))
+    sortie = {}
+    for s, u in univers.items():
+        semaines = OrderedDict()
+        jours = {}
+        for date, valeur, devise in sorted(tous[s]):
+            a, n, _ = datetime.date.fromisoformat(date).isocalendar()
+            semaines[(a, n)] = (date, valeur)
+            jours[date] = valeur
+        sortie[s] = {
+            "nom": u["name"],
+            "classe": u["asset_class"],
+            "secteur": secteur(u),
+            "zone": zone(u),
+            "devise": tous[s][0][2] if tous[s] else u["currency"],
+            "hebdo": [list(p) for p in semaines.values()],
+            "jours": jours,
+        }
+    return sortie
+
+
 def main():
     univers = {l["ticker"]: l for l in csv.DictReader(UNIVERS.open(encoding="utf-8"))}
+    direct = tables_en_direct(univers)
+    for s, d in direct.items():
+        d.pop("jours")
+    (DESTINATION.parent / "univers.json").write_text(json.dumps({
+        "note": f"Calculé par {OUTIL} depuis data/assets_universe.csv (sector, market) et data/prices_daily.csv "
+                "(adj_close, dernier cours de chaque semaine). " + REGLE_ZONE + ".",
+        "actifs": direct,
+    }, ensure_ascii=False) + "\n", encoding="utf-8")
     voulus = set(CIBLES.values())
     prix = {s: [] for s in voulus}
     devises = {}

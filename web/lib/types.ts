@@ -101,6 +101,26 @@ export type SortiePipeline = {
   exclus: Record<string, string>;
   meta: { modele: string; duree_secondes: number; date: string };
   graphiques: Graphiques;
+  demande_analysee?: { texte: string; resume: string; symboles: { symbole: string; poids: number }[]; classes: string[]; part_risquee: number };
+  /** Éventail de scénarios (réponse de POST /analyse). Absent des sorties de démonstration. */
+  scenarios?: Scenarios;
+};
+
+/** Format attendu du champ « scenarios » : une médiane et des bandes par
+ *  date ou année, en valeur du capital fictif ou en multiple du départ.
+ *  Chaque série peut renvoyer à un chiffre de la table (reference). */
+export type Scenarios = {
+  titre?: string;
+  unite?: string;
+  abscisses?: (string | number)[];
+  annees?: (string | number)[];
+  mediane: number[];
+  bandes?: { nom?: string; niveau?: number | string; bas: number[]; haut: number[] }[];
+  reference?: string;
+  chiffres?: Record<string, Reference>;
+  hypotheses?: string[];
+  methode?: string;
+  [cle: string]: unknown;
 };
 
 export const CARTES = ["profil", "repartition", "risque", "verifications", "pourquoi", "limites"] as const;

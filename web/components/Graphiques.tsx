@@ -58,9 +58,12 @@ export function Cours({ sortie, hauteur = 150 }: { sortie: SortiePipeline; haute
   const X = (d: number) => m.g + ((d - t0) / (t1 - t0)) * (L - m.g - m.d);
   const Y = (x: number) => m.h + (1 - (x - v0) / (v1 - v0)) * (H - m.h - m.b);
   const chemin = c.points.map(([d, x], i) => `${i ? "L" : "M"}${X(Date.parse(d)).toFixed(1)},${Y(x).toFixed(1)}`).join("");
+  // Le point le plus proche de la date (les cours sont hebdomadaires).
   const point = (date: string) => {
-    const k = c.points.findIndex(([d]) => d === date);
-    return k < 0 ? null : { x: X(Date.parse(date)), y: Y(c.points[k][1]) };
+    const cible = Date.parse(date);
+    let k = -1;
+    t.forEach((x, i) => { if (k < 0 || Math.abs(x - cible) < Math.abs(t[k] - cible)) k = i; });
+    return k < 0 ? null : { x: X(t[k]), y: Y(c.points[k][1]) };
   };
   const pic = point(c.date_pic), creux = point(c.date_creux);
   const annees = Array.from(new Set(c.points.map(([d]) => d.slice(0, 4)))).slice(1);
