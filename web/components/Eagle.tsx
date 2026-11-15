@@ -236,7 +236,12 @@ export function Eagle({ onApi, avatar = null, logo = null }: { onApi?: (api: Eag
       if (!QUESTIONS.some((q) => q.champ === champ) && champ !== "prenom" && champ !== "demande") return `Champ inconnu : ${champ}.`;
       if (champ === "prenom") setPrenom(String(valeur));
       else if (champ === "demande") setDemande(String(valeur));
-      else repondre(champ, valeur);
+      else {
+        repondre(champ, valeur);
+        // Curseur ou liste : l'écran avance avec la voix (un choix simple avance déjà seul).
+        const q = QUESTIONS[question];
+        if (q && q.champ === champ && (q.type === "curseur" || q.multiple)) suivante();
+      }
       // La voix apprend ce qui manque encore, dans l'ordre des questions.
       const apres = noter(profil, champ, valeur);
       const manque = QUESTIONS.filter((q) => q.champ !== champ && (apres[q.champ] === undefined || apres[q.champ] === ""));
