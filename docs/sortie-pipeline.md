@@ -200,11 +200,13 @@ Le texte de l'explication change avec le niveau : mots courants aux niveaux 1 et
 | --- | --- | --- |
 | `poids_<id>_<symbole>` | `poids_a_tsla` | poids décidé par le constructeur |
 | `ptf_<id>_duree_pire_baisse` | `ptf_a_duree_pire_baisse` | `stats_portefeuille`, durée du sommet au retour (ou à la fin de la fenêtre), en années |
-| `ptf_<id>_<champ>_recent` | `ptf_a_volatilite_recent` | `stats_portefeuille` sur les deux dernières années (hypothèse « fenêtre ») |
-| `ptf_<id>_<champ>_cotation` | `ptf_a_volatilite_cotation` | `stats_portefeuille` sans conversion en CAD (hypothèse « conversion ») |
+| `ptf_<id>_recent_<champ>` | `ptf_a_recent_volatilite` | `stats_portefeuille` sur les deux dernières années (hypothèse « fenêtre ») |
+| `ptf_<id>_cotation_<champ>` | `ptf_a_cotation_volatilite` | `stats_portefeuille` sans conversion en CAD (hypothèse « conversion ») |
 | `ptf_<id>_vol_sans_diversification` | | `stats_portefeuille`, volatilité si toutes les corrélations valaient 1 |
 | `expo_usd_<id>` | `expo_usd_a` | part du capital cotée en USD |
 | `sens_ptf_<id>` | | sensibilité aux taux pondérée des lignes obligataires |
 | `titre_<id>_<symbole>` | `titre_a_nvda` | `tools.esg.exposition_titre` : exposition réelle à un titre, en direct et via les FNB |
 | `transp_<id>_<critere>` | `transp_a_activite_fossile` | `tools.esg.exposition_transparente` |
+| `recoupement_<fnb_a>_<fnb_b>` | `recoupement_spy_qqq` | part de l'actif commune à deux FNB (`data/fnb_composition.csv`) |
+| `change_<symbole>` | `change_spy` | `rendement_en_cad`, effet du change seul sur la fenêtre |
 | `montant_pb_<id>` | | pire baisse du portefeuille appliquée au capital fictif, en dollars (`unite` « montant en CAD ») |

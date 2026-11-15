@@ -34,6 +34,7 @@ from strands import tool
 
 from agents import adequation as adq
 from agents import gouvernance as gv
+from agents import limites as lm
 from agents import lignes as lg
 from agents.journal import Journal, cle
 from agents.modele import creer_agent
@@ -698,6 +699,11 @@ class Session:
         retenu = portefeuilles[0]
         limites_outil = self.acceptes[0]["verdict"]["limites_outil"]
         calc = self.limites_calculees(portefeuilles, limites_outil)
+        poids_retenu = {l["symbole"]: l["poids"] for l in retenu["lignes"]}
+        self.journal.agent_courant = "Gouvernance"
+        lim_spec = lm.limites_specifiques(self.profil, poids_retenu, retenu["id"], self.journal, self.mesures,
+                                          self.ids_limites, self.interets_non_couverts)
+        hyp_spec = lm.hypotheses_specifiques(self.profil, poids_retenu, retenu["id"], self.journal, self.ids_limites, self.c)
         controles = ([gv.pour_interface(x) for x in controles_demande] + retenu["controles"]
                      + [{"statut": "ok", "titre": gv.TITRES["simulation"], "detail": "Aucune transaction réelle.",
                          "controle": "simulation", "statut_outil": "conforme"}])
@@ -715,7 +721,14 @@ class Session:
                             "statut": "accepte", "portefeuille_retenu": retenu["id"],
                             "controles": controles, "historique": self.historique},
             "explication": exp["explication"],
-            "limites": {k: calc[k] + exp["limites_modele"][k] for k in ("faits", "hypotheses", "limites")},
+            "limites": {
+                "faits": calc["faits"] + exp["limites_modele"]["faits"],
+                "hypotheses": [f"{h['texte']} {h['si_elle_tombe']}" for h in hyp_spec] + exp["limites_modele"]["hypotheses"],
+                "limites": [x["texte"] for x in lim_spec] + exp["limites_modele"]["limites"],
+                "methode": calc["hypotheses"] + calc["limites"],
+                "limites_specifiques": lim_spec,
+                "hypotheses_specifiques": hyp_spec,
+            },
             "messages": exp["messages"],
             "chiffres": self.journal.chiffres,
             "contraintes": {"limites": self.c["limites"], "origine": self.c["origine"],

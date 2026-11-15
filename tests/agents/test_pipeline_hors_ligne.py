@@ -117,3 +117,23 @@ def test_ligne_mal_justifiee_rejetee_puis_corrigee(monkeypatch):
     assert premier and not premier[0]["accepte"] and "justification_lignes" in premier[0]["rejets"]
     assert "GLD" in appels[1] and "critère « centres_interet » absent de ce profil" in appels[1]
     assert s["gouvernance"]["essai"] == 2 and all(h["accepte"] for h in s["gouvernance"]["historique"] if h["essai"] == 2)
+
+
+def test_limites_et_hypotheses_propres_au_portefeuille(sortie):
+    lim = sortie["limites"]
+    spec, hyp = lim["limites_specifiques"], lim["hypotheses_specifiques"]
+    assert [x["importance"] for x in spec] == list(range(1, len(spec) + 1))
+    noms = {l["symbole"] for l in sortie["portefeuilles"][0]["lignes"]}
+    for x in spec:
+        assert REPERE.findall(x["texte"]) and all(i in sortie["chiffres"] for i in REPERE.findall(x["texte"])), x
+        if x["type"] != "theme_non_couvert":
+            assert x["lignes"] and any(s in x["texte"] for s in x["lignes"]) and set(x["lignes"]) & noms, x
+    types = {x["type"] for x in spec}
+    assert {"source_de_risque", "duree_pire_baisse", "taux", "dollar_americain", "donnee_manquante"} <= types
+    # Robert : tolérance faible, horizon court -> la durée de la pire baisse passe avant le dollar américain.
+    rang = {x["type"]: x["importance"] for x in spec}
+    assert rang["duree_pire_baisse"] < rang["dollar_americain"]
+    assert {h["type"] for h in hyp} == {"fenetre", "correlations", "conversion_cad", "plafonds"}
+    for h in hyp:
+        assert REPERE.findall(h["si_elle_tombe"]) or h["type"] == "plafonds", h
+    assert lim["methode"] and lim["limites"][: len(spec)] == [x["texte"] for x in spec]
