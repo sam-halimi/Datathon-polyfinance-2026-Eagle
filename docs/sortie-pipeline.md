@@ -159,7 +159,8 @@ Dans un symbole, tout caractère autre qu'une lettre ou un chiffre devient `_`, 
 ### Profil
 
 - `connaissance_niveau` (1 à 5) : curseur d'Eagle. Absent, il découle de `connaissance` (débutant 2, intermédiaire 3, avancé 4) et `profil.connaissance_niveau` est rempli dans la sortie.
-- `centres_interet` : texte libre (« les jeux vidéo », « l'IA »). Un centre d'intérêt que l'univers ne couvre pas donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- `centres_interet` : texte libre (« les jeux vidéo », « le solaire », « l'IA »). Il se relie d'abord à un thème de `data/themes.csv` par son nom ou un synonyme (jeu vidéo, énergie propre, international, Europe, marchés émergents), sinon à un secteur de l'univers sourcé par mots-clés. Un centre d'intérêt que rien ne couvre donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- Univers : celui de départ (`data/assets_universe.csv`) et l'univers étendu ajouté par API (`data/univers_etendu.csv`, cours dans `data/base/prix_etendus.csv`). Les deux fournissent des candidats au constructeur. `theme.source` vaut `data/themes.csv` quand le thème vient de la table des thèmes ; `lignes[].sources` cite alors la page de l'émetteur et `data/base/prix_etendus.csv`.
 
 ### Adequation
 
@@ -180,7 +181,7 @@ Une entrée par critère du profil : `horizon`, `objectif`, `tolerance`, `capita
 
 | Champ | Type | Contenu |
 | --- | --- | --- |
-| `limites.limites_specifiques` | [{`texte`, `type`, `lignes`, `chiffres`, `importance`}] | Propres au portefeuille retenu, calculées par le code, triées de la plus à la moins importante pour ce profil (`importance` 1 = la première). Chaque `texte` nomme la ou les lignes et porte au moins un repère. `type` : `source_de_risque`, `dollar_americain`, `taux`, `duree_pire_baisse`, `recoupement_fnb`, `theme_non_couvert`, `donnee_manquante` |
+| `limites.limites_specifiques` | [{`texte`, `type`, `lignes`, `chiffres`, `importance`}] | Propres au portefeuille retenu, calculées par le code, triées de la plus à la moins importante pour ce profil (`importance` 1 = la première). Chaque `texte` nomme la ou les lignes et porte au moins un repère. `type` : `source_de_risque`, `qualite_donnees` (avertissement de `data/base/rapport_prix_etendus.txt` sur une ligne retenue : historique court, saut d'un jour), `dollar_americain`, `taux`, `duree_pire_baisse`, `recoupement_fnb`, `theme_non_couvert`, `donnee_manquante` |
 | `limites.hypotheses_specifiques` | [{`texte`, `si_elle_tombe`, `type`, `chiffres`, `lignes`}] | Hypothèses dont dépend ce portefeuille, avec ce qui changerait si elles tombaient, chiffré par `tools/`. `type` : `fenetre`, `correlations`, `conversion_cad`, `plafonds` |
 | `limites.methode` | string[] | Les phrases générales (biais du survivant, passé qui ne promet rien…), qui étaient avant dans `limites.limites` et `limites.hypotheses` |
 | `limites.limites`, `limites.hypotheses` | string[] | Gardés pour l'interface v1 : les `texte` spécifiques, dans l'ordre d'importance, puis ceux du modèle |
@@ -209,4 +210,6 @@ Le texte de l'explication change avec le niveau : mots courants aux niveaux 1 et
 | `transp_<id>_<critere>` | `transp_a_activite_fossile` | `tools.esg.exposition_transparente` |
 | `recoupement_<fnb_a>_<fnb_b>` | `recoupement_spy_qqq` | part de l'actif commune à deux FNB (`data/fnb_composition.csv`) |
 | `change_<symbole>` | `change_spy` | `rendement_en_cad`, effet du change seul sur la fenêtre |
+| `cours_<symbole>` | `cours_nxt` | `tools.cours.couverture_cours` : nombre de jours avec un prix |
+| `saut_<symbole>_<date>` | `saut_gme_2024_05_13` | rendement d'un jour signalé par le contrôle de qualité des cours |
 | `montant_pb_<id>` | | pire baisse du portefeuille appliquée au capital fictif, en dollars (`unite` « montant en CAD ») |

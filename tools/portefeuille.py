@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 from tools.calendriers import aligner_calendriers, convertir_cad
-from tools.donnees import FICHIER_FX, FICHIER_PRIX, charger_prix, classe_actif, devise, verifier_symboles
+from tools.donnees import sources_prix, FICHIER_FX, charger_prix, classe_actif, devise, verifier_symboles
 from tools.mesures import DEVISES, pire_baisse_serie, rendements
 from tools.trace import periode_de, resultat
 
@@ -55,7 +55,7 @@ def _periode(r: pd.DataFrame, alignement: dict[str, Any]) -> dict[str, Any]:
 
 
 def _sources(symboles: list[str], devise_calcul: str) -> list[str]:
-    sources = [FICHIER_PRIX + " (adj_close)"]
+    sources = sources_prix(symboles)
     if devise_calcul == "CAD" and any(devise(s) == "USD" for s in symboles):
         sources.append(FICHIER_FX)
     return sources

@@ -53,7 +53,7 @@ def test_un_element_de_liste_change_son_entree(champ, avant, apres):
 
 def test_chaque_entree_est_chiffree_ou_dit_pourquoi_non():
     a, j = _adequation(preferences=["ESG", "dividendes"], exclusions=["énergies fossiles", "tabac"],
-                       centres_interet=["les jeux vidéo", "la techno"])
+                       centres_interet=["la pêche à la mouche", "la techno"])
     for e in a.values():
         assert j.verifier_texte(e["reponse"]) == [], e
         if e["statut"] == NON_COUVERT:
@@ -63,7 +63,7 @@ def test_chaque_entree_est_chiffree_ou_dit_pourquoi_non():
             assert any(j.chiffres[i]["outil"] in ("stats_portefeuille", "parts_du_risque", "exposition_transparente",
                                                   "exposition_titre") or j.chiffres[i]["outil"].startswith("agents.")
                        for i in e["chiffres"])
-    assert a[("centres_interet", "les jeux vidéo")]["statut"] == NON_COUVERT
+    assert a[("centres_interet", "la pêche à la mouche")]["statut"] == NON_COUVERT
     assert a[("preferences", "dividendes")]["statut"] == NON_COUVERT
 
 
@@ -77,5 +77,28 @@ def test_l_exclusion_voit_a_travers_les_fnb():
 def test_centres_interet_en_texte_libre():
     assert relier_interet("j'adore l'IA et les puces")["secteur"] == "Information Technology"
     assert relier_interet("le bitcoin")["type"] == "crypto"
-    lien = relier_interet("les jeux vidéo")
+    lien = relier_interet("la pêche à la mouche")
     assert lien["type"] == NON_COUVERT and "themes.csv" in lien["raison"] and not lien["symboles"]
+
+
+@pytest.mark.parametrize("interet,theme,symboles", [
+    ("les jeux vidéo", "jeu vidéo", {"ESPO", "TTWO", "RBLX", "GME"}),
+    ("J'aime le gaming et l'esport", "jeu vidéo", {"ESPO"}),
+    ("l'énergie propre", "énergie propre", {"ICLN", "NXT", "FSLR", "BE"}),
+    ("le solaire", "énergie propre", {"ICLN"}),
+    ("les marchés émergents", "marchés émergents", {"VWO"}),
+])
+def test_themes_de_data_themes_csv(interet, theme, symboles):
+    lien = relier_interet(interet)
+    assert lien["type"] == "table_themes" and lien["theme"] == theme and symboles <= set(lien["symboles"])
+    assert lien["source"] == "data/themes.csv" and lien["source_url"].startswith("https://")
+
+
+def test_jeu_video_et_energie_propre_ne_sont_plus_non_couverts():
+    for interet, ligne in (("les jeux vidéo", "ESPO"), ("l'énergie propre", "ICLN")):
+        p = Profil(**{**BASE, "centres_interet": [interet]})
+        j = Journal()
+        ids = gv.enregistrer_limites(j, gv.limites_du_profil(p))
+        e = {(x["critere"], x["element"]): x for x in evaluer(p, {**POIDS, "RY.TO": 0.0, ligne: 0.05} , j, "A", ids)}
+        entree = e[("centres_interet", interet)]
+        assert entree["statut"] == "respecté" and ligne in entree["reponse"], entree

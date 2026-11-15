@@ -124,7 +124,7 @@ def exposition_transparente(poids: dict[str, float], critere: str) -> dict[str, 
     """
     from tools.donnees import univers
 
-    u = univers()
+    u = univers(etendu=True)
     connus = set(fnb_connus())
     direct, via, inconnu, lignes = 0.0, 0.0, 0.0, {}
     for s, w in poids.items():
@@ -179,5 +179,5 @@ def exposition_titre(poids: dict[str, float], symbole: str) -> dict[str, Any]:
 def _est_fnb_actions(symbole: str) -> bool:
     from tools.donnees import univers
 
-    u = univers()
+    u = univers(etendu=True)
     return symbole in u.index and u.at[symbole, "asset_class"] == "etf_equity"

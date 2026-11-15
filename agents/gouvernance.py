@@ -96,7 +96,7 @@ def _controle(nom: str, statut: str, message: str, **autres: Any) -> dict[str, A
 
 
 def diversification(poids: dict[str, float], c: dict[str, Any]) -> dict[str, Any]:
-    table = univers()
+    table = univers(etendu=True)
     lignes = [s for s, w in poids.items() if w > 0]
     risquee = sum(w for s, w in poids.items() if s in table.index and table.at[s, "asset_class"] in CLASSES_RISQUEES)
     lim = c["limites"]
@@ -143,7 +143,7 @@ def demande_hors_profil(demande: dict[str, Any], c: dict[str, Any], journal: Jou
     Le contrôle est « à signaler » quand la demande dépasse une limite : il dit pourquoi,
     avec la pire baisse, la volatilité et le gain de rattrapage calculés par tools/.
     """
-    table = univers()
+    table = univers(etendu=True)
     lim = c["limites"]
     controles = []
     for d in demande.get("symboles", []):

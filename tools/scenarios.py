@@ -84,7 +84,7 @@ def _sans_accents(texte: str) -> str:
 
 def trouver_symbole(demande: str) -> str | None:
     """Retrouve un symbole de la table sourcée à partir d'un symbole ou d'un nom (« tesla », « TSLA »)."""
-    table = univers()
+    table = univers(etendu=True)
     brut = demande.strip()
     for symbole in table.index:
         if brut.upper() in (symbole.upper(), symbole.upper().removesuffix(".TO"), symbole.upper().removesuffix("-USD")):
@@ -109,7 +109,7 @@ def fiche_actif(symbole: str, tolerance: str, horizon_annees: int) -> dict[str, 
         return {"statut": "inconnu", "symbole": symbole,
                 "titre": f"« {symbole} » n'est pas dans la table des actifs",
                 "raisons": ["Seuls les actifs de data/assets_universe.csv sont mesurés. Aucun chiffre n'est donné sans donnée."]}
-    ligne = univers().loc[trouve]
+    ligne = univers(etendu=True).loc[trouve]
     niveau, note = tolerance_normalisee(tolerance)
     seuils = SEUILS_PAR_TOLERANCE[niveau]
     vol, pb = volatilite(trouve), pire_baisse(trouve)

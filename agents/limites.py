@@ -11,20 +11,24 @@ courte, corrélations à 1, calcul sans conversion en CAD, plafonds de l'équipe
 
 from __future__ import annotations
 
+import re
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 from agents.adequation import _ref, mesures_portefeuille, normaliser
 from agents.journal import Journal, cle
+from agents.lignes import statut_fondamentaux
 from agents.profil import Profil
 from tools import esg as esg_outils
 from tools.donnees import univers
 
+RAPPORT_PRIX_ETENDUS = Path(__file__).resolve().parents[1] / "data" / "base" / "rapport_prix_etendus.txt"
 PART_OBLIGATIONS_LOURDE = 0.25
 ANNEES_FENETRE_RECENTE = 2
 
 # Importance de base de chaque type de limite, puis multiplicateurs selon le profil.
-IMPORTANCE = {"source_de_risque": 3.0, "duree_pire_baisse": 2.5, "taux": 2.0, "dollar_americain": 1.5,
+IMPORTANCE = {"qualite_donnees": 2.5, "source_de_risque": 3.0, "duree_pire_baisse": 2.5, "taux": 2.0, "dollar_americain": 1.5,
               "recoupement_fnb": 1.5, "theme_non_couvert": 1.5, "donnee_manquante": 1.0}
 
 
@@ -60,7 +64,7 @@ def _serie_taux(symbole: str) -> str:
 def limites_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: Journal,
                         mesures: dict[str, dict[str, str]], ids_limites: dict[str, str],
                         interets_non_couverts: list[dict[str, str]]) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
     nom = lambda s: f"{table.at[s, 'name']} ({s})"  # noqa: E731
@@ -139,7 +143,10 @@ def limites_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: 
             f"« {x['interet']} » n'a aucune ligne : {x['raison']}. Aucune ligne n'occupe la place du thème"
             + (f" (plafond {{{lid}}})." if lid else "."), [], [lid] if lid else [], profil))
 
-    # 7. Donnée manquante pour une ligne précise.
+    # 7. Avertissements du contrôle de qualité des cours (data/base/rapport_prix_etendus.txt).
+    sortie += _qualite_donnees(profil, poids, ident, j, mesures, m)
+
+    # 8. Donnée manquante pour une ligne précise.
     sortie += _donnees_manquantes(profil, poids, ident, j)
 
     sortie.sort(key=lambda x: -x["_score"])
@@ -149,8 +156,84 @@ def limites_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: 
     return sortie
 
 
+def avertissements_prix(chemin: Path = RAPPORT_PRIX_ETENDUS) -> dict[str, list[dict[str, str]]]:
+    """Avertissements du rapport de qualité des cours étendus, par symbole.
+
+    Lignes « - SYM: history starts AAAA-MM-JJ… » (historique court) et
+    « - SYM: one-day adjusted move of N% on AAAA-MM-JJ… » (saut d'un jour).
+    """
+    if not chemin.is_file():
+        return {}
+    sortie: dict[str, list[dict[str, str]]] = {}
+    for ligne in chemin.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"-\s*([A-Z0-9.\-]+):\s*(.+)", ligne.strip())
+        if not m:
+            continue
+        symbole, message = m.groups()
+        debut = re.search(r"history starts (\d{4}-\d{2}-\d{2})", message)
+        saut = re.search(r"move of .* on (\d{4}-\d{2}-\d{2})", message)
+        if debut:
+            sortie.setdefault(symbole, []).append({"type": "historique_court", "date": debut.group(1), "brut": message})
+        elif saut:
+            sortie.setdefault(symbole, []).append({"type": "saut", "date": saut.group(1), "brut": message})
+    return sortie
+
+
+def _qualite_donnees(profil: Profil, poids: dict[str, float], ident: str, j: Journal,
+                     mesures: dict[str, dict[str, str]], m: dict[str, Any]) -> list[dict[str, Any]]:
+    """Une limite par ligne retenue que le contrôle de qualité des cours a signalée."""
+    from tools.cours import couverture_cours
+    from tools.donnees import charger_prix, fichier_prix
+
+    source = "data/base/rapport_prix_etendus.txt"
+    sortie = []
+    for s, avis in avertissements_prix().items():
+        if poids.get(s, 0) <= 0:
+            continue
+        morceaux, chiffres = [], []
+        court = [a for a in avis if a["type"] == "historique_court"]
+        if court:
+            res = couverture_cours(s)
+            cid = j.enregistrer(cle("cours", s), {**{k: res[k] for k in (
+                "outil", "parametres", "periode", "formule", "sources", "details")},
+                "valeur": float(res["valeur"]), "unite": "nombre de jours avec un prix"})
+            chiffres.append(cid)
+            morceaux.append(f"cours seulement depuis le {court[0]['date']} ({{{cid}}} jours de cours) ; les chiffres du "
+                            f"portefeuille couvrent donc la fenêtre commune, qui commence le {m['periode']['debut']}")
+        sauts = [a for a in avis if a["type"] == "saut"]
+        if sauts:
+            px = charger_prix(s)[s].dropna()
+            r = px.pct_change()
+            ids = []
+            for a in sauts:
+                jour = px.index[px.index >= a["date"]][0]
+                avant = px.index[px.index.get_loc(jour) - 1]
+                ids.append(j.enregistrer(cle("saut", s, a["date"]), {
+                    "outil": "rendements", "parametres": {"symbole": s, "date": a["date"]},
+                    "periode": {"debut": avant.date().isoformat(), "fin": jour.date().isoformat(), "observations": 2},
+                    "valeur": float(r.loc[jour]), "unite": "fraction", "formule": "p_t / p_{t-1} − 1 (adj_close)",
+                    "sources": [f"{fichier_prix(s)} (adj_close)", source],
+                    "details": {"nature": "fait mesuré", "avertissement": a["brut"]}}))
+            chiffres += ids
+            liste = ", ".join(f"{{{i}}} le {a['date']}" for i, a in zip(ids, sauts))
+            morceaux.append(f"saut{'s' if len(sauts) > 1 else ''} d'un jour dans les cours ajustés ({liste}), signalé"
+                            f"{'s' if len(sauts) > 1 else ''} par le contrôle de qualité : fractionnement mal appliqué "
+                            f"ou erreur possible, non corrigé ; sa volatilité ({{{mesures[s]['vol']}}}) et sa pire "
+                            f"baisse en dépendent")
+            chiffres.append(mesures[s]["vol"])
+        pid = cle("poids", ident, s)
+        if pid in j.chiffres:
+            chiffres.insert(0, pid)
+        nom = univers(etendu=True).at[s, "name"]
+        sortie.append(_limite(
+            "qualite_donnees", f"{nom} ({s}"
+            + (f", {{{pid}}} du capital" if pid in j.chiffres else "") + ") : " + " ; ".join(morceaux) + f" ({source}).",
+            [s], chiffres, profil, 1 + poids[s]))
+    return sortie
+
+
 def _recoupements(profil: Profil, poids: dict[str, float], ident: str, j: Journal) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     comp = esg_outils.composition()
     connus = set(esg_outils.fnb_connus())
     fnb = [x for x in poids if table.at[x, "asset_class"] == "etf_equity" and x in connus]
@@ -189,7 +272,7 @@ def _recoupements(profil: Profil, poids: dict[str, float], ident: str, j: Journa
 
 
 def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: Journal) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     sortie = []
     connus = set(esg_outils.fnb_connus())
     comp = esg_outils.composition()
@@ -201,7 +284,7 @@ def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: 
             f = esg_outils.fiche_esg(s)
             if f["statut"] != "connu" or f.get("controverse") == "inconnu":
                 manque.append("controverse inconnue dans data/esg_actions.csv")
-            manque.append("fondamentaux (bénéfices, dette, dividendes) : data/fondamentaux.csv absent")
+            manque.append(f"fondamentaux (bénéfices, dette, dividendes) : {statut_fondamentaux()} (data/fondamentaux.csv)")
         elif classe == "etf_equity":
             if s not in connus:
                 manque.append("composition absente de data/fnb_composition.csv")
@@ -219,7 +302,7 @@ def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: 
 
 def hypotheses_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: Journal,
                            ids_limites: dict[str, str], c: dict[str, Any]) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
     vol, pb = m["stats"]["volatilite"], m["stats"]["pire_baisse"]

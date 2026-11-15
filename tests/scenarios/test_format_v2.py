@@ -43,6 +43,8 @@ def test_lignes_justifiees_et_sourcees(nom):
     for p in s["portefeuilles"]:
         for l in p["lignes"]:
             assert l["pourquoi"] and REPERE.findall(l["pourquoi"]) and l["critere_profil"]
+            for texte in (l["pourquoi"], l["plutot_que"]["raison"]):  # seules des clés de chiffres entre accolades
+                assert len(re.findall(r"\{[^{}]*\}", texte)) == len(REPERE.findall(texte)), texte
             assert l["plutot_que"]["symbole"] != l["symbole"] and l["plutot_que"]["raison"]
             assert l["secteur"] and l["pays"] and l["devise"] and l["sources"]
             assert all(i in s["chiffres"] for i in l["chiffres"].values())

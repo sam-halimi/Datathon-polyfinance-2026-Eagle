@@ -74,7 +74,7 @@ def test_sensibilite_refuse_ce_qui_n_est_pas_un_taux_quotidien():
     with pytest.raises(SerieInconnue):
         sensibilite_taux("TLT", "XYZ")
     with pytest.raises(SymboleInconnu):
-        sensibilite_taux("GME")
+        sensibilite_taux("ZZZZ")
 
 
 # --- pente_courbe --------------------------------------------------------------

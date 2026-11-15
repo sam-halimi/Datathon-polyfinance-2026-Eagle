@@ -22,7 +22,7 @@ import sys
 from datetime import date, timedelta
 
 from tools.bedrock import JETON_FACTICE, VARIABLES_PROXY  # noqa: F401  (réexportés : tests, scripts)
-from tools.bedrock import aide_iam, aide_proxy, jeton_temporaire, mode_bedrock, modele_bedrock
+from tools.bedrock import aide_proxy, jeton_temporaire, mode_bedrock, modele_bedrock
 from tools.env import RACINE, charger_env
 
 CLES = ("FRED_API_KEY", "AWS_BEARER_TOKEN_BEDROCK")
@@ -55,8 +55,8 @@ def verifier_env() -> tuple[bool, str]:
     message = f"clés lues ({origine}) : " + ", ".join(attendues)
     if mode_bedrock() == "proxy":
         message += " ; Bedrock : pas de jeton local, authentification par le proxy réseau"
-    elif mode_bedrock() == "iam":
-        message += " ; Bedrock : identifiants AWS de l'environnement (AWS_ACCESS_KEY_ID…), sans jeton"
+    elif mode_bedrock() == "identifiants":
+        message += " ; Bedrock : identifiants AWS (AWS_ACCESS_KEY_ID), signature SigV4"
     return True, message
 
 
@@ -81,8 +81,7 @@ def verifier_fred() -> tuple[bool, str]:
 def verifier_bedrock() -> tuple[bool, str]:
     mode = mode_bedrock()
     if mode is None:
-        return False, ("ni identifiants AWS (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY), ni AWS_BEARER_TOKEN_BEDROCK, "
-                       "ni proxy réseau pour authentifier")
+        return False, ("AWS_BEARER_TOKEN_BEDROCK absente, pas d'identifiants AWS et aucun proxy réseau pour authentifier à sa place")
     try:
         from strands import Agent, tool
     except ImportError:
@@ -101,8 +100,8 @@ def verifier_bedrock() -> tuple[bool, str]:
     reglages = {"tools": [volatilite_actif]}
     if modele_bedrock():
         reglages["model"] = modele_bedrock()
-    auth = {"iam": "identifiants AWS de l'environnement cloud", "jeton": "jeton AWS_BEARER_TOKEN_BEDROCK"}.get(
-        mode, "proxy réseau, sans jeton local")
+    auth = {"jeton": "jeton AWS_BEARER_TOKEN_BEDROCK", "identifiants": "identifiants AWS, signature SigV4",
+            "proxy": "proxy réseau, sans jeton local"}[mode]
     try:
         with jeton_temporaire():
             reponse = str(Agent(**reglages)(
@@ -112,8 +111,6 @@ def verifier_bedrock() -> tuple[bool, str]:
         message = masquer(f"{type(e).__name__} : {e}")
         if mode == "proxy":
             message += f" ({aide_proxy()})"
-        elif mode == "iam":
-            message += f" ({aide_iam()})"
         return False, message
     print()  # la réponse de l'agent s'affiche au fil de l'eau, on revient à la ligne
     chiffre = f"{attendu:.1f}"
