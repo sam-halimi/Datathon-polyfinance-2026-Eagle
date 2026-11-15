@@ -1,0 +1,27 @@
+# Serveur local d'Eagle
+
+L'interface parle à un petit serveur Python, lancé sur la machine où les clés fonctionnent.
+
+```bash
+python -m agents.serveur        # http://localhost:8000
+```
+
+| Route | Rôle | Clés |
+| --- | --- | --- |
+| `GET /sante` | Vérifie que le serveur répond | Non |
+| `GET /actif?symbole=tesla&tolerance=faible&horizon=3` | Fiche d'un actif face à un profil : statut (`compatible`, `à plafonner`, `hors profil`, `inconnu`), titre, raisons chiffrées, références des chiffres | Non |
+| `POST /scenarios` avec `{"poids": {...}, "horizon_annees": 8, "capital": 50000}` | Éventail de scénarios d'un portefeuille | Non |
+| `GET /demonstration/robert` (ou `amira`, `mateo`) | Sortie enregistrée d'un persona, avec son éventail | Non |
+| `POST /analyse` avec `{"profil": {...}, "demande": "...", "prenom": "..."}` | Pipeline complet sur Bedrock pour n'importe quel profil, environ une minute | Oui |
+
+Le profil suit le schéma de `python -m agents.profil`. La réponse de `/analyse` suit `docs/sortie-pipeline.md`, avec un champ `scenarios` en plus.
+
+## Le champ `scenarios`
+
+Référence complète de `tools.scenarios.eventail_scenarios`. Dans `valeur` : `annees` (0 à l'horizon) et cinq séries de même longueur, `p10`, `p25`, `p50`, `p75`, `p90`, en valeur du portefeuille simulé.
+
+À afficher : la médiane (`p50`) en trait, les bandes `p25` à `p75` et `p10` à `p90` en aplats, le titre « Scénarios, pas une prévision », puis `details.avertissement` et `details.hypotheses` sous le graphique.
+
+## Erreurs
+
+Une requête mal formée renvoie le code 400 avec `{"erreur": "..."}`. Un échec du pipeline renvoie 500 ; le détail s'affiche dans le terminal du serveur.
