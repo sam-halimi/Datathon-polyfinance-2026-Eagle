@@ -8,7 +8,8 @@ from tools import verifier_cles
 
 @pytest.fixture
 def sans_cles(monkeypatch):
-    for nom in verifier_cles.CLES:
+    """Ni clé ni proxy : les tests ne dépendent pas de la machine qui les lance."""
+    for nom in verifier_cles.SECRETS + verifier_cles.VARIABLES_PROXY:
         monkeypatch.delenv(nom, raising=False)
 
 
@@ -34,6 +35,37 @@ def test_env_avec_une_cle_vide(tmp_path, monkeypatch, sans_cles):
     monkeypatch.setenv("FRED_API_KEY", "abc")
     ok, message = verifier_cles.verifier_env()
     assert not ok and "AWS_BEARER_TOKEN_BEDROCK" in message and "abc" not in message
+
+
+def test_env_session_cloud_avec_proxy_sans_jeton(tmp_path, monkeypatch, sans_cles):
+    """Session cloud : le proxy authentifie Bedrock, seule FRED_API_KEY est exigée."""
+    monkeypatch.setattr(verifier_cles, "RACINE", tmp_path)
+    monkeypatch.setenv("FRED_API_KEY", "cle-fred-secrete")
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    ok, message = verifier_cles.verifier_env()
+    assert ok and "proxy" in message and "AWS_BEARER_TOKEN_BEDROCK" not in message and "secrete" not in message
+
+
+def test_env_proxy_ne_dispense_pas_de_fred(tmp_path, monkeypatch, sans_cles):
+    monkeypatch.setattr(verifier_cles, "RACINE", tmp_path)
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    ok, message = verifier_cles.verifier_env()
+    assert not ok and "FRED_API_KEY" in message and "AWS_BEARER_TOKEN_BEDROCK" not in message
+
+
+def test_mode_bedrock(monkeypatch, sans_cles):
+    assert verifier_cles.mode_bedrock() is None
+    monkeypatch.setenv("https_proxy", "http://proxy.local:3128")
+    assert verifier_cles.mode_bedrock() == "proxy"
+    monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "cle-bedrock-secrete")
+    assert verifier_cles.mode_bedrock() == "jeton"  # un vrai jeton passe avant le proxy
+
+
+def test_masquer_retire_les_identifiants_aws(monkeypatch):
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "AKIAIDENTIFIANTSECRET")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "cle-aws-secrete")
+    message = verifier_cles.masquer("signature AKIAIDENTIFIANTSECRET/cle-aws-secrete refusée")
+    assert "SECRET" not in message and "secrete" not in message and message.count("***") == 2
 
 
 def test_masquer_retire_les_cles(monkeypatch):
@@ -75,7 +107,11 @@ def test_bedrock_sans_strands(monkeypatch):
 
 
 def _faux_strands(monkeypatch, reponse=None, erreur=None):
-    """Remplace le paquet strands : l'agent appelle l'outil puis renvoie `reponse`."""
+    """Remplace le paquet strands : l'agent appelle l'outil puis renvoie `reponse`.
+
+    Chaque appel note aussi le jeton vu par boto3 au moment de la requête (`jeton_vu`).
+    """
+    import os
     import types
 
     appels = []
@@ -85,9 +121,10 @@ def _faux_strands(monkeypatch, reponse=None, erreur=None):
             self.tools, self.model = tools, model
 
         def __call__(self, question):
+            jeton_vu = os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
             if erreur:
                 raise erreur
-            appels.append(json.loads(self.tools[0]("NVDA")))
+            appels.append({**json.loads(self.tools[0]("NVDA")), "jeton_vu": jeton_vu})
             return reponse
 
     module = types.SimpleNamespace(Agent=Agent, tool=lambda f: f)
@@ -115,3 +152,40 @@ def test_bedrock_erreur_exacte_sans_fuite(monkeypatch):
     _faux_strands(monkeypatch, erreur=RuntimeError("AccessDenied pour le jeton cle-bedrock-secrete"))
     ok, message = verifier_cles.verifier_bedrock()
     assert not ok and "AccessDenied" in message and "cle-bedrock-secrete" not in message
+
+
+def test_bedrock_sans_jeton_ni_proxy(monkeypatch, sans_cles):
+    ok, message = verifier_cles.verifier_bedrock()
+    assert not ok and "AWS_BEARER_TOKEN_BEDROCK absente" in message and "proxy" in message
+
+
+def test_bedrock_par_le_proxy_avec_jeton_factice_le_temps_de_l_appel(monkeypatch, sans_cles):
+    """Le proxy ajoute le vrai jeton : boto3 reçoit un jeton factice pendant l'appel, retiré ensuite."""
+    import os
+
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    appels = _faux_strands(monkeypatch, reponse="La volatilité annualisée de NVDA est de 51,9 % (2021-2026).")
+    ok, message = verifier_cles.verifier_bedrock()
+    assert ok and "51,9 %" in message and "proxy" in message
+    assert appels[0]["jeton_vu"] == verifier_cles.JETON_FACTICE
+    assert "AWS_BEARER_TOKEN_BEDROCK" not in os.environ
+
+
+def test_bedrock_par_le_proxy_erreur_cite_l_hote_attendu(monkeypatch, sans_cles):
+    import os
+
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    monkeypatch.setenv("AWS_REGION", "us-west-2")
+    _faux_strands(monkeypatch, erreur=RuntimeError("UnrecognizedClientException"))
+    ok, message = verifier_cles.verifier_bedrock()
+    assert not ok and "UnrecognizedClientException" in message
+    assert "bedrock-runtime.us-west-2.amazonaws.com" in message
+    assert "AWS_BEARER_TOKEN_BEDROCK" not in os.environ  # retiré même après une erreur
+
+
+def test_bedrock_un_vrai_jeton_n_est_pas_remplace(monkeypatch, sans_cles):
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy.local:3128")
+    monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "cle-bedrock-secrete")
+    appels = _faux_strands(monkeypatch, reponse="51,9 %")
+    ok, message = verifier_cles.verifier_bedrock()
+    assert ok and appels[0]["jeton_vu"] == "cle-bedrock-secrete" and "secrete" not in message

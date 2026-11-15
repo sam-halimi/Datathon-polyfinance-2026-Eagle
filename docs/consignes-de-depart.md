@@ -42,7 +42,7 @@ python -m tools.ingestion
 
 ### Résultat attendu
 
-`verifier_cles` affiche trois fois `[OK]` : les clés, FRED, puis Bedrock avec un agent qui répond 51,9 % pour la volatilité de NVDA. Si Bedrock affiche ÉCHEC, montrer l'erreur exacte à l'équipe AWS sur place. La région et le modèle se règlent avec `AWS_REGION` et `BEDROCK_MODEL_ID`, au même endroit que les clés.
+`verifier_cles` affiche trois fois `[OK]` : les clés, FRED, puis Bedrock avec un agent qui répond 51,9 % pour la volatilité de NVDA. Si Bedrock affiche ÉCHEC, montrer l'erreur exacte à l'équipe AWS sur place. La région et le modèle se règlent avec `AWS_REGION` et `BEDROCK_MODEL_ID`, au même endroit que les clés. En session cloud, `AWS_BEARER_TOKEN_BEDROCK` peut manquer si un secret réseau est enregistré pour `bedrock-runtime.<région>.amazonaws.com` : le proxy ajoute lui-même le jeton, et `verifier_cles` l'indique (« authentification par le proxy réseau »). Le secret vaut pour un seul hôte, donc pour la région de `AWS_REGION`.
 
 ## Les quatre consignes
 
