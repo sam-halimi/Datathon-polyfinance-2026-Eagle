@@ -144,7 +144,7 @@
   "limites": {
     "faits": [
       "Données du 12 novembre 2021 au 12 novembre 2026.",
-      "Pire baisse des obligations AGG : {baisse_agg}. En 2022, actions et obligations ont baissé ensemble.",
+      "Obligations AGG, pire baisse : {baisse_agg}. En 2022, actions et obligations ont baissé ensemble.",
       "Quand le taux 10 ans américain monte d'un point, AGG varie d'environ {sens_agg}."
     ],
     "hypotheses": [
@@ -152,7 +152,7 @@
       "Calculs en dollars américains, sans conversion en CAD."
     ],
     "limites": [
-      "Composition des FNB pas encore chargée : la techno déjà présente dans SPY n'est pas mesurée.",
+      "Composition des FNB absente : la techno contenue dans SPY n'est pas mesurée.",
       "Univers choisi en 2026 : biais du survivant."
     ]
   },
