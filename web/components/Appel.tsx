@@ -1,20 +1,21 @@
 "use client";
 
 import { useCallback, useMemo, useState, type FormEvent } from "react";
-import { CarteAnalyse, CarteQuestion } from "./Accueil";
+import { CarteAnalyse } from "./Analyse";
 import { CarteLimites, CartePourquoi, CarteProfil, CarteRepartition, CarteRisque, CarteVerifications } from "./Cartes";
 import { FicheReference, FournisseurChiffres } from "./Chiffres";
 import { Assistant, BarreEtapes } from "./Entete";
+import { CartePersonas } from "./Personas";
 import { ToutVoir } from "./ToutVoir";
-import { choisir, estRepondue, QUESTIONS, viderListe } from "@/lib/questions";
-import type { Carte, Profil, SortiePipeline } from "@/lib/types";
+import { chargerSortie, type Persona } from "@/lib/personas";
+import type { Carte, SortiePipeline } from "@/lib/types";
 
 // L'écran d'appel : l'assistant en haut, une carte au milieu, la saisie en bas.
 // Une seule chose à la fois. La voix (étape 3) ne fera que choisir la carte.
 
 type Vue =
   | { type: "depart" }
-  | { type: "question"; i: number }
+  | { type: "persona" }
   | { type: "recap" }
   | { type: "analyse" }
   | { type: "carte"; carte: Carte; depuisTout?: boolean }
@@ -31,7 +32,7 @@ const MOTS: [Carte | "tout", RegExp][] = [
   ["profil", /profil/],
   ["repartition", /repartition|portefeuille|allocation|actifs?\b/],
   ["risque", /risque|volatilite|baisse/],
-  ["verifications", /verif|controle|gouvernance/],
+  ["verifications", /verif|controle|gouvernance|ecarte/],
   ["pourquoi", /pourquoi|explication|expliqu/],
   ["limites", /limite|hypothese|fait/],
 ];
@@ -40,25 +41,20 @@ function normaliser(t: string): string {
   return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
-function memeProfil(a: Profil, b: Profil): boolean {
-  const cle = (p: Profil) =>
-    JSON.stringify([p.horizon_annees, p.objectif, p.tolerance_risque, p.connaissance, [...p.preferences].sort(),
-      [...p.exclusions].sort(), [...p.centres_interet].sort(), p.capital_fictif]);
-  return cle(a) === cle(b);
-}
-
-export function Appel({ sortie }: { sortie: SortiePipeline }) {
+export function Appel() {
   const [vue, setVue] = useState<Vue>({ type: "depart" });
-  // Réponses d'exemple déjà cochées : celles du profil de la sortie.
-  const [profil, setProfil] = useState<Profil>(sortie.profil);
+  const [persona, setPersona] = useState<Persona | null>(null);
+  const [sortie, setSortie] = useState<SortiePipeline | null>(null);
+  const [chargement, setChargement] = useState<string | null>(null);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [ptfId, setPtfId] = useState<string | null>(null);
   const [analyseFinie, setAnalyseFinie] = useState(false);
   const [fiche, setFiche] = useState<string | null>(null);
   const [saisie, setSaisie] = useState("");
   const [reponse, setReponse] = useState<string | null>(null);
 
-  const ctx = useMemo(() => ({ chiffres: sortie.chiffres, ouvrir: setFiche }), [sortie.chiffres]);
+  const ctx = useMemo(() => ({ chiffres: sortie?.chiffres ?? {}, ouvrir: setFiche }), [sortie]);
   const finAnalyse = useCallback(() => setAnalyseFinie(true), []);
-  const ptf = sortie.portefeuilles[0];
 
   const aller = (v: Vue) => {
     setReponse(null);
@@ -67,10 +63,26 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
     setVue(v);
   };
 
+  const choisirPersona = async (p: Persona) => {
+    setChargement(p.id);
+    setErreur(null);
+    try {
+      const s = await chargerSortie(p.id);
+      setPersona(p);
+      setSortie(s);
+      setPtfId(s.gouvernance.portefeuille_retenu);
+      aller({ type: "recap" });
+    } catch {
+      setErreur(`Je n'arrive pas à lire agents/sorties/${p.id}.json.`);
+    } finally {
+      setChargement(null);
+    }
+  };
+
   const suivant = () => {
     switch (vue.type) {
-      case "depart": return aller({ type: "question", i: 0 });
-      case "question": return aller(vue.i + 1 < QUESTIONS.length ? { type: "question", i: vue.i + 1 } : { type: "recap" });
+      case "depart": return aller({ type: "persona" });
+      case "persona": return;
       case "recap": return aller({ type: "analyse" });
       case "analyse": return aller({ type: "carte", carte: PARCOURS[0] });
       case "carte": {
@@ -78,14 +90,14 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
         const k = PARCOURS.indexOf(vue.carte);
         return aller(k + 1 < PARCOURS.length ? { type: "carte", carte: PARCOURS[k + 1] } : { type: "tout" });
       }
-      case "tout": return aller({ type: "depart" });
+      case "tout": return aller({ type: "persona" });
     }
   };
 
   const retour = () => {
     switch (vue.type) {
-      case "question": return aller(vue.i > 0 ? { type: "question", i: vue.i - 1 } : { type: "depart" });
-      case "recap": return aller({ type: "question", i: QUESTIONS.length - 1 });
+      case "persona": return aller({ type: "depart" });
+      case "recap": return aller({ type: "persona" });
       case "analyse": return aller({ type: "recap" });
       case "carte": {
         if (vue.depuisTout) return aller({ type: "tout" });
@@ -111,70 +123,6 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
     aller(cible === "tout" ? { type: "tout" } : { type: "carte", carte: cible, depuisTout: vue.type === "tout" });
   };
 
-  // ---- Contenu de chaque zone selon la vue ----
-  let etape = 0;
-  let message = "";
-  let sousTitre: string | undefined;
-  let carte: React.ReactNode = null;
-  let libelleSuivant = "Suivant";
-  let libelleRetour = "Retour";
-  let suivantActif = true;
-
-  switch (vue.type) {
-    case "question": {
-      const q = QUESTIONS[vue.i];
-      sousTitre = `Question ${vue.i + 1} sur ${QUESTIONS.length}`;
-      message = q.texte;
-      suivantActif = estRepondue(profil, q);
-      carte = (
-        <CarteQuestion q={q} profil={profil}
-          choisir={(v) => setProfil((p) => choisir(p, q, v))} vider={() => setProfil((p) => viderListe(p, q))} />
-      );
-      break;
-    }
-    case "recap":
-      message = "Voici ce que j'ai compris. C'est bien ça ?";
-      carte = <CarteProfil profil={profil} titre="Récapitulatif" />;
-      libelleRetour = "Modifier";
-      libelleSuivant = "C'est bien ça";
-      break;
-    case "analyse":
-      etape = 1;
-      message = sortie.messages.analyse;
-      if (sortie.exemple && !memeProfil(profil, sortie.profil)) {
-        message += ` Pour l'instant, je montre un exemple : le profil de ${sortie.profil.prenom ?? "démonstration"}.`;
-      }
-      carte = <CarteAnalyse sortie={sortie} fini={finAnalyse} />;
-      suivantActif = analyseFinie;
-      libelleSuivant = analyseFinie ? "Voir la proposition" : "Analyse en cours…";
-      break;
-    case "carte": {
-      etape = ETAPE_DE_CARTE[vue.carte];
-      message = vue.carte === "profil" ? "Votre profil, tel que vous l'avez validé." : sortie.messages[vue.carte];
-      const cartes: Record<Carte, React.ReactNode> = {
-        profil: <CarteProfil profil={profil} />,
-        repartition: <CarteRepartition sortie={sortie} ptf={ptf} />,
-        risque: <CarteRisque sortie={sortie} ptf={ptf} />,
-        verifications: <CarteVerifications sortie={sortie} />,
-        pourquoi: <CartePourquoi sortie={sortie} />,
-        limites: <CarteLimites sortie={sortie} />,
-      };
-      carte = cartes[vue.carte];
-      if (vue.depuisTout) {
-        libelleSuivant = "Revenir à tout voir";
-      } else if (vue.carte === PARCOURS[PARCOURS.length - 1]) {
-        libelleSuivant = "Tout voir";
-      }
-      break;
-    }
-    case "tout":
-      etape = 4;
-      message = sortie.messages.tout;
-      carte = <ToutVoir sortie={sortie} profil={profil} ouvrir={(c) => aller({ type: "carte", carte: c, depuisTout: true })} />;
-      libelleSuivant = "Recommencer";
-      break;
-  }
-
   if (vue.type === "depart") {
     return (
       <main className="depart">
@@ -186,7 +134,7 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
           </p>
         </div>
         <ul className="depart__promesses">
-          <li>8 questions courtes</li>
+          <li>Trois profils, trois vraies analyses</li>
           <li>Une chose à la fois</li>
           <li>Simulation seulement : aucune transaction réelle</li>
         </ul>
@@ -194,14 +142,69 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
           <button type="button" className="bouton bouton--principal bouton--appel" onClick={suivant}>
             Démarrer l&apos;appel
           </button>
-          {sortie.exemple ? <p className="depart__note">Démonstration : les réponses d&apos;exemple sont déjà cochées.</p> : null}
         </div>
       </main>
     );
   }
 
-  const q = vue.type === "question" ? QUESTIONS[vue.i] : null;
-  const champLibre = q?.saisie;
+  // ---- Contenu de chaque zone selon la vue ----
+  let etape = 0;
+  let message = "";
+  let sousTitre: string | undefined;
+  let carte: React.ReactNode = null;
+  let libelleSuivant: string | null = "Suivant";
+  let libelleRetour = "Retour";
+  let suivantActif = true;
+  const ptf = sortie ? sortie.portefeuilles.find((p) => p.id === ptfId) ?? sortie.portefeuilles[0] : null;
+
+  if (vue.type === "persona" || !sortie || !persona || !ptf) {
+    message = erreur ?? "Quel profil voulez-vous essayer ?";
+    sousTitre = erreur ? undefined : "Trois personas, chacun avec sa demande";
+    carte = <CartePersonas choisir={choisirPersona} enCours={chargement} />;
+    libelleSuivant = null;
+  } else {
+    switch (vue.type) {
+      case "recap":
+        message = "Voici ce que j'ai compris. C'est bien ça ?";
+        carte = <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} />;
+        libelleRetour = "Changer";
+        libelleSuivant = "C'est bien ça";
+        break;
+      case "analyse":
+        etape = 1;
+        message = analyseFinie ? sortie.messages.analyse : "Les spécialistes analysent le profil…";
+        carte = <CarteAnalyse sortie={sortie} fini={finAnalyse} />;
+        suivantActif = analyseFinie;
+        libelleSuivant = analyseFinie ? "Voir la proposition" : "Analyse en cours…";
+        break;
+      case "carte": {
+        etape = ETAPE_DE_CARTE[vue.carte];
+        message = vue.carte === "profil" ? `Le profil de ${persona.nom}, tel qu'il l'a validé.` : sortie.messages[vue.carte];
+        const cartes: Record<Carte, React.ReactNode> = {
+          profil: <CarteProfil profil={sortie.profil} titre={`Profil de ${persona.nom}`} notes={persona.choix} />,
+          repartition: <CarteRepartition sortie={sortie} ptf={ptf} choisir={setPtfId} />,
+          risque: <CarteRisque sortie={sortie} ptf={ptf} choisir={setPtfId} />,
+          verifications: <CarteVerifications sortie={sortie} />,
+          pourquoi: <CartePourquoi sortie={sortie} />,
+          limites: <CarteLimites sortie={sortie} />,
+        };
+        carte = cartes[vue.carte];
+        if (vue.depuisTout) {
+          libelleSuivant = "Revenir à tout voir";
+        } else if (vue.carte === PARCOURS[PARCOURS.length - 1]) {
+          libelleSuivant = "Tout voir";
+        }
+        break;
+      }
+      case "tout":
+        etape = 4;
+        message = sortie.messages.tout;
+        carte = <ToutVoir sortie={sortie} ptf={ptf} ouvrir={(c) => aller({ type: "carte", carte: c, depuisTout: true })} />;
+        libelleSuivant = "Autre profil";
+        break;
+    }
+  }
+
   const resultat = vue.type === "carte" || vue.type === "tout";
 
   return (
@@ -209,17 +212,10 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
       <main className="appel">
         <BarreEtapes active={etape} />
         <Assistant message={reponse ?? message} sousTitre={reponse ? undefined : sousTitre} />
-        <div className="appel__carte" key={vue.type === "carte" ? vue.carte : vue.type === "question" ? `q${vue.i}` : vue.type}>
+        <div className="appel__carte" key={vue.type === "carte" ? vue.carte : vue.type}>
           {carte}
         </div>
         <footer className="saisie">
-          {champLibre ? (
-            <label className="champ">
-              <span className="sr-only">{champLibre.invite}</span>
-              <input type="text" value={String(profil[champLibre.champ] ?? "")} placeholder={champLibre.invite}
-                onChange={(e) => setProfil((p) => ({ ...p, [champLibre.champ]: e.target.value }))} />
-            </label>
-          ) : null}
           {resultat ? (
             <form className="champ champ--envoi" onSubmit={envoyer}>
               <label className="sr-only" htmlFor="saisie">Écrire à l&apos;assistant</label>
@@ -232,9 +228,11 @@ export function Appel({ sortie }: { sortie: SortiePipeline }) {
             {vue.type === "tout" || (vue.type === "carte" && vue.depuisTout) ? null : (
               <button type="button" className="bouton bouton--secondaire" onClick={retour}>{libelleRetour}</button>
             )}
-            <button type="button" className="bouton bouton--principal" onClick={suivant} disabled={!suivantActif}>
-              {libelleSuivant}
-            </button>
+            {libelleSuivant ? (
+              <button type="button" className="bouton bouton--principal" onClick={suivant} disabled={!suivantActif}>
+                {libelleSuivant}
+              </button>
+            ) : null}
           </div>
         </footer>
         {fiche ? <FicheReference id={fiche} fermer={() => setFiche(null)} /> : null}
