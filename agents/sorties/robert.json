@@ -1,0 +1,5165 @@
+{
+ "version": 1,
+ "exemple": false,
+ "genere_le": "2026-11-15T16:56:04+00:00",
+ "modele": "modèle par défaut de Strands sur Bedrock",
+ "note": "Sortie du pipeline d'agents (agents/pipeline.py). Portefeuilles simulés, aucune transaction réelle.",
+ "profil": {
+  "horizon_annees": 3,
+  "objectif": "préservation du capital",
+  "tolerance_risque": "faible",
+  "connaissance": "avancé",
+  "preferences": [],
+  "exclusions": [],
+  "centres_interet": [],
+  "capital_fictif": 200000.0,
+  "devise": "CAD",
+  "prenom": "Robert",
+  "demande": "Tout le monde parle de Tesla en ce moment. Je veux mettre 40 % de mon capital dessus."
+ },
+ "contraintes": {
+  "limites": {
+   "max_titre_individuel": 0.05,
+   "max_crypto": 0.0,
+   "max_part_risquee": 0.4,
+   "max_un_secteur": 0.15,
+   "min_lignes": 5,
+   "plafond_theme": 0.0
+  },
+  "origine": {
+   "max_titre_individuel": "tolérance au risque « faible »",
+   "max_crypto": "tolérance au risque « faible »",
+   "max_part_risquee": "tolérance au risque « faible »",
+   "max_un_secteur": "tolérance au risque « faible »",
+   "min_lignes": "tolérance au risque « faible »",
+   "plafond_theme": "aucun centre d'intérêt déclaré"
+  },
+  "exclusions": [],
+  "niveau_explication_par_defaut": 3,
+  "nature": "hypothèses de conception de l'équipe, pas des chiffres de marché"
+ },
+ "etapes": [
+  {
+   "agent": "Orchestrateur",
+   "fait": "Lit le profil et fixe les limites (6 limites). Pas de thème. 1 demande(s) chiffrée(s) relevée(s)."
+  },
+  {
+   "agent": "Marché et risque",
+   "fait": "Mesure volatilité, pire baisse et corrélations : 28 chiffres calculés par tools/. 1 constat(s) écarté(s) : chiffre écrit sans référence."
+  },
+  {
+   "agent": "Constructeur",
+   "fait": "Propose 3 portefeuilles simulés en 1 essai(s)."
+  },
+  {
+   "agent": "Gouvernance",
+   "fait": "Vérifie chaque portefeuille contre le profil : 3 accepté(s)."
+  },
+  {
+   "agent": "Explication",
+   "fait": "Explique à trois niveaux ; chaque chiffre cité renvoie à son calcul."
+  }
+ ],
+ "orchestration": {
+  "resume_demande": "Allouer une part importante du capital sur Tesla (TSLA).",
+  "cibles": [
+   {
+    "symboles": [
+     "TSLA"
+    ],
+    "poids_demande": 0.4,
+    "extrait": "Je veux mettre … % de mon capital dessus."
+   }
+  ],
+  "theme": null,
+  "notes": []
+ },
+ "constats": [
+  {
+   "texte": "TSLA affiche une volatilité annualisée de {vol_tsla}, nettement au-dessus de tous les autres actifs mesurés. Sa pire baisse historique est de {baisse_tsla}, ce qui exigerait un gain de rattrapage de {rattrapage_tsla} pour revenir au niveau de départ. Ces mesures sont incompatibles, comme fait brut, avec un objectif de préservation du capital sur un horizon court.",
+   "symboles": [
+    "TSLA"
+   ]
+  },
+  {
+   "texte": "La corrélation de TSLA avec SPY est de {corr_tsla_spy} : modérée à forte. En période de baisse large des marchés, TSLA n'a pas absorbé les chocs de façon indépendante sur la fenêtre mesurée.",
+   "symboles": [
+    "TSLA",
+    "SPY"
+   ]
+  },
+  {
+   "texte": "La corrélation de TSLA avec XIU.TO est de {corr_tsla_xiu_to} : modérée. La diversification partielle ne réduit pas la volatilité propre de TSLA, mesurée à {vol_tsla}.",
+   "symboles": [
+    "TSLA",
+    "XIU.TO"
+   ]
+  },
+  {
+   "texte": "La corrélation de TSLA avec GLD est de {corr_tsla_gld} : quasi nulle. GLD apporte une décorrélation mesurée par rapport à TSLA, mais ne compense pas un drawdown de {baisse_tsla} sur une position lourde.",
+   "symboles": [
+    "TSLA",
+    "GLD"
+   ]
+  },
+  {
+   "texte": "AMZN, aussi classé Consumer Discretionary, affiche une pire baisse de {baisse_amzn} et une volatilité de {vol_amzn}. Toute pondération combinée de TSLA et AMZN doit rester dans la limite hypothétique max_un_secteur.",
+   "symboles": [
+    "AMZN"
+   ]
+  },
+  {
+   "texte": "ZST.TO présente la volatilité la plus basse parmi les actifs mesurés : {vol_zst_to}, avec une pire baisse de {baisse_zst_to} et un gain de rattrapage de {rattrapage_zst_to}. C'est l'actif le plus stable de la sélection sur la fenêtre étudiée.",
+   "symboles": [
+    "ZST.TO"
+   ]
+  },
+  {
+   "texte": "XBB.TO a enregistré une pire baisse de {baisse_xbb_to} sur la fenêtre, avec une volatilité de {vol_xbb_to}. Les données confirment que les obligations agrégées canadiennes ont aussi baissé sur cette période ; aucune protection automatique ne peut être présumée.",
+   "symboles": [
+    "XBB.TO"
+   ]
+  },
+  {
+   "texte": "XIU.TO affiche une pire baisse de {baisse_xiu_to} et une volatilité de {vol_xiu_to}. SPY affiche une pire baisse de {baisse_spy} et une volatilité de {vol_spy}. Ces deux FNB larges sont moins volatils que TSLA, mais restent dans la part risquée au sens du profil.",
+   "symboles": [
+    "XIU.TO",
+    "SPY"
+   ]
+  },
+  {
+   "texte": "GLD affiche une volatilité de {vol_gld} et une pire baisse de {baisse_gld}, avec un gain de rattrapage de {rattrapage_gld}. Sa corrélation avec SPY est de {corr_spy_gld} et avec XIU.TO de {corr_xiu_to_gld} : il apporte une diversification mesurée par rapport aux actions.",
+   "symboles": [
+    "GLD"
+   ]
+  }
+ ],
+ "portefeuilles": [
+  {
+   "id": "A",
+   "nom": "Défensif avec exposition plafonnée à Tesla",
+   "intention": "Respecter le profil de préservation en maintenant TSLA au strict plafond autorisé, entouré d'une large base obligataire et d'or.",
+   "lignes": [
+    {
+     "symbole": "ZST.TO",
+     "nom": "BMO Ultra Short-Term Bond ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada ultra short-term)",
+     "role": "Ancre stabilisatrice ultra-court terme",
+     "theme": false,
+     "poids": 0.4,
+     "poids_cle": "poids_zst_to_a"
+    },
+    {
+     "symbole": "XBB.TO",
+     "nom": "iShares Core Canadian Universe Bond Index ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada aggregate)",
+     "role": "Coussin obligataire agrégat Canada",
+     "theme": false,
+     "poids": 0.25,
+     "poids_cle": "poids_xbb_to_a"
+    },
+    {
+     "symbole": "GLD",
+     "nom": "SPDR Gold Shares",
+     "classe": "FNB d'or",
+     "secteur": "Gold",
+     "role": "Diversificateur décorrélé",
+     "theme": false,
+     "poids": 0.1,
+     "poids_cle": "poids_gld_a"
+    },
+    {
+     "symbole": "XIU.TO",
+     "nom": "iShares S&P/TSX 60 Index ETF",
+     "classe": "FNB d'actions",
+     "secteur": "Broad market (Canada)",
+     "role": "Exposition actions canadiennes larges",
+     "theme": false,
+     "poids": 0.1,
+     "poids_cle": "poids_xiu_to_a"
+    },
+    {
+     "symbole": "RY.TO",
+     "nom": "Royal Bank of Canada",
+     "classe": "Action",
+     "secteur": "Financials",
+     "role": "Action défensive Financières Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_ry_to_a"
+    },
+    {
+     "symbole": "FTS.TO",
+     "nom": "Fortis",
+     "classe": "Action",
+     "secteur": "Utilities",
+     "role": "Action défensive Utilities Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_fts_to_a"
+    },
+    {
+     "symbole": "TSLA",
+     "nom": "Tesla",
+     "classe": "Action",
+     "secteur": "Consumer Discretionary",
+     "role": "Action",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_tsla_a"
+    }
+   ],
+   "volatilite": "vol_ptf_a",
+   "pire_baisse": "baisse_ptf_a",
+   "parts_du_risque": {
+    "ZST.TO": "part_zst_to_a",
+    "XBB.TO": "part_xbb_to_a",
+    "GLD": "part_gld_a",
+    "XIU.TO": "part_xiu_to_a",
+    "RY.TO": "part_ry_to_a",
+    "FTS.TO": "part_fts_to_a",
+    "TSLA": "part_tsla_a"
+   },
+   "pires_baisses": {
+    "ZST.TO": "baisse_zst_to",
+    "XBB.TO": "baisse_xbb_to",
+    "GLD": "baisse_gld",
+    "XIU.TO": "baisse_xiu_to",
+    "RY.TO": "baisse_ry_to",
+    "FTS.TO": "baisse_fts_to",
+    "TSLA": "baisse_tsla"
+   },
+   "controles": [
+    {
+     "controle": "somme_des_poids",
+     "statut": "ok",
+     "titre": "Poids complets",
+     "detail": "Les poids totalisent 100,0 % du capital fictif.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "poids_positifs",
+     "statut": "ok",
+     "titre": "Ni vente à découvert ni levier",
+     "detail": "Aucune vente à découvert ni effet de levier.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "univers_source",
+     "statut": "ok",
+     "titre": "Actifs de la table sourcée",
+     "detail": "Tous les symboles viennent de assets_universe.csv.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "instruments_autorises",
+     "statut": "ok",
+     "titre": "Ni options ni dérivés",
+     "detail": "Actions, FNB, or et cryptos seulement : ni options ni dérivés.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_titre",
+     "statut": "ok",
+     "titre": "Plafond par titre",
+     "detail": "Aucun titre au-dessus de 5,0 % du capital.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_crypto",
+     "statut": "ok",
+     "titre": "Plafond crypto",
+     "detail": "Cryptos : 0,0 % du capital, plafond 0,0 % (horizon de moins de 5 ans).",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_secteur",
+     "statut": "ok",
+     "titre": "Plafond par secteur",
+     "detail": "Aucun secteur au-dessus de 15,0 % en actions détenues en direct.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "volatilite_max",
+     "statut": "ok",
+     "titre": "Volatilité historique",
+     "detail": "Volatilité historique 5,5 %, plafond 8,0 % pour une tolérance « faible ».",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "pire_baisse_max",
+     "statut": "ok",
+     "titre": "Pire baisse historique",
+     "detail": "Pire baisse historique -7,8 % (du 2022-01-04 au 2022-10-20), plancher -15,0 %.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "nombre_de_lignes",
+     "statut": "ok",
+     "titre": "Diversification",
+     "detail": "7 lignes, au moins 5 exigées.",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    },
+    {
+     "controle": "part_risquee",
+     "statut": "ok",
+     "titre": "Part risquée",
+     "detail": "Actions, FNB d'actions et crypto : 25,0 % du capital, plafond 40,0 % (tolérance au risque « faible »).",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    }
+   ]
+  },
+  {
+   "id": "B",
+   "nom": "Défensif sans Tesla, diversification internationale",
+   "intention": "Préserver le capital sans aucune exposition à Tesla, en répartissant la part risquée sur des titres moins volatils et des secteurs variés.",
+   "lignes": [
+    {
+     "symbole": "ZST.TO",
+     "nom": "BMO Ultra Short-Term Bond ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada ultra short-term)",
+     "role": "Ancre stabilisatrice ultra-court terme",
+     "theme": false,
+     "poids": 0.35,
+     "poids_cle": "poids_zst_to_b"
+    },
+    {
+     "symbole": "XBB.TO",
+     "nom": "iShares Core Canadian Universe Bond Index ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada aggregate)",
+     "role": "Coussin obligataire agrégat Canada",
+     "theme": false,
+     "poids": 0.25,
+     "poids_cle": "poids_xbb_to_b"
+    },
+    {
+     "symbole": "GLD",
+     "nom": "SPDR Gold Shares",
+     "classe": "FNB d'or",
+     "secteur": "Gold",
+     "role": "Diversificateur décorrélé des actions",
+     "theme": false,
+     "poids": 0.15,
+     "poids_cle": "poids_gld_b"
+    },
+    {
+     "symbole": "XIU.TO",
+     "nom": "iShares S&P/TSX 60 Index ETF",
+     "classe": "FNB d'actions",
+     "secteur": "Broad market (Canada)",
+     "role": "Exposition actions canadiennes larges",
+     "theme": false,
+     "poids": 0.1,
+     "poids_cle": "poids_xiu_to_b"
+    },
+    {
+     "symbole": "RY.TO",
+     "nom": "Royal Bank of Canada",
+     "classe": "Action",
+     "secteur": "Financials",
+     "role": "Action défensive Financières Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_ry_to_b"
+    },
+    {
+     "symbole": "ENB.TO",
+     "nom": "Enbridge",
+     "classe": "Action",
+     "secteur": "Energy",
+     "role": "Action défensive Énergie Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_enb_to_b"
+    },
+    {
+     "symbole": "JNJ",
+     "nom": "Johnson & Johnson",
+     "classe": "Action",
+     "secteur": "Health Care",
+     "role": "Action défensive Santé États-Unis",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_jnj_b"
+    }
+   ],
+   "volatilite": "vol_ptf_b",
+   "pire_baisse": "baisse_ptf_b",
+   "parts_du_risque": {
+    "ZST.TO": "part_zst_to_b",
+    "XBB.TO": "part_xbb_to_b",
+    "GLD": "part_gld_b",
+    "XIU.TO": "part_xiu_to_b",
+    "RY.TO": "part_ry_to_b",
+    "ENB.TO": "part_enb_to_b",
+    "JNJ": "part_jnj_b"
+   },
+   "pires_baisses": {
+    "ZST.TO": "baisse_zst_to",
+    "XBB.TO": "baisse_xbb_to",
+    "GLD": "baisse_gld",
+    "XIU.TO": "baisse_xiu_to",
+    "RY.TO": "baisse_ry_to",
+    "ENB.TO": "baisse_enb_to",
+    "JNJ": "baisse_jnj"
+   },
+   "controles": [
+    {
+     "controle": "somme_des_poids",
+     "statut": "ok",
+     "titre": "Poids complets",
+     "detail": "Les poids totalisent 100,0 % du capital fictif.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "poids_positifs",
+     "statut": "ok",
+     "titre": "Ni vente à découvert ni levier",
+     "detail": "Aucune vente à découvert ni effet de levier.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "univers_source",
+     "statut": "ok",
+     "titre": "Actifs de la table sourcée",
+     "detail": "Tous les symboles viennent de assets_universe.csv.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "instruments_autorises",
+     "statut": "ok",
+     "titre": "Ni options ni dérivés",
+     "detail": "Actions, FNB, or et cryptos seulement : ni options ni dérivés.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_titre",
+     "statut": "ok",
+     "titre": "Plafond par titre",
+     "detail": "Aucun titre au-dessus de 5,0 % du capital.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_crypto",
+     "statut": "ok",
+     "titre": "Plafond crypto",
+     "detail": "Cryptos : 0,0 % du capital, plafond 0,0 % (horizon de moins de 5 ans).",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_secteur",
+     "statut": "ok",
+     "titre": "Plafond par secteur",
+     "detail": "Aucun secteur au-dessus de 15,0 % en actions détenues en direct.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "volatilite_max",
+     "statut": "ok",
+     "titre": "Volatilité historique",
+     "detail": "Volatilité historique 5,0 %, plafond 8,0 % pour une tolérance « faible ».",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "pire_baisse_max",
+     "statut": "ok",
+     "titre": "Pire baisse historique",
+     "detail": "Pire baisse historique -6,5 % (du 2022-03-08 au 2022-10-20), plancher -15,0 %.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "nombre_de_lignes",
+     "statut": "ok",
+     "titre": "Diversification",
+     "detail": "7 lignes, au moins 5 exigées.",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    },
+    {
+     "controle": "part_risquee",
+     "statut": "ok",
+     "titre": "Part risquée",
+     "detail": "Actions, FNB d'actions et crypto : 25,0 % du capital, plafond 40,0 % (tolérance au risque « faible »).",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "nom": "Défensif sans Tesla, ancrage canadien maximal",
+   "intention": "Concentrer l'essentiel du capital sur des obligations canadiennes et américaines court terme, avec une part risquée minimale sur des actions défensives canadiennes et de l'or.",
+   "lignes": [
+    {
+     "symbole": "ZST.TO",
+     "nom": "BMO Ultra Short-Term Bond ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada ultra short-term)",
+     "role": "Ancre stabilisatrice dominante ultra-court terme",
+     "theme": false,
+     "poids": 0.45,
+     "poids_cle": "poids_zst_to_c"
+    },
+    {
+     "symbole": "XBB.TO",
+     "nom": "iShares Core Canadian Universe Bond Index ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (Canada aggregate)",
+     "role": "Coussin obligataire agrégat Canada",
+     "theme": false,
+     "poids": 0.2,
+     "poids_cle": "poids_xbb_to_c"
+    },
+    {
+     "symbole": "AGG",
+     "nom": "iShares Core U.S. Aggregate Bond ETF",
+     "classe": "FNB d'obligations",
+     "secteur": "Bonds (U.S. aggregate)",
+     "role": "Diversification obligataire agrégat États-Unis",
+     "theme": false,
+     "poids": 0.15,
+     "poids_cle": "poids_agg_c"
+    },
+    {
+     "symbole": "GLD",
+     "nom": "SPDR Gold Shares",
+     "classe": "FNB d'or",
+     "secteur": "Gold",
+     "role": "Diversificateur décorrélé des actions",
+     "theme": false,
+     "poids": 0.1,
+     "poids_cle": "poids_gld_c"
+    },
+    {
+     "symbole": "FTS.TO",
+     "nom": "Fortis",
+     "classe": "Action",
+     "secteur": "Utilities",
+     "role": "Action défensive Utilities Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_fts_to_c"
+    },
+    {
+     "symbole": "ATD.TO",
+     "nom": "Alimentation Couche-Tard",
+     "classe": "Action",
+     "secteur": "Consumer Staples",
+     "role": "Action défensive Consommation de base Canada",
+     "theme": false,
+     "poids": 0.05,
+     "poids_cle": "poids_atd_to_c"
+    }
+   ],
+   "volatilite": "vol_ptf_c",
+   "pire_baisse": "baisse_ptf_c",
+   "parts_du_risque": {
+    "ZST.TO": "part_zst_to_c",
+    "XBB.TO": "part_xbb_to_c",
+    "AGG": "part_agg_c",
+    "GLD": "part_gld_c",
+    "FTS.TO": "part_fts_to_c",
+    "ATD.TO": "part_atd_to_c"
+   },
+   "pires_baisses": {
+    "ZST.TO": "baisse_zst_to",
+    "XBB.TO": "baisse_xbb_to",
+    "AGG": "baisse_agg",
+    "GLD": "baisse_gld",
+    "FTS.TO": "baisse_fts_to",
+    "ATD.TO": "baisse_atd_to"
+   },
+   "controles": [
+    {
+     "controle": "somme_des_poids",
+     "statut": "ok",
+     "titre": "Poids complets",
+     "detail": "Les poids totalisent 100,0 % du capital fictif.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "poids_positifs",
+     "statut": "ok",
+     "titre": "Ni vente à découvert ni levier",
+     "detail": "Aucune vente à découvert ni effet de levier.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "univers_source",
+     "statut": "ok",
+     "titre": "Actifs de la table sourcée",
+     "detail": "Tous les symboles viennent de assets_universe.csv.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "instruments_autorises",
+     "statut": "ok",
+     "titre": "Ni options ni dérivés",
+     "detail": "Actions, FNB, or et cryptos seulement : ni options ni dérivés.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_titre",
+     "statut": "ok",
+     "titre": "Plafond par titre",
+     "detail": "Aucun titre au-dessus de 5,0 % du capital.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_crypto",
+     "statut": "ok",
+     "titre": "Plafond crypto",
+     "detail": "Cryptos : 0,0 % du capital, plafond 0,0 % (horizon de moins de 5 ans).",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "plafond_par_secteur",
+     "statut": "ok",
+     "titre": "Plafond par secteur",
+     "detail": "Aucun secteur au-dessus de 15,0 % en actions détenues en direct.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "volatilite_max",
+     "statut": "ok",
+     "titre": "Volatilité historique",
+     "detail": "Volatilité historique 3,9 %, plafond 8,0 % pour une tolérance « faible ».",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "pire_baisse_max",
+     "statut": "ok",
+     "titre": "Pire baisse historique",
+     "detail": "Pire baisse historique -5,2 % (du 2021-12-30 au 2022-10-20), plancher -15,0 %.",
+     "chiffres": [],
+     "source": "tools/gouvernance.py : verifier_contraintes",
+     "bloquant": false
+    },
+    {
+     "controle": "nombre_de_lignes",
+     "statut": "ok",
+     "titre": "Diversification",
+     "detail": "6 lignes, au moins 5 exigées.",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    },
+    {
+     "controle": "part_risquee",
+     "statut": "ok",
+     "titre": "Part risquée",
+     "detail": "Actions, FNB d'actions et crypto : 10,0 % du capital, plafond 40,0 % (tolérance au risque « faible »).",
+     "chiffres": [],
+     "source": "agents/gouvernance.py",
+     "bloquant": false
+    }
+   ]
+  }
+ ],
+ "gouvernance": {
+  "essai": 1,
+  "essais_max": 3,
+  "statut": "accepte",
+  "controles": [
+   {
+    "controle": "demande_hors_profil",
+    "statut": "alerte",
+    "titre": "Votre demande sur TSLA",
+    "detail": "Demandé : {demande_tsla} du capital sur TSLA. Votre profil en permet au plus {lim_max_titre_individuel}. La demande n'est pas retenue telle quelle. TSLA : pire baisse {baisse_tsla}, il faudrait {rattrapage_tsla} pour la rattraper, volatilité {vol_tsla}.",
+    "chiffres": [
+     "demande_tsla",
+     "lim_max_titre_individuel",
+     "vol_tsla",
+     "baisse_tsla",
+     "rattrapage_tsla"
+    ],
+    "source": "agents/gouvernance.py",
+    "bloquant": false
+   },
+   {
+    "controle": "portefeuille_A",
+    "statut": "ok",
+    "titre": "Portefeuille simulé A : Défensif avec exposition plafonnée à Tesla",
+    "detail": "11 contrôles conformes, 0 à signaler.",
+    "chiffres": [],
+    "source": "agents/gouvernance.py",
+    "bloquant": false
+   },
+   {
+    "controle": "portefeuille_B",
+    "statut": "ok",
+    "titre": "Portefeuille simulé B : Défensif sans Tesla, diversification internationale",
+    "detail": "11 contrôles conformes, 0 à signaler.",
+    "chiffres": [],
+    "source": "agents/gouvernance.py",
+    "bloquant": false
+   },
+   {
+    "controle": "portefeuille_C",
+    "statut": "ok",
+    "titre": "Portefeuille simulé C : Défensif sans Tesla, ancrage canadien maximal",
+    "detail": "11 contrôles conformes, 0 à signaler.",
+    "chiffres": [],
+    "source": "agents/gouvernance.py",
+    "bloquant": false
+   },
+   {
+    "controle": "simulation",
+    "statut": "ok",
+    "titre": "Simulation seulement",
+    "detail": "Aucune transaction réelle.",
+    "chiffres": [],
+    "source": "agents/pipeline.py",
+    "bloquant": false
+   },
+   {
+    "controle": "sources",
+    "statut": "ok",
+    "titre": "Chaque chiffre a sa source",
+    "detail": "Touchez un chiffre pour voir son calcul, sa période et sa source.",
+    "chiffres": [],
+    "source": "agents/journal.py",
+    "bloquant": false
+   }
+  ],
+  "historique": [
+   {
+    "essai": 1,
+    "rejets": {}
+   }
+  ]
+ },
+ "explication": {
+  "niveau_par_defaut": 3,
+  "sujet": "Pourquoi la demande TSLA à {demande_tsla} est incompatible avec le profil, et comment les trois portefeuilles simulés s'y substituent",
+  "niveau1": "La demande dépasse le plafond par titre du profil ({lim_max_titre_individuel}), et la volatilité de TSLA ({vol_tsla}) ainsi que sa pire baisse ({baisse_tsla}) sont incompatibles avec un objectif de préservation du capital.",
+  "niveau2": [
+   "La demande porte sur {demande_tsla} du capital sur un seul titre ; le profil plafonne chaque titre individuel à {lim_max_titre_individuel} : l'écart est direct et mesuré.",
+   "La pire baisse de TSLA est {baisse_tsla} ; pour en effacer l'effet, il faudrait un gain de {rattrapage_tsla}, ce qui contredit un objectif de préservation sur un horizon court.",
+   "La volatilité de TSLA est {vol_tsla}, très au-dessus du seuil du profil {lim_volatilite} : même à {poids_tsla_a}, TSLA concentre {part_tsla_a} du risque total du portefeuille simulé A.",
+   "Les trois portefeuilles simulés retenus passent tous les contrôles : leur volatilité ({vol_ptf_a}, {vol_ptf_b}, {vol_ptf_c}) et leur pire baisse ({baisse_ptf_a}, {baisse_ptf_b}, {baisse_ptf_c}) restent dans les seuils du profil."
+  ],
+  "niveau3": {
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; part_i = w_i × (Σ w)_i / (wᵀ Σ w)",
+   "lignes": [
+    "Portefeuille A — TSLA : poids {poids_tsla_a}, part du risque {part_tsla_a} ; volatilité globale {vol_ptf_a}, pire baisse {baisse_ptf_a}",
+    "Portefeuille A — ZST.TO : poids {poids_zst_to_a}, part du risque {part_zst_to_a}",
+    "Portefeuille A — XBB.TO : poids {poids_xbb_to_a}, part du risque {part_xbb_to_a}",
+    "Portefeuille A — GLD : poids {poids_gld_a}, part du risque {part_gld_a}",
+    "Portefeuille A — XIU.TO : poids {poids_xiu_to_a}, part du risque {part_xiu_to_a}",
+    "Portefeuille A — RY.TO : poids {poids_ry_to_a}, part du risque {part_ry_to_a}",
+    "Portefeuille A — FTS.TO : poids {poids_fts_to_a}, part du risque {part_fts_to_a}",
+    "Portefeuille B — pas de TSLA ; ZST.TO : poids {poids_zst_to_b}, part du risque {part_zst_to_b} ; GLD : poids {poids_gld_b}, part du risque {part_gld_b} ; volatilité globale {vol_ptf_b}, pire baisse {baisse_ptf_b}",
+    "Portefeuille B — XBB.TO : poids {poids_xbb_to_b}, part du risque {part_xbb_to_b}",
+    "Portefeuille B — XIU.TO : poids {poids_xiu_to_b}, part du risque {part_xiu_to_b}",
+    "Portefeuille B — RY.TO : poids {poids_ry_to_b}, part du risque {part_ry_to_b}",
+    "Portefeuille B — ENB.TO : poids {poids_enb_to_b}, part du risque {part_enb_to_b}",
+    "Portefeuille B — JNJ : poids {poids_jnj_b}, part du risque {part_jnj_b}",
+    "Portefeuille C — pas de TSLA ; ZST.TO : poids {poids_zst_to_c}, part du risque {part_zst_to_c} ; volatilité globale {vol_ptf_c}, pire baisse {baisse_ptf_c}",
+    "Portefeuille C — XBB.TO : poids {poids_xbb_to_c}, part du risque {part_xbb_to_c}",
+    "Portefeuille C — AGG : poids {poids_agg_c}, part du risque {part_agg_c}",
+    "Portefeuille C — GLD : poids {poids_gld_c}, part du risque {part_gld_c}",
+    "Portefeuille C — FTS.TO : poids {poids_fts_to_c}, part du risque {part_fts_to_c}",
+    "Portefeuille C — ATD.TO : poids {poids_atd_to_c}, part du risque {part_atd_to_c}"
+   ]
+  }
+ },
+ "limites": {
+  "faits": [
+   "Données de prix du 2021-11-12 au 2026-11-12.",
+   "Volatilité de TSLA : {vol_tsla}",
+   "Pire baisse de TSLA : {baisse_tsla}",
+   "Gain de rattrapage TSLA : {rattrapage_tsla}",
+   "Corrélation TSLA / SPY : {corr_tsla_spy}",
+   "Corrélation TSLA / GLD : {corr_tsla_gld}",
+   "Part de TSLA dans le risque du portefeuille A : {part_tsla_a} pour un poids de {poids_tsla_a}",
+   "Volatilité du portefeuille A : {vol_ptf_a}, pire baisse : {baisse_ptf_a}",
+   "Volatilité du portefeuille B : {vol_ptf_b}, pire baisse : {baisse_ptf_b}",
+   "Volatilité du portefeuille C : {vol_ptf_c}, pire baisse : {baisse_ptf_c}",
+   "Volatilité de ZST.TO : {vol_zst_to}, pire baisse : {baisse_zst_to}"
+  ],
+  "hypotheses": [
+   "Calculs dans la devise du profil : un actif coté en USD est converti avec le taux de la Banque du Canada (fx_usdcad_daily.csv), dernier taux reporté les jours fériés.",
+   "Poids constants : un portefeuille simulé est supposé rééquilibré chaque jour, sans frais ni impôt.",
+   "Les limites du profil et les seuils de risque sont des hypothèses de conception de l'équipe, pas une norme.",
+   "Les poids sont la décision du constructeur ; la gouvernance les vérifie par le code.",
+   "TSLA est plafonné à {lim_max_titre_individuel} par titre individuel (limite de conception du profil tolérance faible).",
+   "Le plafond de la part risquée est {lim_max_part_risquee} ; le seuil de volatilité est {lim_volatilite} ; le seuil de pire baisse est {lim_pire_baisse}.",
+   "Poids constants supposés rééquilibrés chaque jour, sans frais ni impôt."
+  ],
+  "limites": [
+   "Le passé décrit le risque observé sur la fenêtre. Il ne promet rien pour l'avenir.",
+   "Univers de départ choisi en 2026 : les actifs qui ont disparu entre-temps n'y sont pas (biais du survivant).",
+   "La gouvernance ne voit pas encore à travers les FNB : un titre ou un secteur détenu par SPY, QQQ, XIU.TO ou ESGV n'est pas compté dans les plafonds.",
+   "La part de risque de TSLA à {part_tsla_a} est calculée sur la fenêtre historique disponible ; une autre fenêtre pourrait donner un résultat différent.",
+   "La gouvernance ne voit pas à travers les FNB : une exposition indirecte à TSLA via un FNB ne serait pas comptée dans le plafond.",
+   "Les corrélations sont mesurées sur les jours communs de la fenêtre ; elles peuvent varier selon les périodes."
+  ]
+ },
+ "messages": {
+  "analyse": "Voici pourquoi la demande sur TSLA ne pouvait pas être retenue telle quelle.",
+  "repartition": "Voici comment le risque est réparti entre les lignes de chaque portefeuille simulé.",
+  "risque": "Voici les mesures de risque de TSLA qui ont déclenché l'alerte.",
+  "verifications": "Voici les contrôles que les trois portefeuilles simulés ont passés.",
+  "pourquoi": "Voici le détail chiffré de la tension entre votre demande et votre profil.",
+  "limites": "Voici ce que les données ne permettent pas de conclure dans ce cas précis.",
+  "tout": "Voici l'ensemble de l'explication, des faits aux calculs."
+ },
+ "chiffres": {
+  "lim_max_titre_individuel": {
+   "outil": "agents/profil.py : contraintes",
+   "parametres": {
+    "tolerance_risque": "faible",
+    "horizon_annees": 3
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "agents/profil.py : contraintes"
+   ],
+   "details": {
+    "decrit": "Limite « max_titre_individuel » du profil (tolérance au risque « faible »)",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_max_crypto": {
+   "outil": "agents/profil.py : contraintes",
+   "parametres": {
+    "tolerance_risque": "faible",
+    "horizon_annees": 3
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.0,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "agents/profil.py : contraintes"
+   ],
+   "details": {
+    "decrit": "Limite « max_crypto » du profil (tolérance au risque « faible »)",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_max_part_risquee": {
+   "outil": "agents/profil.py : contraintes",
+   "parametres": {
+    "tolerance_risque": "faible",
+    "horizon_annees": 3
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.4,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "agents/profil.py : contraintes"
+   ],
+   "details": {
+    "decrit": "Limite « max_part_risquee » du profil (tolérance au risque « faible »)",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_max_un_secteur": {
+   "outil": "agents/profil.py : contraintes",
+   "parametres": {
+    "tolerance_risque": "faible",
+    "horizon_annees": 3
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "agents/profil.py : contraintes"
+   ],
+   "details": {
+    "decrit": "Limite « max_un_secteur » du profil (tolérance au risque « faible »)",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_plafond_theme": {
+   "outil": "agents/profil.py : contraintes",
+   "parametres": {
+    "tolerance_risque": "faible",
+    "horizon_annees": 3
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.0,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "agents/profil.py : contraintes"
+   ],
+   "details": {
+    "decrit": "Limite « plafond_theme » du profil (aucun centre d'intérêt déclaré)",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_volatilite": {
+   "outil": "tools/gouvernance.py : SEUILS_PAR_TOLERANCE",
+   "parametres": {
+    "tolerance_risque": "faible"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction",
+   "formule": "",
+   "sources": [
+    "tools/gouvernance.py : SEUILS_PAR_TOLERANCE"
+   ],
+   "details": {
+    "decrit": "Seuil de volatilite pour une tolérance « faible »",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "lim_pire_baisse": {
+   "outil": "tools/gouvernance.py : SEUILS_PAR_TOLERANCE",
+   "parametres": {
+    "tolerance_risque": "faible"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": -0.15,
+   "unite": "fraction",
+   "formule": "",
+   "sources": [
+    "tools/gouvernance.py : SEUILS_PAR_TOLERANCE"
+   ],
+   "details": {
+    "decrit": "Seuil de pire baisse pour une tolérance « faible »",
+    "nature": "hypothèse de conception",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "demande_tsla": {
+   "outil": "demande de l'utilisateur",
+   "parametres": {
+    "extrait": "Je veux mettre … % de mon capital dessus."
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.4,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "demande de l'utilisateur"
+   ],
+   "details": {
+    "decrit": "Part du capital demandée pour TSLA",
+    "nature": "demande de l'utilisateur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "vol_tsla": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.5891162747078174,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de TSLA",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_tsla": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.7088064947998852,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de TSLA sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_tsla": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.7088064947998852
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 2.4341425277077433,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de TSLA",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "TSLA",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.7088064947998852
+    }
+   }
+  },
+  "corr_tsla_xiu_to": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.4002723098381794,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre TSLA et XIU.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "TSLA",
+     "XIU.TO"
+    ]
+   }
+  },
+  "corr_tsla_spy": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.580497675659523,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre TSLA et SPY",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "TSLA",
+     "SPY"
+    ]
+   }
+  },
+  "corr_tsla_amzn": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.4355570215695742,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre TSLA et AMZN",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "TSLA",
+     "AMZN"
+    ]
+   }
+  },
+  "corr_tsla_gld": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.026822087589361075,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre TSLA et GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "TSLA",
+     "GLD"
+    ]
+   }
+  },
+  "corr_xiu_to_spy": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.7062497569151102,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre XIU.TO et SPY",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XIU.TO",
+     "SPY"
+    ]
+   }
+  },
+  "corr_xiu_to_amzn": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.44428737966311416,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre XIU.TO et AMZN",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XIU.TO",
+     "AMZN"
+    ]
+   }
+  },
+  "corr_xiu_to_gld": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.2538008308097109,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre XIU.TO et GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XIU.TO",
+     "GLD"
+    ]
+   }
+  },
+  "corr_spy_amzn": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.7002308462690245,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre SPY et AMZN",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "SPY",
+     "AMZN"
+    ]
+   }
+  },
+  "corr_spy_gld": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.09307189349503413,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre SPY et GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "SPY",
+     "GLD"
+    ]
+   }
+  },
+  "corr_amzn_gld": {
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.04288101120280867,
+   "unite": "coefficient de corrélation de Pearson, entre -1 et 1",
+   "formule": "corr(r_a, r_b) = cov(r_a, r_b) / (σ_a × σ_b), rendements quotidiens des jours communs",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Corrélation entre AMZN et GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "AMZN",
+     "GLD"
+    ]
+   }
+  },
+  "vol_xiu_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.13062769328794735,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de XIU.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_xiu_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.1636012731598746,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de XIU.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_xiu_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1636012731598746
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.1956020112296828,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de XIU.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "XIU.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.1636012731598746
+    }
+   }
+  },
+  "vol_spy": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "SPY",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.1666138602428706,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de SPY",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_spy": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "SPY",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.22245742927246515,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de SPY sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_spy": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.22245742927246515
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.2861032149845057,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de SPY",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "SPY",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.22245742927246515
+    }
+   }
+  },
+  "vol_xbb_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.0664417800264345,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de XBB.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_xbb_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.1547974797578775,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de XBB.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_xbb_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1547974797578775
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.18314838875957581,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de XBB.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "XBB.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.1547974797578775
+    }
+   }
+  },
+  "vol_zst_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.005568051043071253,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de ZST.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_zst_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.004282831925976671,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de ZST.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_zst_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.004282831925976671
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.004301253471666844,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de ZST.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "ZST.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.004282831925976671
+    }
+   }
+  },
+  "vol_gld": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.18386753070849882,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_gld": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.2599925169596916,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de GLD sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_gld": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2599925169596916
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.35133768633192286,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de GLD",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "GLD",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.2599925169596916
+    }
+   }
+  },
+  "vol_amzn": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "AMZN",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.3639625435960716,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de AMZN",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_amzn": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "AMZN",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.5239166256331587,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de AMZN sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_amzn": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.5239166256331587
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 1.1004724252972125,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de AMZN",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "AMZN",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.5239166256331587
+    }
+   }
+  },
+  "poids_zst_to_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.4,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de ZST.TO dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_xbb_to_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.25,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de XBB.TO dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_gld_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de GLD dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_xiu_to_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de XIU.TO dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_ry_to_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de RY.TO dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_fts_to_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de FTS.TO dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_tsla_a": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "A"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de TSLA dans le portefeuille simulé A",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "vol_ptf_a": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.05543060659175344,
+   "unite": "fraction annualisée",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité du portefeuille simulé A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "volatilite"
+    ]
+   }
+  },
+  "baisse_ptf_a": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": -0.07766958757846953,
+   "unite": "fraction",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse du portefeuille simulé A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "pire_baisse"
+    ]
+   }
+  },
+  "part_zst_to_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.012049426347449965,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de ZST.TO dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "ZST.TO"
+    ]
+   }
+  },
+  "part_xbb_to_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.16446085892949883,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de XBB.TO dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XBB.TO"
+    ]
+   }
+  },
+  "part_gld_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.1668504249611942,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de GLD dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "GLD"
+    ]
+   }
+  },
+  "part_xiu_to_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.17384688908140325,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de XIU.TO dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XIU.TO"
+    ]
+   }
+  },
+  "part_ry_to_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.07374867252073082,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de RY.TO dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "RY.TO"
+    ]
+   }
+  },
+  "part_fts_to_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.03799129872882265,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de FTS.TO dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "FTS.TO"
+    ]
+   }
+  },
+  "part_tsla_a": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.3710524294309003,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de TSLA dans le risque du portefeuille A",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "TSLA"
+    ]
+   }
+  },
+  "vol_ry_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.15466694552290577,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de RY.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_ry_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.21213823196001913,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de RY.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_ry_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.21213823196001913
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.2692581878770058,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de RY.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "RY.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.21213823196001913
+    }
+   }
+  },
+  "vol_fts_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.14714307040776003,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de FTS.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_fts_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.24010771485674764,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de FTS.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_fts_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.24010771485674764
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.31597598705911767,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de FTS.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "FTS.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.24010771485674764
+    }
+   }
+  },
+  "poids_zst_to_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de ZST.TO dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_xbb_to_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.25,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de XBB.TO dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_gld_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de GLD dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_xiu_to_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de XIU.TO dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_ry_to_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de RY.TO dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_enb_to_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de ENB.TO dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_jnj_b": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "B"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de JNJ dans le portefeuille simulé B",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "vol_ptf_b": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.04966369061684132,
+   "unite": "fraction annualisée",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité du portefeuille simulé B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "volatilite"
+    ]
+   }
+  },
+  "baisse_ptf_b": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": -0.06525427274841544,
+   "unite": "fraction",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse du portefeuille simulé B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "pire_baisse"
+    ]
+   }
+  },
+  "part_zst_to_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.012665937356214609,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de ZST.TO dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "ZST.TO"
+    ]
+   }
+  },
+  "part_xbb_to_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.2010032246728456,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de XBB.TO dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XBB.TO"
+    ]
+   }
+  },
+  "part_gld_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.40385845239334484,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de GLD dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "GLD"
+    ]
+   }
+  },
+  "part_xiu_to_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.18240993032716873,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de XIU.TO dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XIU.TO"
+    ]
+   }
+  },
+  "part_ry_to_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.07558567831619996,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de RY.TO dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "RY.TO"
+    ]
+   }
+  },
+  "part_enb_to_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.06816044266335916,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de ENB.TO dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "ENB.TO"
+    ]
+   }
+  },
+  "part_jnj_b": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.05631633427086702,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de JNJ dans le risque du portefeuille B",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "JNJ"
+    ]
+   }
+  },
+  "vol_enb_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ENB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.16093301395457596,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de ENB.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_enb_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ENB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.2137754707126388,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de ENB.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_enb_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2137754707126388
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.27190129886485,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de ENB.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "ENB.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.2137754707126388
+    }
+   }
+  },
+  "vol_jnj": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "JNJ",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.18367574992546873,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de JNJ",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_jnj": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "JNJ",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.15549390670711927,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de JNJ sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_jnj": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.15549390670711927
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.1841240790825092,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de JNJ",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "JNJ",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.15549390670711927
+    }
+   }
+  },
+  "poids_zst_to_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.45,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de ZST.TO dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_xbb_to_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de XBB.TO dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_agg_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de AGG dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_gld_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de GLD dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_fts_to_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de FTS.TO dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "poids_atd_to_c": {
+   "outil": "constructeur (vérifié par la gouvernance)",
+   "parametres": {
+    "portefeuille": "C"
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "",
+   "sources": [
+    "constructeur (vérifié par la gouvernance)"
+   ],
+   "details": {
+    "decrit": "Poids de ATD.TO dans le portefeuille simulé C",
+    "nature": "décision du constructeur",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "vol_ptf_c": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.03856702009142522,
+   "unite": "fraction annualisée",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité du portefeuille simulé C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "volatilite"
+    ]
+   }
+  },
+  "baisse_ptf_c": {
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": -0.052212627165238445,
+   "unite": "fraction",
+   "formule": "volatilité = √(wᵀ Σ w), Σ = covariance des rendements quotidiens × 252 ; rendement annualisé = (valeur finale) ^ (1 / années) - 1 ; pire baisse = min(valeur / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse du portefeuille simulé C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "pire_baisse"
+    ]
+   }
+  },
+  "part_zst_to_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.024897681787427857,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de ZST.TO dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "ZST.TO"
+    ]
+   }
+  },
+  "part_xbb_to_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.2649555531246802,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de XBB.TO dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "XBB.TO"
+    ]
+   }
+  },
+  "part_agg_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.19603487144009235,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de AGG dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "AGG"
+    ]
+   }
+  },
+  "part_gld_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.3079458736781736,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de GLD dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "GLD"
+    ]
+   }
+  },
+  "part_fts_to_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.08694753684701044,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de FTS.TO dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "FTS.TO"
+    ]
+   }
+  },
+  "part_atd_to_c": {
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": 0.11921848312261546,
+   "unite": "fraction de la variance du portefeuille (somme = 1)",
+   "formule": "part_i = w_i × (Σ w)_i / (wᵀ Σ w), Σ = covariance annualisée des rendements quotidiens",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Part de ATD.TO dans le risque du portefeuille C",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur",
+     "ATD.TO"
+    ]
+   }
+  },
+  "vol_agg": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "AGG",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.07382792091400975,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de AGG",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_agg": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "AGG",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.12751041239058147,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "decrit": "Pire baisse de AGG sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_agg": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.12751041239058147
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.14614548322571294,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de AGG",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "AGG",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.12751041239058147
+    }
+   }
+  },
+  "vol_atd_to": {
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ATD.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.24088456063893515,
+   "unite": "fraction annualisée, en CAD",
+   "formule": "écart-type des rendements quotidiens × √252",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Volatilité annualisée de ATD.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "baisse_atd_to": {
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ATD.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": -0.22159134064185015,
+   "unite": "fraction, en CAD",
+   "formule": "min sur la fenêtre de (prix / plus haut atteint jusque-là - 1)",
+   "sources": [
+    "prices_daily.csv (adj_close)"
+   ],
+   "details": {
+    "decrit": "Pire baisse de ATD.TO sur la fenêtre",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ]
+   }
+  },
+  "rattrapage_atd_to": {
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.22159134064185015
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1255
+   },
+   "valeur": 0.2846722450705611,
+   "unite": "fraction",
+   "formule": "gain nécessaire = perte / (1 - perte)",
+   "sources": [
+    "résultat de pire_baisse"
+   ],
+   "details": {
+    "decrit": "Gain nécessaire pour effacer la pire baisse de ATD.TO",
+    "nature": "fait mesuré",
+    "chemin": [
+     "valeur"
+    ],
+    "origine": {
+     "outil": "pire_baisse",
+     "parametres": {
+      "symbole": "ATD.TO",
+      "debut": null,
+      "fin": null,
+      "devise": "CAD"
+     },
+     "periode": {
+      "debut": "2021-11-12",
+      "fin": "2026-11-12",
+      "observations": 1255
+     },
+     "valeur": -0.22159134064185015
+    }
+   }
+  }
+ },
+ "appels": [
+  {
+   "agent": "Gouvernance",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.7088064947998852
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "correlations",
+   "parametres": {
+    "symboles": [
+     "TSLA",
+     "XIU.TO",
+     "SPY",
+     "AMZN",
+     "GLD"
+    ],
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.7088064947998852
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1636012731598746
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "SPY",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "SPY",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.22245742927246515
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1547974797578775
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.004282831925976671
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2599925169596916
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "AMZN",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "AMZN",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.5239166256331587
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "TSLA": 0.05,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Constructeur",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "TSLA": 0.05,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "verifier_contraintes",
+   "parametres": {
+    "portefeuille": {
+     "poids": {
+      "ZST.TO": 0.4,
+      "XBB.TO": 0.25,
+      "GLD": 0.1,
+      "XIU.TO": 0.1,
+      "RY.TO": 0.05,
+      "FTS.TO": 0.05,
+      "TSLA": 0.05
+     },
+     "theme": null
+    },
+    "profil": {
+     "horizon_annees": 3,
+     "objectif": "préservation du capital",
+     "tolerance_risque": "faible",
+     "connaissance": "avancé",
+     "preferences": [],
+     "exclusions": [],
+     "centres_interet": [],
+     "capital_fictif": 200000.0,
+     "devise": "CAD"
+    },
+    "plafond_theme": 0.0,
+    "debut": null,
+    "fin": null
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "verifier_contraintes",
+   "parametres": {
+    "portefeuille": {
+     "poids": {
+      "ZST.TO": 0.35,
+      "XBB.TO": 0.25,
+      "GLD": 0.15,
+      "XIU.TO": 0.1,
+      "RY.TO": 0.05,
+      "ENB.TO": 0.05,
+      "JNJ": 0.05
+     },
+     "theme": null
+    },
+    "profil": {
+     "horizon_annees": 3,
+     "objectif": "préservation du capital",
+     "tolerance_risque": "faible",
+     "connaissance": "avancé",
+     "preferences": [],
+     "exclusions": [],
+     "centres_interet": [],
+     "capital_fictif": 200000.0,
+     "devise": "CAD"
+    },
+    "plafond_theme": 0.0,
+    "debut": null,
+    "fin": null
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "verifier_contraintes",
+   "parametres": {
+    "portefeuille": {
+     "poids": {
+      "ZST.TO": 0.45,
+      "XBB.TO": 0.2,
+      "AGG": 0.15,
+      "GLD": 0.1,
+      "FTS.TO": 0.05,
+      "ATD.TO": 0.05
+     },
+     "theme": null
+    },
+    "profil": {
+     "horizon_annees": 3,
+     "objectif": "préservation du capital",
+     "tolerance_risque": "faible",
+     "connaissance": "avancé",
+     "preferences": [],
+     "exclusions": [],
+     "centres_interet": [],
+     "capital_fictif": 200000.0,
+     "devise": "CAD"
+    },
+    "plafond_theme": 0.0,
+    "debut": null,
+    "fin": null
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.25,
+     "GLD": 0.1,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "FTS.TO": 0.05,
+     "TSLA": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.004282831925976671
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1547974797578775
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2599925169596916
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1636012731598746
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.21213823196001913
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.24010771485674764
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "TSLA",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.7088064947998852
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.35,
+     "XBB.TO": 0.25,
+     "GLD": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05,
+     "JNJ": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.004282831925976671
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1547974797578775
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2599925169596916
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XIU.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1636012731598746
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "RY.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.21213823196001913
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ENB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ENB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2137754707126388
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "JNJ",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "JNJ",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.15549390670711927
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "stats_portefeuille",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Gouvernance",
+   "outil": "parts_du_risque",
+   "parametres": {
+    "poids": {
+     "ZST.TO": 0.45,
+     "XBB.TO": 0.2,
+     "AGG": 0.15,
+     "GLD": 0.1,
+     "FTS.TO": 0.05,
+     "ATD.TO": 0.05
+    },
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ZST.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.004282831925976671
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "XBB.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.1547974797578775
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "AGG",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "AGG",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.12751041239058147
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "GLD",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.2599925169596916
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "FTS.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.24010771485674764
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "volatilite",
+   "parametres": {
+    "symbole": "ATD.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "pire_baisse",
+   "parametres": {
+    "symbole": "ATD.TO",
+    "debut": null,
+    "fin": null,
+    "devise": "CAD"
+   }
+  },
+  {
+   "agent": "Marché et risque",
+   "outil": "gain_de_rattrapage",
+   "parametres": {
+    "perte": 0.22159134064185015
+   }
+  }
+ ]
+}
