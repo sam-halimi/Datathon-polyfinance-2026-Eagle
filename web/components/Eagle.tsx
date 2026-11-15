@@ -17,7 +17,7 @@ import type { Profil, Reference, SortiePipeline } from "@/lib/types";
 // diapositive à la fois ; à droite le profil qui se remplit en direct.
 
 type Phase = "accueil" | "recap" | "analyse" | "presentation" | "erreur";
-type Replique = { qui: "eagle" | "toi"; texte: string };
+type Replique = { qui: "eagle" | "vous"; texte: string };
 
 const ETAT: Record<Phase, string> = {
   accueil: "Questions d'accueil",
@@ -48,7 +48,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
   const [diapo, setDiapo] = useState(0);
   const [actif, setActif] = useState<{ symbole: string; verdict?: VerdictActif; erreur?: string } | null>(null);
   const [transcription, setTranscription] = useState<Replique[]>([
-    { qui: "eagle", texte: "Bonjour, je suis Eagle. Je construis avec toi un portefeuille simulé et je t'explique chaque chiffre. Première question." },
+    { qui: "eagle", texte: "Bonjour, je suis Eagle, votre assistant. Je vais établir avec vous un portefeuille simulé et vous détailler chacun de ses chiffres. Aucune transaction réelle n'est effectuée. Commençons par votre profil." },
     { qui: "eagle", texte: QUESTIONS[0].texte },
   ]);
   const [saisie, setSaisie] = useState("");
@@ -77,7 +77,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setProfil((p) => noter(p, champ, valeur));
     setDernierChamp(champ);
     const q = QUESTIONS[question];
-    if (titre) dire(titre, "toi");
+    if (titre) dire(titre, "vous");
     if (q && q.champ === champ && !q.multiple) suivante();
   };
 
@@ -88,7 +88,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
       dire(QUESTIONS[i].texte);
     } else {
       setPhase("recap");
-      dire("Voici ce que j'ai compris. Donne-moi ton prénom et ta demande en tes mots, puis lance l'analyse.");
+      dire("Voici le profil que j'ai retenu. Indiquez votre prénom et, si vous le souhaitez, votre demande en vos propres termes, puis lancez l'analyse.");
     }
   };
 
@@ -100,7 +100,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setDiapo(0);
     setActif(null);
     setPhase("presentation");
-    dire(`${origine} Je te présente le résultat, une diapositive à la fois.`);
+    dire(`${origine} Je vous présente le résultat, une diapositive à la fois.`);
   }, [dire]);
 
   const lancer = useCallback(async (): Promise<string> => {
@@ -108,7 +108,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setPhase("analyse");
     setErreur(null);
     setDebutAnalyse(Date.now());
-    dire("Je transmets ton profil aux spécialistes. Ça prend environ une minute.");
+    dire("Je transmets votre profil aux spécialistes. L'analyse prend environ une minute.");
     try {
       const s = await analyser(profil, demande, prenom);
       await presenter(s, "L'analyse est prête.");
@@ -116,7 +116,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     } catch (e) {
       setErreur(`${(e as Error).message || "Service injoignable"} (${ADRESSE_API}).`);
       setPhase("erreur");
-      dire("Je n'arrive pas à joindre le service d'analyse. Tu peux essayer une démonstration à droite.");
+      dire("Le service d'analyse ne répond pas. Aucun résultat ne vous est présenté à sa place.");
       return "Le service d'analyse est injoignable.";
     }
   }, [profil, demande, prenom, dire, presenter]);
@@ -127,7 +127,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     setPrenom(s.profil.prenom ?? p.nom);
     setDemande(s.profil.demande ?? "");
     setQuestion(QUESTIONS.length);
-    dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "toi");
+    dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "vous");
     await presenter(s, `Voici l'analyse enregistrée pour ${p.nom} (agents/sorties/${p.id}.json).`);
   };
 
@@ -148,18 +148,18 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
 
   const questionActif = async (symbole: string) => {
     if (!profil.tolerance_risque || !profil.horizon_annees) {
-      dire(`Pour juger ${symbole}, il me faut d'abord ton horizon et ta tolérance au risque.`);
+      dire(`Pour situer ${symbole}, il me faut d'abord votre horizon et votre tolérance au risque.`);
       return;
     }
     setActif({ symbole });
-    dire(`Je regarde ${symbole} par rapport à ton profil.`);
+    dire(`J'examine ${symbole} au regard de votre profil.`);
     try {
       const v = await verifierActif(symbole, profil.tolerance_risque, profil.horizon_annees);
       setActif({ symbole, verdict: v });
-      dire(v.compatible ? `${symbole} est compatible avec ton profil. Voici pourquoi.` : `Voici pourquoi ${symbole} ne convient pas à ton profil.`);
+      dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.` : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
     } catch (e) {
       setActif({ symbole, erreur: `${(e as Error).message || "Service injoignable"} (${ADRESSE_API}).` });
-      dire(`Je n'arrive pas à joindre le service pour ${symbole}.`);
+      dire(`Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);
     }
   };
 
@@ -168,7 +168,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     const texte = saisie.trim();
     if (!texte) return;
     setSaisie("");
-    dire(texte, "toi");
+    dire(texte, "vous");
     const s = trouverActif(texte);
     if (s) {
       void questionActif(s);
@@ -187,15 +187,15 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
         const n = Number(texte.replace(/\s/g, "").match(/\d+/)?.[0]);
         if (n > 0) { repondre(q.champ, n); return; }
       }
-      dire("Je n'ai pas compris. Choisis une réponse au centre, ou écris-la autrement.");
+      dire("Je n'ai pas reconnu cette réponse. Choisissez une option au centre, ou reformulez-la.");
       return;
     }
     if (phase === "recap") {
       setDemande(texte);
-      dire("C'est noté comme ta demande.");
+      dire("Votre demande est notée.");
       return;
     }
-    dire("Tu peux me demander un actif, par exemple « Tesla », « TSLA » ou « bitcoin ».");
+    dire("Vous pouvez m'interroger sur un actif, par exemple « Tesla », « TSLA » ou « bitcoin ».");
   };
 
   // ---------- Outils de la voix ----------
@@ -277,15 +277,15 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     );
   } else if (phase === "recap") {
     titre = "Récapitulatif";
-    justification = "Vérifie le profil à droite, ajoute ton prénom et ta demande, puis lance l'analyse.";
+    justification = "Vérifiez le profil à droite, indiquez votre prénom et votre demande, puis lancez l'analyse.";
     contenu = (
       <div className="recap">
-        <label className="champ-texte">Ton prénom
+        <label className="champ-texte">Votre prénom
           <input value={prenom} onChange={(e) => setPrenom(e.target.value)} placeholder="Prénom" />
         </label>
-        <label className="champ-texte">Ta demande, en tes mots
+        <label className="champ-texte">Votre demande, en vos propres termes
           <textarea value={demande} onChange={(e) => setDemande(e.target.value)} rows={4}
-            placeholder="Par exemple : « Je veux mettre une grosse part sur Tesla. »" />
+            placeholder="Par exemple : « Je souhaite placer une part importante sur Tesla. »" />
         </label>
         <p className="recap__note">Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. Simulation seulement : aucune transaction réelle.</p>
       </div>
@@ -298,12 +298,12 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
     );
   } else if (phase === "analyse") {
     titre = "Les spécialistes travaillent";
-    justification = "Chaque agent a son domaine. La gouvernance vérifie tout contre ton profil avant la présentation.";
+    justification = "Chaque agent traite son domaine. La gouvernance vérifie chaque proposition au regard de votre profil avant la présentation.";
     contenu = <DiapositiveAttente debut={debutAnalyse} />;
   } else if (phase === "erreur") {
     titre = "Analyse indisponible";
     justification = erreur;
-    contenu = <p className="diapo__texte">Le service du pipeline ne répond pas. Rien n&apos;est inventé à sa place : tu peux relancer, ou ouvrir une démonstration enregistrée à droite.</p>;
+    contenu = <p className="diapo__texte">Le service du pipeline ne répond pas. Aucun résultat n&apos;est présenté à sa place.</p>;
     navigation = <button type="button" className="bouton bouton--principal" onClick={() => void lancer()}>Relancer</button>;
   } else if (phase === "presentation" && diapos[diapo]) {
     const d = diapos[diapo];
@@ -323,7 +323,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
   const lignesProfil: [string, string, string | undefined][] = [
     ["prenom", "Prénom", prenom || undefined],
     ["horizon_annees", "Horizon", profil.horizon_annees ? formaterHorizon(profil.horizon_annees) : undefined],
-    ["objectif", "But", profil.objectif ? majuscule(profil.objectif) : undefined],
+    ["objectif", "Objectif", profil.objectif ? majuscule(profil.objectif) : undefined],
     ["tolerance_risque", "Tolérance", profil.tolerance_risque ? majuscule(profil.tolerance_risque) : undefined],
     ["connaissance", "Connaissance", profil.connaissance ? majuscule(profil.connaissance) : undefined],
     ["preferences", "Préférences", question > 4 || profil.preferences?.length ? (profil.preferences?.join(", ") || "Rien de particulier") : undefined],
@@ -348,7 +348,7 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
           <div className="transcription" aria-live="polite" aria-label="Transcription">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>
-                <span className="replique__qui">{r.qui === "eagle" ? "Eagle" : prenom || "Toi"}</span>
+                <span className="replique__qui">{r.qui === "eagle" ? "Eagle" : prenom || "Vous"}</span>
                 {typo(r.texte)}
               </p>
             ))}
@@ -373,13 +373,13 @@ export function Eagle({ onApi }: { onApi?: (api: EagleApi) => void }) {
           <form className="champ champ--envoi" onSubmit={envoyer}>
             <label className="sr-only" htmlFor="saisie">Écrire à Eagle</label>
             <input id="saisie" value={saisie} onChange={(e) => setSaisie(e.target.value)} autoComplete="off"
-              placeholder={phase === "accueil" ? "Écris ta réponse, ou demande un actif : « et Tesla ? »" : "Demande un actif : « Tesla », « TSLA », « bitcoin »…"} />
+              placeholder={phase === "accueil" ? "Saisissez votre réponse, ou interrogez-moi sur un actif : « et Tesla ? »" : "Interrogez-moi sur un actif : « Tesla », « TSLA », « bitcoin »…"} />
             <button type="submit" className="champ__envoyer" aria-label="Envoyer">→</button>
           </form>
         </main>
 
         <aside className="eagle__droite">
-          <h2 className="profil-direct__titre">Ton profil <span>en direct</span></h2>
+          <h2 className="profil-direct__titre">Votre profil <span>en direct</span></h2>
           <dl className="profil-direct">
             {lignesProfil.map(([cle, nom, valeur]) => (
               <div key={cle} className={`profil-direct__ligne${valeur ? " profil-direct__ligne--rempli" : ""}${dernierChamp === cle ? " profil-direct__ligne--nouveau" : ""}`}>

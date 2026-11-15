@@ -45,7 +45,7 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
   const sc = s.scenarios;
   return [
     {
-      id: "demande", court: "La demande", titre: "Ta demande, face à ton profil", justification: s.messages.analyse,
+      id: "demande", court: "La demande", titre: "Votre demande au regard de votre profil", justification: s.messages.analyse,
       contenu: <Pages elements={elementsDemande} classe="diapo__liste" />,
       texte: [s.messages.analyse, demande && `Demande : ${demande}`, tension && brut(tension.detail, c), brut(e.niveau1, c), ...e.niveau2.map((t) => brut(t, c))].filter(Boolean).join(" "),
     },
@@ -130,12 +130,12 @@ function Eventail({ sc }: { sc: Scenarios }) {
 }
 
 const AGENTS = [
-  ["Orchestrateur", "lit ton profil et fixe les plafonds"],
-  ["ESG et qualité", "écarte ou signale les titres selon tes critères"],
+  ["Orchestrateur", "lit votre profil et fixe les plafonds"],
+  ["ESG et qualité", "écarte ou signale les titres selon vos critères"],
   ["Marché et risque", "mesure volatilité et pires baisses"],
   ["Macro et taux", "mesure la sensibilité aux taux"],
   ["Constructeur", "propose deux ou trois portefeuilles simulés"],
-  ["Gouvernance", "vérifie chaque proposition contre ton profil"],
+  ["Gouvernance", "vérifie chaque proposition au regard de votre profil"],
   ["Explication", "prépare les chiffres et leurs références"],
 ] as const;
 
@@ -165,17 +165,17 @@ export function DiapositiveActif({ symbole, verdict, erreur }: { symbole: string
   if (erreur) {
     return (
       <div className="diapo-actif">
-        <h2 className="diapo__titre">{symbole} et ton profil</h2>
+        <h2 className="diapo__titre">{symbole} et votre profil</h2>
         <p className="diapo__manque">Service indisponible : {erreur} Rien n&apos;est affiché à sa place.</p>
       </div>
     );
   }
-  if (!verdict) return <div className="diapo-actif"><h2 className="diapo__titre">{symbole} et ton profil</h2><p className="diapo__justification">Vérification en cours…</p></div>;
+  if (!verdict) return <div className="diapo-actif"><h2 className="diapo__titre">{symbole} et votre profil</h2><p className="diapo__justification">Vérification en cours…</p></div>;
   const textes = [...(verdict.raisons ?? []), ...([] as string[]).concat(verdict.explication ?? [])];
   return (
     <div className="diapo-actif">
       <h2 className={verdict.compatible ? "diapo__titre diapo__titre--ok" : "diapo__titre diapo__titre--non"}>
-        {verdict.compatible ? `${symbole} : compatible avec ton profil` : `Pourquoi ${symbole} ne convient pas à ton profil`}
+        {verdict.compatible ? `${symbole} : compatible avec votre profil` : `Pourquoi ${symbole} ne correspond pas à votre profil`}
       </h2>
       {verdict.verdict ? <p className="diapo__justification"><Texte>{verdict.verdict}</Texte></p> : null}
       <Pages elements={textes.map((t, i) => ({ cle: `r${i}`, contenu: <p className="puce"><Texte>{t}</Texte></p> }))} classe="diapo__liste" />

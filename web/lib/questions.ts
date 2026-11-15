@@ -10,8 +10,8 @@ export type Question = { champ: Champ; texte: string; aide?: string; multiple?: 
 
 export const QUESTIONS: Question[] = [
   {
-    champ: "horizon_annees", texte: "Dans combien de temps auras-tu besoin de cet argent ?",
-    aide: "Une fourchette ? Je retiens la borne basse, plus prudente.",
+    champ: "horizon_annees", texte: "Dans combien d'années prévoyez-vous d'utiliser ce capital ?",
+    aide: "Pour une fourchette, la borne basse, plus prudente, est retenue.",
     options: [
       { valeur: 2, titre: "Moins de 3 ans", detail: "2 ans retenus" },
       { valeur: 3, titre: "3 à 5 ans", detail: "3 ans retenus" },
@@ -20,7 +20,7 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "objectif", texte: "Quel est ton but ?",
+    champ: "objectif", texte: "Quel est l'objectif principal de ce placement ?",
     options: [
       { valeur: "préservation du capital", titre: "Garder ce que j'ai", detail: "Préservation du capital" },
       { valeur: "revenu", titre: "Un revenu régulier", detail: "Revenu" },
@@ -29,16 +29,16 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "tolerance_risque", texte: "Ton portefeuille baisse fort. Comment le vis-tu ?",
-    aide: "Si tu hésites entre deux, je retiens le plus bas.",
+    champ: "tolerance_risque", texte: "Votre portefeuille perd une part importante de sa valeur en un an. Que faites-vous ?",
+    aide: "En cas d'hésitation entre deux réponses, la plus prudente est retenue.",
     options: [
-      { valeur: "faible", titre: "Ça m'inquiète beaucoup", detail: "Tolérance faible" },
-      { valeur: "modéré", titre: "Ça m'inquiète un peu", detail: "Tolérance modérée" },
-      { valeur: "élevé", titre: "Ça ne m'inquiète pas", detail: "Tolérance élevée" },
+      { valeur: "faible", titre: "Je vends pour limiter la perte", detail: "Tolérance faible" },
+      { valeur: "modéré", titre: "J'attends sans modifier le portefeuille", detail: "Tolérance modérée" },
+      { valeur: "élevé", titre: "Je renforce la position", detail: "Tolérance élevée" },
     ],
   },
   {
-    champ: "connaissance", texte: "Les placements, tu connais ?", aide: "J'adapte le niveau d'explication.",
+    champ: "connaissance", texte: "Quelle est votre connaissance des marchés financiers ?", aide: "Le niveau des explications s'y adapte.",
     options: [
       { valeur: "débutant", titre: "Pas vraiment", detail: "Débutant" },
       { valeur: "intermédiaire", titre: "Un peu", detail: "Intermédiaire" },
@@ -46,7 +46,7 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "preferences", texte: "Qu'est-ce qui compte pour toi ?", multiple: true, aucun: "Rien de particulier",
+    champ: "preferences", texte: "Quelles sont vos préférences de placement ?", multiple: true, aucun: "Rien de particulier",
     options: [
       { valeur: "ESG", titre: "L'environnement et le social (ESG)" },
       { valeur: "dividendes", titre: "Des dividendes" },
@@ -54,7 +54,7 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "exclusions", texte: "Veux-tu écarter quelque chose ?", multiple: true, aucun: "Rien à écarter",
+    champ: "exclusions", texte: "Souhaitez-vous exclure certains placements ?", multiple: true, aucun: "Rien à écarter",
     options: [
       { valeur: "énergies fossiles", titre: "Le pétrole et le gaz" },
       { valeur: "controverses", titre: "Les entreprises à controverses" },
@@ -62,7 +62,7 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "centres_interet", texte: "Un sujet te passionne ?", aide: "Un thème reste une petite part, plafonnée.", multiple: true, aucun: "Aucun",
+    champ: "centres_interet", texte: "Quels secteurs ou thèmes retiennent votre intérêt ?", aide: "Un thème reste une part limitée du portefeuille, plafonnée.", multiple: true, aucun: "Aucun",
     options: [
       { valeur: "technologie", titre: "La technologie" },
       { valeur: "crypto", titre: "Les cryptoactifs" },
@@ -70,7 +70,7 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
-    champ: "capital_fictif", texte: "Combien veux-tu simuler ?", aide: "De l'argent fictif : rien n'est investi.",
+    champ: "capital_fictif", texte: "Quel montant souhaitez-vous simuler ?", aide: "Montant fictif : aucune somme n'est investie.",
     options: [
       { valeur: 10000, titre: "10 000 $" },
       { valeur: 50000, titre: "50 000 $" },
