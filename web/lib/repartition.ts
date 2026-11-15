@@ -14,21 +14,53 @@ export async function chargerUnivers(): Promise<Univers> {
   return (await import("../data/univers.json")).default as unknown as Univers;
 }
 
+/** Répartition par classe d'actif (champ `classe` des lignes du pipeline) :
+ *  somme des poids, ajoutée à la table « chiffres » avec sa référence. */
+export function ajouterClasses(sortie: SortiePipeline): SortiePipeline {
+  const chiffres: Record<string, Reference> = {};
+  const repartitions = { ...sortie.graphiques.repartitions };
+  for (const ptf of sortie.portefeuilles) {
+    const g = new Map<string, string[]>();
+    for (const l of ptf.lignes) g.set(l.classe || "Inconnue", [...(g.get(l.classe || "Inconnue") ?? []), l.symbole]);
+    const poids = Object.fromEntries(ptf.lignes.map((l) => [l.symbole, l.poids]));
+    const somme = (ss: string[]) => ss.reduce((x, s) => x + poids[s], 0);
+    const parts: Part[] = [...g.entries()]
+      .map(([libelle, symboles]) => ({ libelle, symboles, id: `rep_${ptf.id.toLowerCase()}_classe_${cle(libelle)}` }))
+      .sort((a, b) => somme(b.symboles) - somme(a.symboles));
+    for (const p of parts) {
+      chiffres[p.id] = {
+        outil: "web/lib/repartition.ts (ajouterClasses)",
+        parametres: { portefeuille: ptf.id, regroupement: "classe d'actif", groupe: p.libelle, poids: Object.fromEntries(p.symboles.map((s) => [s, poids[s]])) },
+        periode: { debut: null, fin: null, observations: null },
+        valeur: somme(p.symboles), unite: "fraction du capital", formule: "somme des poids des lignes de la classe",
+        sources: [`sortie du pipeline (portefeuille ${ptf.id} : poids et classe de chaque ligne)`],
+        details: { nature: "répartition du capital fictif, pas une mesure de marché", symboles: p.symboles },
+      };
+    }
+    repartitions[ptf.id] = { ...repartitions[ptf.id], classe: parts };
+  }
+  return { ...sortie, graphiques: { ...sortie.graphiques, repartitions }, chiffres: { ...sortie.chiffres, ...chiffres } };
+}
+
 export async function completerGraphiques(sortie: SortiePipeline): Promise<SortiePipeline> {
+  return ajouterClasses(await completerBase(sortie));
+}
+
+async function completerBase(sortie: SortiePipeline): Promise<SortiePipeline> {
   if (sortie.graphiques) return sortie;
   const u = await chargerUnivers();
   const chiffres: Record<string, Reference> = {};
   const repartitions: Graphiques["repartitions"] = {};
   for (const ptf of sortie.portefeuilles) {
     const poids = Object.fromEntries(ptf.lignes.map((l) => [l.symbole, l.poids]));
-    const groupes: Record<Regroupement, (s: string) => string> = {
+    const groupes: Record<Exclude<Regroupement, "classe">, (s: string) => string> = {
       actif: (s) => s, secteur: (s) => u.actifs[s]?.secteur ?? "Inconnu", zone: (s) => u.actifs[s]?.zone ?? "Inconnue",
     };
-    repartitions[ptf.id] = { actif: [], secteur: [], zone: [] };
+    repartitions[ptf.id] = { actif: [], classe: [], secteur: [], zone: [] };
     for (const r of ["actif", "secteur", "zone"] as Regroupement[]) {
       const g = new Map<string, string[]>();
       for (const l of [...ptf.lignes].sort((a, b) => b.poids - a.poids)) {
-        const k = groupes[r](l.symbole);
+        const k = groupes[r as Exclude<Regroupement, "classe">](l.symbole);
         g.set(k, [...(g.get(k) ?? []), l.symbole]);
       }
       const parts: Part[] = [...g.entries()]

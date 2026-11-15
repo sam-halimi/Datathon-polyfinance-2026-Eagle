@@ -156,7 +156,7 @@ export const ETAPES = ["Profil", "Analyse", "Proposition", "Vérification", "Exp
 // Données des graphiques : web/data/graphiques/<persona>.json, calculées par
 // web/scripts/graphiques.py. Leurs chiffres rejoignent la table « chiffres ».
 export type Part = { libelle: string; id: string; symboles: string[] };
-export type Regroupement = "actif" | "secteur" | "zone";
+export type Regroupement = "actif" | "classe" | "secteur" | "zone";
 
 export type Graphiques = {
   note: string;

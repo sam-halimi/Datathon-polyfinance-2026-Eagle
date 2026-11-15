@@ -16,14 +16,18 @@
   --alerte-fond: #fcefd9;
   --echec: #b3261e;
   --echec-fond: #fbe4e2;
-  --serie-1: #1f4fa3;
-  --serie-2: #2f9e86;
-  --serie-3: #e0912b;
-  --serie-4: #8a4fb5;
-  --serie-5: #c2475e;
-  --serie-6: #5b6b7a;
-  --serie-7: #a8862a;
-  --serie-8: #3d8fc7;
+  /* Palette catégorielle validée (dataviz, validate_palette.js : surface #ffffff), ordre fixe. */
+  --serie-1: #2a78d6;
+  --serie-2: #eb6834;
+  --serie-3: #1baf7a;
+  --serie-4: #eda100;
+  --serie-5: #e87ba4;
+  --serie-6: #008300;
+  --serie-7: #6250d6;
+  --serie-8: #e34948;
+  --grille: #e8e6e0;
+  --axe: #c3c2b7;
+  --encre-discrete: #6f6e69;
   --capital: #9aa3ad;
   --rayon: 20px;
   --ombre: 0 1px 2px rgb(27 31 36 / 6%), 0 6px 24px rgb(27 31 36 / 6%);
@@ -47,14 +51,18 @@
     --alerte-fond: #3a2a12;
     --echec: #f08b84;
     --echec-fond: #3d1c1a;
-    --serie-1: #7ea6f2;
-    --serie-2: #4fc3a8;
-    --serie-3: #f0a54a;
-    --serie-4: #b48ae0;
-    --serie-5: #e57890;
-    --serie-6: #9fb0c0;
-    --serie-7: #d8b75a;
-    --serie-8: #74b9e8;
+    /* Même ordre, pas sombres validés sur la surface #1c1f24. */
+    --serie-1: #3987e5;
+    --serie-2: #d95926;
+    --serie-3: #199e70;
+    --serie-4: #c98500;
+    --serie-5: #d55181;
+    --serie-6: #0ca30c;
+    --serie-7: #9085e9;
+    --serie-8: #e66767;
+    --grille: #2c2f35;
+    --axe: #3a3e45;
+    --encre-discrete: #9a9fa6;
     --capital: #6b737d;
     --ombre: none;
     color-scheme: dark;
@@ -909,4 +917,51 @@ ul, ol { list-style: none; }
 .registre__bulle { left: auto; right: 0; }
 .terme:hover .terme__bulle, .terme:focus .terme__bulle, .registre:hover .terme__bulle, .registre:focus .terme__bulle {
   opacity: 1; visibility: visible; transform: none; transition-delay: 0s;
+}
+
+/* ---------- Graphiques (Recharts) ---------- */
+
+.anneaux { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.anneau { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.anneau figcaption { font-weight: 700; font-size: 16px; text-align: center; }
+.anneau__graphique { position: relative; height: min(190px, 23vh); }
+.anneau__part { transition: opacity var(--duree-courte, 160ms) ease-out; cursor: pointer; outline: none; }
+.anneau__etiquette { fill: #ffffff; font-size: 11.5px; font-weight: 700; }
+.anneau__centre {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none; text-align: center; padding: 0 30%;
+}
+.anneau__centre strong { font-size: 20px; line-height: 1.1; }
+.anneau__centre span { font-size: 12px; color: var(--encre-douce); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.anneau__legende { display: grid; gap: 2px; }
+.anneau__entree {
+  display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 14px;
+  padding: 3px 6px; border-radius: 8px; transition: background var(--duree-courte, 160ms), opacity var(--duree-courte, 160ms);
+}
+.anneau__entree--actif { background: var(--accent-fond); }
+.anneau__entree--terne { opacity: 0.55; }
+.anneau__pastille { width: 12px; height: 12px; border-radius: 4px; }
+.anneau__nom { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.cours-commentes { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+.cours-commentes__graphique { flex: 1; min-height: 160px; }
+.cours-commentes__commentaire { display: grid; gap: 4px; font-size: 15.5px; }
+.eventail { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.eventail__graphique { flex: 1; min-height: 160px; }
+.eventail__cle--central { background: color-mix(in srgb, var(--serie-1) 26%, transparent); }
+.eventail__cle--large { background: color-mix(in srgb, var(--serie-1) 12%, transparent); }
+.eventail__cle--mediane { background: var(--serie-1); }
+.infobulle {
+  display: grid; gap: 2px; background: var(--surface); color: var(--encre); border: 1px solid var(--trait);
+  border-radius: 10px; padding: 8px 12px; font-size: 13.5px; box-shadow: var(--ombre);
+}
+.infobulle strong { font-size: 14px; }
+.recharts-wrapper :focus, .recharts-surface:focus { outline: none; }
+@media (max-height: 820px) {
+  .anneaux { gap: 16px; }
+  .anneau { gap: 4px; }
+  .anneau__graphique { height: min(150px, 19vh); }
+  .anneau__centre strong { font-size: 17px; }
+  .anneau__entree { font-size: 13px; padding: 1px 6px; }
+  .cours-commentes__commentaire { font-size: 14.5px; }
 }

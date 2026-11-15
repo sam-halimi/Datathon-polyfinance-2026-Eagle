@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { CarteVerifications } from "./Cartes";
 import { FichesLignes, LimitesPortefeuille, MANQUE, retenu, TableauAdequation } from "./Adequation";
 import { Chiffre, Texte, texteBrut, typo } from "./Chiffres";
-import { Camembert, Cours, Legende, LegendeCours, PhraseCours, phraseCours, SourceCours } from "./Graphiques";
+import { CoursCommentes, EventailGraphique, TroisAnneaux } from "./Visualisations";
+import { phraseCours } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
 import type { VerdictActif } from "@/lib/api";
-import { lireEventail, type Eventail as EventailDonnees } from "@/lib/scenarios";
+import { lireEventail } from "@/lib/scenarios";
 import type { Reference, SortiePipeline } from "@/lib/types";
 
 // Les diapositives de la présentation. Chacune a un titre, sa justification,
@@ -34,7 +35,7 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
   const demande = s.demande_analysee?.texte ?? s.profil.demande ?? "";
   const tension = g.controles.find((k) => k.controle === "demande_hors_profil") ?? g.controles.find((k) => k.titre === "Votre demande");
   const e = s.explication;
-  const reps = s.graphiques.repartitions[ptf.id];
+  const reps = s.graphiques?.repartitions?.[ptf.id];
   const cours = s.graphiques.cours;
 
   const elementsDemande: Element[] = [
@@ -79,18 +80,8 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
     },
     {
       id: "repartition", court: "Répartition", titre: `Répartition du portefeuille simulé ${ptf.id} : ${ptf.nom}`, justification: ptf.intention,
-      contenu: (
-        <div className="diapo__camemberts">
-          {([["actif", "Par actif"], ["secteur", "Par secteur"], ["zone", "Par zone géographique"]] as const).map(([k, nom]) => (
-            <figure key={k}>
-              <figcaption>{nom}</figcaption>
-              <Camembert parts={reps[k]} taille={150} libelle={`Répartition ${nom.toLowerCase()}`} />
-              <Legende parts={reps[k]} />
-            </figure>
-          ))}
-        </div>
-      ),
-      texte: [ptf.intention, ...(["secteur", "zone"] as const).map((k) => `${k === "secteur" ? "Par secteur" : "Par zone"} : ${reps[k].map((p) => `${p.libelle} ${brut(`{${p.id}}`, c)}`).join(", ")}.`)].join(" "),
+      contenu: <TroisAnneaux s={s} ptf={ptf} />,
+      texte: [ptf.intention, ...(["classe", "secteur", "zone"] as const).map((k) => `${{ classe: "Par classe d'actif", secteur: "Par secteur", zone: "Par zone" }[k]} : ${(reps?.[k] ?? []).map((p) => `${p.libelle} ${brut(`{${p.id}}`, c)}`).join(", ")}.`)].join(" "),
     },
     {
       id: "lignes", court: "Lignes", titre: `Les lignes du portefeuille simulé ${ptf.id}`,
@@ -99,21 +90,14 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
       texte: ptf.lignes.map((l) => `${l.nom} (${l.symbole}), ${brut(l.poids_id ? `{${l.poids_id}}` : "", c) || `${Math.round(l.poids * 100)} %`} : ${l.pourquoi ? brut(l.pourquoi, c) : `${MANQUE} sur la raison de cette ligne.`}`).join(" "),
     },
     {
-      id: "cours", court: "Cours", titre: cours ? `Cours de ${cours.nom} (${cours.symbole})` : "Cours de l'actif demandé", justification: s.messages.risque,
-      contenu: cours ? (
-        <Pages classe="diapo__liste diapo__cours" elements={[
-          { cle: "graphique", contenu: <Cours sortie={s} hauteur={190} /> },
-          { cle: "marques", contenu: <LegendeCours sortie={s} /> },
-          { cle: "phrase", contenu: <PhraseCours sortie={s} /> },
-          { cle: "source", contenu: <SourceCours sortie={s} /> },
-        ]} />
-      ) : <p className="diapo__manque">Information manquante : pas de cours ou pas de pire baisse calculée pour l&apos;actif demandé.</p>,
-      texte: cours ? brut(phraseCours(s), c) : "Information manquante pour le cours de l'actif demandé.",
+      id: "cours", court: "Cours", titre: "Cours commentés", justification: "Le cours de l'actif demandé et de chaque ligne du portefeuille simulé, avec sa pire baisse sur la fenêtre. Survolez la courbe pour lire une date.",
+      contenu: <CoursCommentes s={s} ptf={ptf} />,
+      texte: cours ? brut(phraseCours(s), c) : `Cours des lignes du portefeuille ${ptf.id} : ${ptf.lignes.map((l) => `${l.symbole}, pire baisse ${brut(`{${ptf.pires_baisses?.[l.symbole]}}`, c)}`).join(" ; ")}.`,
     },
     {
       id: "scenarios", court: "Scénarios", titre: "Scénarios, pas une prévision",
       justification: "Un éventail de trajectoires possibles du portefeuille simulé, tirées des mois observés : une médiane et des bandes. Ce n'est pas une prévision.",
-      contenu: ev ? <Eventail ev={ev} /> : <p className="diapo__manque">Information manquante : la réponse du pipeline ne contient pas de champ « scenarios ». Rien n&apos;est tracé à sa place.</p>,
+      contenu: ev ? <EventailGraphique ev={ev} /> : <p className="diapo__manque">Information manquante : la réponse du pipeline ne contient pas de champ « scenarios ». Rien n&apos;est tracé à sa place.</p>,
       texte: ev
         ? ["Scénarios, pas une prévision.", `Médiane à l'horizon : ${brut("{scen_p50_fin}", cev)}.`, `Huit scénarios sur dix entre ${brut("{scen_p10_fin}", cev)} et ${brut("{scen_p90_fin}", cev)}.`, ev.avertissement ?? "", ...ev.hypotheses].join(" ")
         : "Information manquante : les scénarios ne sont pas dans la réponse du pipeline.",
@@ -132,35 +116,6 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
         : [s.messages.limites, `${MANQUE} : pas de limites propres au portefeuille dans la réponse.`, ...s.limites.limites.map((t) => brut(t, c))].join(" "),
     },
   ];
-}
-
-/** Éventail de scénarios : bandes p10-p90 et p25-p75, médiane en trait. */
-function Eventail({ ev }: { ev: EventailDonnees }) {
-  const L = 620, H = 260, m = { h: 12, b: 24, g: 8, d: 8 };
-  const toutes = [...ev.p10, ...ev.p90];
-  const y0 = Math.min(...toutes), y1 = Math.max(...toutes);
-  const X = (i: number) => m.g + (i / Math.max(1, ev.annees.length - 1)) * (L - m.g - m.d);
-  const Y = (v: number) => m.h + (1 - (v - y0) / (y1 - y0 || 1)) * (H - m.h - m.b);
-  const ligne = (vals: number[]) => vals.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("");
-  const bande = (haut: number[], bas: number[]) => `${ligne(haut)}${bas.map((_, k) => { const i = bas.length - 1 - k; return `L${X(i).toFixed(1)},${Y(bas[i]).toFixed(1)}`; }).join("")}Z`;
-  const n = ev.annees.length - 1;
-  return (
-    <div className="eventail">
-      <svg viewBox={`0 0 ${L} ${H}`} className="eventail__svg" role="img" aria-label="Éventail de scénarios : médiane et bandes">
-        <path className="eventail__bande eventail__bande--0" d={bande(ev.p90, ev.p10)} />
-        <path className="eventail__bande eventail__bande--1" d={bande(ev.p75, ev.p25)} />
-        <path d={ligne(ev.p50)} className="eventail__mediane" />
-        {[0, Math.floor(n / 2), n].map((i) => <text key={i} x={X(i)} y={H - 6} className="cours__axe" textAnchor={i === 0 ? "start" : i === n ? "end" : "middle"}>{ev.annees[i]} an{ev.annees[i] > 1 ? "s" : ""}</text>)}
-      </svg>
-      <p className="eventail__legende">
-        <span><i className="eventail__cle eventail__cle--mediane" /> Médiane : <Chiffre id="scen_p50_fin" /></span>
-        <span><i className="eventail__cle eventail__bande--1" /> Un scénario sur deux</span>
-        <span><i className="eventail__cle eventail__bande--0" /> Huit sur dix : de <Chiffre id="scen_p10_fin" /> à <Chiffre id="scen_p90_fin" /></span>
-      </p>
-      {ev.avertissement ? <p className="eventail__avertissement">{typo(ev.avertissement)}</p> : null}
-      {ev.hypotheses.length ? <ul className="eventail__hypotheses">{ev.hypotheses.map((h) => <li key={h}>{typo(h)}</li>)}</ul> : null}
-    </div>
-  );
 }
 
 // Les agents du pipeline, dans l'ordre d'exécution (agents/pipeline.py).
