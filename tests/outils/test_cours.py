@@ -18,7 +18,8 @@ def test_univers_etendu_source_et_sans_doublon():
 def test_themes_relient_des_symboles_sources():
     t = pd.read_csv(DATA / "themes.csv", dtype=str, keep_default_na=False)
     connus = set(cours.univers_etendu()["ticker"]) | set(pd.read_csv(DATA / "assets_universe.csv")["ticker"])
-    assert set(t["symbole"]) <= connus
+    assert set(t.loc[t["role"] != "non_couvert", "symbole"]) <= connus
+    assert (t.loc[t["role"] == "non_couvert", "raison"].str.len() > 40).all()
     assert t["source_url"].str.startswith("https://").all()
     assert {"jeu vidéo", "énergie propre"} <= set(t["theme"])
 
@@ -59,7 +60,7 @@ def test_telechargement_simule_ecrit_puis_relit_le_cache(tmp_path, monkeypatch):
     monkeypatch.setattr(cours, "CACHE", tmp_path / "cache")
     faux = FauxBuildDataset()
     r = cours.telecharger(bd=faux)
-    assert r["symboles"] == 11 and faux.appels == 1
+    assert r["symboles"] == len(cours.univers_etendu()) and faux.appels == 1
     cours.telecharger(bd=faux)
     assert faux.appels == 1  # deuxième passage : lu dans le cache
     p = pd.read_csv(tmp_path / "base" / "prix_etendus.csv")

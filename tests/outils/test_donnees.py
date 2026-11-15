@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import pytest
 
@@ -84,7 +85,8 @@ def test_univers_etendu_reconnu_sans_changer_le_depart():
 
     assert len(univers()) == 31 and charger_prix().shape[1] == 31
     complet = univers(etendu=True)
-    assert len(complet) == 42 and set(complet["univers"]) == {"départ", "étendu"}
+    etendus = len(pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "univers_etendu.csv"))
+    assert len(complet) == 31 + etendus and set(complet["univers"]) == {"départ", "étendu"}
     assert classe_actif("ESPO") == "etf_equity" and devise("GME") == "USD"
     px = charger_prix(["GME", "SPY"])
     assert px["GME"].notna().sum() > 1000 and px["SPY"].notna().sum() == 1255

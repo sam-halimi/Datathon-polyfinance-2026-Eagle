@@ -199,6 +199,11 @@ def theme_de(interet: str) -> dict[str, Any] | None:
     for nom, lignes in themes.groupby("theme", sort=False):
         termes = [nom] + [x for s in lignes.get("synonymes", pd.Series(dtype=str)) for x in str(s).split(";") if x.strip()]
         if contient(interet, tuple(normaliser(x) for x in termes)):
+            if "role" in lignes and (lignes["role"] == "non_couvert").all():
+                l0 = lignes.iloc[0]
+                return {"type": "non couvert", "symboles": [], "theme": nom,
+                        "raison": f"{l0.get('raison', '')} (data/themes.csv ; source : {l0.get('source_url', '')}, "
+                                  f"{l0.get('source_date', '')})"}
             symboles = [s for s in lignes["symbole"] if s in table.index]
             if symboles:
                 premiere = lignes.iloc[0]
@@ -214,6 +219,10 @@ def relier_interet(interet: str) -> dict[str, Any]:
     lien = theme_de(interet)
     if lien:
         return lien
+    if contient(interet, MOTS_REVENU):
+        return {"type": "non couvert", "symboles": [], "raison": (
+            f"« {interet} » est un objectif de revenu, pas un thème d'actifs : il se règle par l'objectif « revenu » "
+            "ou la préférence « dividendes » (tools/dividendes.py)")}
     if contient(interet, MOTS_CLES_CRYPTO):
         return {"type": "crypto", "symboles": [s for s in table.index if table.at[s, "asset_class"] == "crypto"],
                 "source": SOURCE_UNIVERS}
