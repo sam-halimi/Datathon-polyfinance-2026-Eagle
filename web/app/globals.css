@@ -281,6 +281,22 @@ ul, ol { list-style: none; }
 .legende-parts li { display: flex; align-items: center; gap: 8px; }
 .legende-parts__nom { flex: 1; min-width: 0; }
 
+/* ---------- Cours de l'actif visé ---------- */
+
+.niveaux--deux { grid-template-columns: 1fr 1fr; }
+.cours__liste { display: grid; gap: 8px; }
+.cours { display: block; width: 100%; height: auto; }
+.cours__ligne { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round; }
+.cours__grille { stroke: var(--trait); stroke-width: 1; }
+.cours__axe { font-size: 10px; fill: var(--encre-douce); }
+.cours__baisse { fill: var(--echec-fond); }
+.cours__sommet { fill: var(--surface); stroke: var(--ok); stroke-width: 2.5; }
+.cours__creux { fill: var(--surface); stroke: var(--echec); stroke-width: 2.5; }
+.cours__marque { font-size: 11px; font-weight: 700; fill: var(--encre); }
+.cours__legende { font-size: 14px; }
+.cours__phrase { font-size: 15.5px; }
+.cours__source { font-size: 13px; color: var(--encre-douce); }
+
 /* ---------- Carte risque ---------- */
 
 .risque__totaux { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -480,6 +496,8 @@ ul, ol { list-style: none; }
   .persona__demande { -webkit-line-clamp: 2; }
   .tuile__extrait { --lignes-tuile: 4; }
   .camembert { width: 68px; height: 68px; }
+  .cours__phrase { font-size: 14.5px; }
+  .cours__legende { font-size: 13px; }
   .lignes .carte__chapeau { font-size: 13.5px; line-height: 1.3; }
   .repartition__sous-titre { display: none; }
   .fiche { gap: 9px; padding-top: 16px; }

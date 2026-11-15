@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Chiffre, Texte, typo, useChiffres } from "./Chiffres";
-import { Camembert, PALETTE } from "./Graphiques";
+import { Camembert, Cours, LegendeCours, PALETTE, PhraseCours, SourceCours } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
 import { formaterDate, formaterHorizon, formaterMontant, formaterPoids, majuscule } from "@/lib/format";
 import type { Controle, Portefeuille, Profil, Regroupement, SortiePipeline } from "@/lib/types";
@@ -174,24 +174,46 @@ export function CarteRisque({ sortie, ptf, choisir }: { sortie: SortiePipeline; 
       ),
     };
   });
+  const [vue, setVue] = useState<"portefeuille" | "cours">("portefeuille");
+  const c = sortie.graphiques.cours;
+  const elementsCours: Element[] = [
+    { cle: "graphique", contenu: <Cours sortie={sortie} /> },
+    { cle: "marques", contenu: <LegendeCours sortie={sortie} /> },
+    { cle: "phrase", contenu: <PhraseCours sortie={sortie} /> },
+    { cle: "source", contenu: <SourceCours sortie={sortie} /> },
+  ];
   return (
     <article className="carte">
-      <Entete titre="Risque"><ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /></Entete>
-      <div className="risque__totaux">
-        <p className="risque__total">
-          <span className="risque__total-libelle">Variation typique par an</span>
-          <span className="risque__total-valeur"><Chiffre id={ptf.volatilite} /></span>
-        </p>
-        <p className="risque__total">
-          <span className="risque__total-libelle">Pire baisse sur la fenêtre</span>
-          <span className="risque__total-valeur"><Chiffre id={ptf.pire_baisse} /></span>
-        </p>
+      <Entete titre="Risque">
+        {vue === "portefeuille" ? <ChoixPortefeuille sortie={sortie} ptf={ptf} choisir={choisir} /> : null}
+      </Entete>
+      <div className="niveaux niveaux--deux" role="tablist" aria-label="Portefeuille ou actif visé">
+        <button type="button" role="tab" aria-selected={vue === "portefeuille"}
+          className={vue === "portefeuille" ? "niveau niveau--actif" : "niveau"} onClick={() => setVue("portefeuille")}>Portefeuille {ptf.id}</button>
+        <button type="button" role="tab" aria-selected={vue === "cours"}
+          className={vue === "cours" ? "niveau niveau--actif" : "niveau"} onClick={() => setVue("cours")}>Cours de {c.symbole}</button>
       </div>
-      <div className="legende" aria-hidden="true">
-        <span><i className="legende__capital" /> Part de l&apos;argent</span>
-        <span><i className="legende__risque" /> Part du risque</span>
-      </div>
-      <Pages elements={elements} classe="parts" />
+      {vue === "cours" ? (
+        <Pages elements={elementsCours} classe="cours__liste" />
+      ) : (
+        <>
+          <div className="risque__totaux">
+            <p className="risque__total">
+              <span className="risque__total-libelle">Variation typique par an</span>
+              <span className="risque__total-valeur"><Chiffre id={ptf.volatilite} /></span>
+            </p>
+            <p className="risque__total">
+              <span className="risque__total-libelle">Pire baisse sur la fenêtre</span>
+              <span className="risque__total-valeur"><Chiffre id={ptf.pire_baisse} /></span>
+            </p>
+          </div>
+          <div className="legende" aria-hidden="true">
+            <span><i className="legende__capital" /> Part de l&apos;argent</span>
+            <span><i className="legende__risque" /> Part du risque</span>
+          </div>
+          <Pages elements={elements} classe="parts" />
+        </>
+      )}
     </article>
   );
 }
