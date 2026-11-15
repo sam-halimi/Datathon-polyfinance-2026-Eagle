@@ -128,15 +128,24 @@ export function FichesLignes({ s }: { s: SortiePipeline }) {
             <Champ nom="Pire baisse">{pb ? <Chiffre id={pb} /> : <Manque />}</Champ>
             <Champ nom="Part du risque">{part ? <Chiffre id={part} /> : <Manque />}</Champ>
           </dl>
+          {/* Justification, alternative écartée et sources : paginées si elles dépassent, rien ne défile. */}
           <div className="fiche-ligne__raisons">
-            <h4>Pourquoi cette ligne, pour votre profil</h4>
-            <p>{l.pourquoi ? <Texte>{l.pourquoi}</Texte> : <Manque quoi="justification absente de la réponse" />}
-              {l.critere_profil ? <span className="fiche-ligne__critere"> Critère servi : {CRITERES[l.critere_profil] ?? l.critere_profil}.</span> : null}</p>
-            {l.plutot_que ? (
-              <p className="fiche-ligne__plutot">Plutôt que <strong>{l.plutot_que.symbole}</strong> : <Texte>{l.plutot_que.raison}</Texte></p>
-            ) : null}
-            <h4>Sources</h4>
-            <Sources sources={l.sources} />
+            <Pages classe="fiche-ligne__raisons-liste" elements={[
+              { cle: "t-pourquoi", contenu: <h4>Pourquoi cette ligne, pour votre profil</h4> },
+              {
+                cle: "pourquoi",
+                contenu: (
+                  <p>{l.pourquoi ? <Texte>{l.pourquoi}</Texte> : <Manque quoi="justification absente de la réponse" />}
+                    {l.critere_profil ? <span className="fiche-ligne__critere"> Critère servi : {CRITERES[l.critere_profil] ?? l.critere_profil}.</span> : null}</p>
+                ),
+              },
+              ...(l.plutot_que ? [{
+                cle: "plutot",
+                contenu: <p className="fiche-ligne__plutot">Plutôt que <strong>{l.plutot_que.symbole}</strong> : <Texte>{l.plutot_que.raison}</Texte></p>,
+              }] : []),
+              { cle: "t-sources", contenu: <h4>Sources</h4> },
+              { cle: "sources", contenu: <Sources sources={l.sources} /> },
+            ].map((e) => ({ ...e, cle: `${l.symbole}-${e.cle}` }))} />
           </div>
         </div>
       </article>

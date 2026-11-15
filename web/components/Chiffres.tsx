@@ -33,7 +33,11 @@ export function Chiffre({ id }: { id: string }) {
 
 /** Espaces insécables du français : avant ? ! : ; » et après «. */
 export function typo(t: string): string {
-  return t.replace(/ ([?!:;»])/g, "\u00a0$1").replace(/« /g, "«\u00a0");
+  return t
+    // Repère mal formé laissé par un modèle autour d'un symbole (« {id:SHOP.TO} ») : on garde le symbole.
+    // Un repère de chiffre ({vol_tsla}) n'a ni majuscule ni deux-points : il n'est pas touché.
+    .replace(/\{(?:id|symbole|ticker)\s*:\s*([A-Z0-9][A-Z0-9.\-]*)\}/g, "$1")
+    .replace(/ ([?!:;»])/g, "\u00a0$1").replace(/« /g, "«\u00a0");
 }
 
 const MORCEAU = /(\{[a-z0-9_]+\}[.,;:)]?|https?:\/\/[^\s,;)]+)/g;
@@ -121,7 +125,10 @@ function Parametres({ p }: { p: Record<string, unknown> }) {
 
 function periode(ref: Reference): string {
   const p = ref.periode;
-  if (!p.debut) return "Sans objet : une limite du profil, pas une mesure de marché";
+  if (!p.debut) {
+    const nature = typeof ref.details?.nature === "string" ? ref.details.nature : null;
+    return `Sans objet : ${nature ?? "une limite du profil, pas une mesure de marché"}`;
+  }
   return `${formaterDate(p.debut)} au ${formaterDate(p.fin)}${p.observations ? ` · ${p.observations} jours` : ""}`;
 }
 

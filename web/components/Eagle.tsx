@@ -67,6 +67,9 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
   const [saisie, setSaisie] = useState("");
   const [fiche, setFiche] = useState<string | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
+  // Serveur injoignable : on donne la commande pour le lancer. Serveur qui répond par une erreur :
+  // il tourne déjà, on renvoie à son terminal et à la vérification des clés.
+  const [injoignable, setInjoignable] = useState(false);
   const [debutAnalyse, setDebutAnalyse] = useState(0);
   const [univers, setUnivers] = useState<Record<string, { nom: string }>>({});
 
@@ -133,6 +136,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     } catch (e) {
       const message = e instanceof ErreurService ? e.message : `L'analyse a échoué : ${(e as Error).message}.`;
       setErreur(message);
+      setInjoignable(e instanceof ErreurService ? e.injoignable : false);
       setPhase("erreur");
       dire(message);
       return message;
@@ -332,8 +336,17 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     contenu = (
       <div className="panne">
         <p className="diapo__manque">{erreur ? typo(erreur) : null}</p>
-        <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
-        <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
+        {injoignable ? (
+          <>
+            <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
+            <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
+          </>
+        ) : (
+          <>
+            <p className="panne__aide">Le serveur répond : le détail est dans son terminal. Pour vérifier les clés (Bedrock, données), à la racine du dépôt :</p>
+            <pre className="panne__commande"><code>python -m tools.verifier_cles</code></pre>
+          </>
+        )}
         <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p>
       </div>
     );

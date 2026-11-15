@@ -1177,3 +1177,14 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .fiches-lignes__onglets { gap: 6px; }
   .diapo__justification { font-size: 15px; line-height: 21px; }
 }
+.fiche-ligne__corps { flex: 1; min-height: 0; }
+.fiche-ligne__raisons { display: flex; flex-direction: column; min-height: 0; }
+.fiche-ligne__raisons-liste { display: grid; gap: 6px; font-size: 15px; }
+.fiche-ligne__raisons-liste h4 { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--encre-douce); margin: 4px 0 0; }
+@media (max-height: 820px) {
+  .eventail { gap: 6px; }
+  .eventail__graphique { min-height: 110px; }
+  .eventail__legende { font-size: 13px; gap: 4px 14px; }
+  .eventail__avertissement { font-size: 13px; line-height: 18px; }
+  .eventail__hypotheses { font-size: 12.5px; line-height: 17px; }
+}
