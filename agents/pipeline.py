@@ -251,7 +251,8 @@ class Session:
         self.mesures: dict[str, dict[str, str]] = {}
         for s in sorted(set(self.candidats) | {d["symbole"] for d in self.demande["symboles"]}):
             self.mesures[s] = {"vol": j.mesurer("volatilite", cle("vol", s), symbole=s)["valeur"],
-                               "pb": j.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"]}
+                               "pb": j.mesurer("pire_baisse", cle("pb", s), symbole=s)["valeur"],
+                               "div": adq.dividende_actif(j, s)}
 
         # Point faible du thème : sa corrélation avec la techno déjà présente dans un FNB large.
         self.corr_theme: dict[str, str] = {}
@@ -465,7 +466,8 @@ class Session:
             f"{self.c['seuils_outil'][self.c['tolerance']]['volatilite']:.0%}, pire baisse pas pire que "
             f"{self.c['seuils_outil'][self.c['tolerance']]['pire_baisse']:.0%}. {theme}")
         catalogue = "\n".join(f"{s} | {table.at[s, 'name']} | {table.at[s, 'asset_class']} | {table.at[s, 'sector']} | "
-                              f"{j.apercu(m['vol'])} | {j.apercu(m['pb'])}"
+                              f"{j.apercu(m['vol'])} | {j.apercu(m['pb'])} | "
+                              + (j.apercu(m["div"]) if m.get("div") else "dividendes : information manquante")
                               for s, m in self.mesures.items() if s in self.candidats)
         agent = creer_agent("Constructeur", (
             "Tu es le constructeur. Tu proposes deux ou trois portefeuilles simulés, différents entre eux, qui "
@@ -485,6 +487,11 @@ class Session:
             demande.append("Au moins un portefeuille contient le thème (rôle « theme »), au plafond ou en dessous.")
         if "crypto" in self.demande["classes"] and lim["max_crypto"] > 0:
             demande.append("La crypto est demandée et permise : au moins un portefeuille en contient, sous son plafond.")
+        if adq.veut_revenu(self.profil):
+            ref = adq.dividende_reference(j)
+            demande.append(f"Revenu ou dividendes demandés : le rendement en dividendes pondéré du portefeuille "
+                           f"(Σ poids × rendement de la ligne, colonne dividendes) devrait atteindre au moins celui de "
+                           f"{adq.REFERENCE_REVENU}, {j.apercu(ref)}, sans dépasser les limites de risque.")
         if self.criteres_esg:
             demande.append("Profil ESG : un FNB large peut contenir des sociétés exclues (voir les constats ESG) ; "
                            "préfère le FNB filtré ESGV aux FNB larges quand c'est possible.")
@@ -493,7 +500,8 @@ class Session:
                   f"Constats du spécialiste marché et risque : {self.constats_marche}\n"
                   f"Constats du spécialiste macro et taux : {self.constats_macro}\n"
                   f"Constats du spécialiste ESG : {self.esg['constats']}\n"
-                  f"Candidats (symbole | nom | classe | secteur | volatilité | pire baisse) :\n{catalogue}")
+                  f"Candidats (symbole | nom | classe | secteur | volatilité | pire baisse | rendement en dividendes "
+                  f"sur 12 mois, passé) :\n{catalogue}")
         self.historique: list[dict[str, Any]] = []
         acceptes: dict[str, dict[str, Any]] = {}
         for essai in range(1, gv.ESSAIS_MAX + 1):

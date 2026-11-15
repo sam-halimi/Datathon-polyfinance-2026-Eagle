@@ -1,4 +1,7 @@
-"""Fondamentaux : « information manquante » tant que data/fondamentaux.csv n'existe pas, jamais inventés."""
+"""Fondamentaux : « information manquante » tant que data/fondamentaux.csv n'existe pas, jamais inventés.
+
+Les dividendes, eux, sont mesurés par tools/dividendes.py (data/corporate_actions.csv) : l'objectif
+« revenu » et la préférence « dividendes » ne dépendent plus de data/fondamentaux.csv."""
 
 from agents import gouvernance as gv
 from agents import lignes
@@ -27,7 +30,8 @@ def test_absent_information_manquante_partout():
     assert not any(s["fichier"] == "data/fondamentaux.csv" for s in lignes.sources_ligne("SPY", "CAD"))  # pas un FNB
     a = _adequation()
     for cle in (("objectif", None), ("preferences", "dividendes")):
-        assert a[cle]["statut"] == "non couvert" and "information manquante" in a[cle]["raison"]
+        assert a[cle]["statut"] in ("respecté", "partiel") and "{div_ptf_a}" in a[cle]["reponse"]
+        assert "tools/dividendes.py" in a[cle]["regle"]
 
 
 def test_un_fichier_qui_apparait_n_est_pas_lu_en_silence(tmp_path, monkeypatch):
@@ -35,5 +39,5 @@ def test_un_fichier_qui_apparait_n_est_pas_lu_en_silence(tmp_path, monkeypatch):
     faux.write_text("ticker,dividende\nRY.TO,0.04\n", encoding="utf-8")
     monkeypatch.setattr(lignes, "FICHIER_FONDAMENTAUX", faux)
     assert lignes.statut_fondamentaux() == "fichier présent, non branché"
-    a = _adequation()
-    assert a[("objectif", None)]["statut"] == "non couvert" and "non branché" in a[("objectif", None)]["raison"]
+    sources = lignes.sources_ligne("MSFT", "CAD")
+    assert any(s["fichier"] == "data/fondamentaux.csv" and "non branché" in s["objet"] for s in sources)

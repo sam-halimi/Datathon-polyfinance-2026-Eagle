@@ -22,6 +22,7 @@ import pandas as pd
 from agents.journal import Journal, cle
 from agents.profil import Profil
 from tools import esg as esg_outils
+from tools.dividendes import rendement_dividende
 from tools.donnees import univers
 from tools.gouvernance import SEUILS_PAR_TOLERANCE
 
@@ -61,6 +62,10 @@ MOTS_CONTROVERSE = ("controverse", "controverses", "esg", "responsable", "durabl
 MOTS_REVENU = ("dividende", "dividendes", "revenu", "revenus", "rente")
 MOTS_CANADA = ("canada", "canadien", "canadienne", "canadiens", "canadiennes", "quebec")
 MOTS_DIVERSIFICATION = ("diversification", "diversifie", "diversifier")
+
+
+REFERENCE_REVENU = "XIU.TO"
+"""Repère de la règle « revenu » : le FNB large du marché canadien de l'univers (hypothèse de l'équipe)."""
 
 
 def normaliser(texte: str) -> str:
@@ -121,6 +126,44 @@ def relier_interet(interet: str) -> dict[str, Any]:
 
 
 # --- chiffres ---------------------------------------------------------------------------------
+
+def veut_revenu(profil: Profil) -> bool:
+    return profil.objectif == "revenu" or any(contient(p, MOTS_REVENU) for p in profil.preferences)
+
+
+def dividende_actif(j: Journal, symbole: str) -> str | None:
+    """Rendement en dividendes d'un actif (tools.dividendes), ou None si « information manquante »."""
+    ident = cle("div", symbole)
+    if ident in j.chiffres:
+        return ident
+    if rendement_dividende(symbole)["valeur"] is None:
+        return None
+    return j.mesurer("rendement_dividende", ident, symbole=symbole)["valeur"]
+
+
+def dividende_reference(j: Journal) -> str:
+    return dividende_actif(j, REFERENCE_REVENU)
+
+
+def revenu(j: Journal, ident: str, poids: dict[str, float]) -> tuple[str, str, str, dict[str, Any]]:
+    """(rendement pondéré, part inconnue, repère XIU.TO, détails) ; chiffres de tools.dividendes."""
+    rid = j.mesurer("rendement_dividende_portefeuille", cle("div", "ptf", ident), poids=poids)["valeur"]
+    d = j.chiffres[rid]["details"]
+    inc = j.enregistrer(cle("div", "ptf", ident, "inconnu"), {
+        **{k: j.chiffres[rid][k] for k in ("outil", "parametres", "periode", "formule", "sources", "details")},
+        "valeur": d["part_inconnue"], "champ": "part_inconnue",
+        "unite": "fraction du capital sans donnée de dividendes"})
+    return rid, inc, dividende_reference(j), d
+
+
+def _verdict_revenu(j: Journal, rid: str, inc: str, ref: str) -> str:
+    ok = j.chiffres[rid]["valeur"] >= j.chiffres[ref]["valeur"] - 1e-12 and j.chiffres[inc]["valeur"] <= 1e-9
+    return RESPECTE if ok else PARTIEL
+
+
+REGLE_REVENU = (f"respecté si le rendement en dividendes pondéré des 12 derniers mois atteint au moins celui de "
+                f"{REFERENCE_REVENU} (FNB large du marché canadien, hypothèse de l'équipe) et qu'aucune ligne n'est "
+                "sans donnée ; tools/dividendes.py, data/corporate_actions.csv")
 
 def _ref(outil: str, parametres: dict[str, Any], valeur: float, unite: str, formule: str, sources: list[str],
          nature: str, periode: dict[str, Any] | None = None, **details: Any) -> dict[str, Any]:
@@ -199,11 +242,12 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         "Σ poids des actions, FNB d'actions et cryptoactifs", [f"{SOURCE_UNIVERS} (asset_class)"],
         "calcul sur les poids décidés par le constructeur"))
     if profil.objectif == "revenu":
-        from agents.lignes import statut_fondamentaux
-        raison = f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
-        entrees.append(_entree("objectif", None, "Tirer un revenu régulier du capital.",
-                               f"Le rendement en revenu des lignes n'est pas mesurable. Part risquée : {{{rid}}}.",
-                               NON_COUVERT, [rid], "revenu mesuré par les dividendes", raison))
+        did, inc, ref, _ = revenu(j, ident, poids)
+        entrees.append(_entree(
+            "objectif", None, "Tirer un revenu régulier du capital.",
+            f"Rendement en dividendes du portefeuille simulé sur la dernière année : {{{did}}}, contre {{{ref}}} "
+            f"pour {REFERENCE_REVENU} ; part sans donnée : {{{inc}}}. Part risquée : {{{rid}}}.",
+            _verdict_revenu(j, did, inc, ref), [did, ref, inc, rid], REGLE_REVENU))
     else:
         bas, haut = BANDES_OBJECTIF[profil.objectif]
         dans_bande = bas - 1e-9 <= risquee <= haut + 1e-9
@@ -264,11 +308,6 @@ def _verdict_transparence(d: dict, valeur: float) -> str:
     return RESPECTE
 
 
-def _raison_fondamentaux() -> str:
-    from agents.lignes import statut_fondamentaux
-    return f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
-
-
 def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict) -> list[dict[str, Any]]:
     table = univers(etendu=True)
     if not profil.preferences:
@@ -285,9 +324,11 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
                 f"statut inconnu : {{{inc}}}.", _verdict_transparence(d, j.chiffres[v]["valeur"]), [v, inc],
                 "respecté si aucune exposition et aucune part inconnue (data/esg_actions.csv, data/fnb_composition.csv)"))
         elif contient(pref, MOTS_REVENU):
-            sortie.append(_entree("preferences", pref, f"« {pref} ».", "Les dividendes ne sont pas mesurés.", NON_COUVERT,
-                                  [], "revenu mesuré par les dividendes",
-                                  _raison_fondamentaux()))
+            did, inc, ref, _ = revenu(j, ident, poids)
+            sortie.append(_entree(
+                "preferences", pref, f"« {pref} » : des lignes qui versent des dividendes.",
+                f"Rendement en dividendes pondéré sur la dernière année : {{{did}}}, contre {{{ref}}} pour {REFERENCE_REVENU} ; "
+                f"part sans donnée : {{{inc}}}.", _verdict_revenu(j, did, inc, ref), [did, ref, inc], REGLE_REVENU))
         elif contient(pref, MOTS_CANADA):
             cad = sum(w for s, w in poids.items() if table.at[s, "currency"] == "CAD")
             cid = j.enregistrer(cle("expo_cad", ident), _ref(

@@ -16,7 +16,7 @@ import re
 from typing import Any, Callable
 
 import tools
-from tools import esg
+from tools import dividendes, esg
 
 REPERE = re.compile(r"\{([a-z0-9_]+)\}")
 CHIFFRE = re.compile(r"\d")
@@ -35,6 +35,8 @@ OUTILS: dict[str, Callable[..., dict[str, Any]]] = {
     "exposition_fnb": esg.exposition_fnb,
     "exposition_transparente": esg.exposition_transparente,
     "exposition_titre": esg.exposition_titre,
+    "rendement_dividende": dividendes.rendement_dividende,
+    "rendement_dividende_portefeuille": dividendes.rendement_dividende_portefeuille,
 }
 
 
