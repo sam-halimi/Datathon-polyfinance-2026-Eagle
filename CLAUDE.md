@@ -1,5 +1,7 @@
 # AlphaForge AI — Datathon PolyFinances 2026
 
+Le produit s'appelle **Eagle** (AlphaForge AI est le nom du défi). Son assistant est un aigle.
+
 Assistant agentique qui propose des portefeuilles **simulés** adaptés à un profil d'investisseur et explique chaque choix, ses sources et ses limites. L'énoncé complet est dans `docs/enonce.txt` : en cas de doute, il fait foi.
 
 ## Règles non négociables
@@ -8,6 +10,7 @@ Assistant agentique qui propose des portefeuilles **simulés** adaptés à un pr
 - Jamais « conseil » ni « conseiller » : on dit « portefeuille simulé » et « assistant ».
 - Aucun chiffre ne sort d'un modèle. Tout chiffre vient d'une fonction de `tools/` et garde la référence de l'appel qui l'a produit (nom de l'outil, paramètres, période).
 - Pas de prédiction de rendement futur. Les données passées décrivent, elles ne promettent rien.
+- Seule projection admise : l'éventail de scénarios de `tools/scenarios.py`, toujours affiché avec le titre « Scénarios, pas une prévision », ses hypothèses et son avertissement.
 - Chaque explication distingue faits, hypothèses et limites. Pas de justification inventée.
 - Une donnée macro mensuelle ne s'utilise pas avant sa date de publication.
 - Toute donnée ajoutée a sa ligne dans `data/sources_metadata.csv` (source, URL, date, traitement, limites, conditions d'utilisation).

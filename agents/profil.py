@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 Tolerance = Literal["faible", "modéré", "élevé"]
 Connaissance = Literal["débutant", "intermédiaire", "avancé"]
@@ -47,6 +47,9 @@ LIMITES_HORIZON_COURT = {"max_crypto": 0.00, "max_part_risquee": 0.50}
 # Niveau d'explication ouvert par défaut (décision 5 de docs/contexte.md).
 NIVEAU_EXPLICATION_PAR_DEFAUT = {"débutant": 1, "intermédiaire": 2, "avancé": 3}
 
+# Échelle de connaissance de l'accueil Eagle (curseur de 1 à 5) et sa traduction en trois niveaux.
+CONNAISSANCE_PAR_NIVEAU: dict[int, str] = {1: "débutant", 2: "débutant", 3: "intermédiaire", 4: "avancé", 5: "avancé"}
+
 
 def _liste_propre(valeurs: list[str]) -> list[str]:
     vus, propres = set(), []
@@ -70,6 +73,9 @@ class Profil(BaseModel):
     tolerance_risque: Tolerance = Field(description=(
         "Si l'utilisateur hésite entre deux niveaux, l'accueil retient le plus bas et le dit dans le récapitulatif."))
     connaissance: Connaissance
+    connaissance_niveau: int | None = Field(default=None, ge=1, le=5, description=(
+        "Curseur de 1 à 5 de l'accueil Eagle. S'il est donné sans `connaissance`, celle-ci en découle "
+        "(1-2 débutant, 3 intermédiaire, 4-5 avancé). Il règle le vocabulaire de l'explication."))
     preferences: list[str] = Field(default_factory=list, description="Ex. : ESG, dividendes, Canada.")
     exclusions: list[str] = Field(default_factory=list, description=(
         "Secteurs, activités ou symboles à écarter. Ex. : énergies fossiles, TSLA."))
@@ -79,6 +85,15 @@ class Profil(BaseModel):
     devise: Devise = "CAD"
 
     _nettoyer = field_validator("preferences", "exclusions", "centres_interet")(_liste_propre)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _connaissance_depuis_niveau(cls, valeurs: Any) -> Any:
+        if isinstance(valeurs, dict) and not valeurs.get("connaissance"):
+            niveau = valeurs.get("connaissance_niveau")
+            if isinstance(niveau, int) and niveau in CONNAISSANCE_PAR_NIVEAU:
+                valeurs = {**valeurs, "connaissance": CONNAISSANCE_PAR_NIVEAU[niveau]}
+        return valeurs
 
 
 def contraintes(profil: Profil, plafond_theme: float = PLAFOND_THEME_DEFAUT) -> dict[str, Any]:

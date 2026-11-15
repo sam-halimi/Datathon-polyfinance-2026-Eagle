@@ -1,0 +1,151 @@
+"""Petit serveur local pour l'interface Eagle : `python -m agents.serveur` (port 8000).
+
+    GET  /sante
+    GET  /actif?symbole=tesla&tolerance=faible&horizon=3   fiche d'un actif face à un profil
+    POST /scenarios  {"poids": {...}, "horizon_annees": 8, "capital": 50000}
+    POST /analyse    {"profil": {...}, "demande": "...", "prenom": "..."}   pipeline complet sur Bedrock
+    GET  /demonstration/robert                              sortie enregistrée d'un persona
+
+/analyse lance le vrai pipeline (environ une minute) pour n'importe quel profil au format de
+`python -m agents.profil`. Il lui faut les clés (`.env`, voir `python -m tools.verifier_cles`).
+Les autres routes ne demandent aucune clé. Simulation uniquement.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import traceback
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Any
+from urllib.parse import parse_qs, urlparse
+
+from tools.scenarios import eventail_scenarios, fiche_actif
+
+RACINE = Path(__file__).resolve().parents[1]
+SORTIES = RACINE / "agents" / "sorties"
+
+
+class Refus(Exception):
+    """Requête mal formée : renvoyée en 400 avec un message lisible."""
+
+
+def scenarios_du_portefeuille(sortie: dict[str, Any]) -> dict[str, Any] | None:
+    """Éventail du portefeuille retenu (le premier), à l'horizon et au capital du profil."""
+    portefeuilles = sortie.get("portefeuilles") or []
+    if not portefeuilles:
+        return None
+    profil = sortie.get("profil", {})
+    poids = {ligne["symbole"]: ligne["poids"] for ligne in portefeuilles[0]["lignes"]}
+    return eventail_scenarios(poids, int(profil.get("horizon_annees", 10)),
+                              float(profil.get("capital_fictif", 10_000)), profil.get("devise", "CAD"))
+
+
+def analyser(corps: dict[str, Any]) -> dict[str, Any]:
+    """Lance le pipeline pour un profil quelconque et ajoute l'éventail de scénarios."""
+    from pydantic import ValidationError
+
+    from agents.profil import Profil
+
+    demande = str(corps.get("demande") or "").strip()
+    if not demande:
+        raise Refus("Champ « demande » manquant : la phrase de l'utilisateur, par exemple « Je veux 40 % sur Tesla ».")
+    try:
+        profil = Profil(**(corps.get("profil") or {}))
+    except ValidationError as e:
+        raise Refus(f"Profil invalide : {e.errors(include_url=False)}") from e
+    from agents.pipeline import Session  # importé ici : il lui faut strands-agents et les clés
+
+    sortie = Session(profil, demande, corps.get("prenom") or None).executer()
+    sortie["scenarios"] = scenarios_du_portefeuille(sortie)
+    return sortie
+
+
+def demonstration(nom: str) -> dict[str, Any]:
+    chemin = SORTIES / f"{nom}.json"
+    if nom not in ("robert", "amira", "mateo") or not chemin.exists():
+        raise Refus("Persona inconnu. Choix : robert, amira, mateo.")
+    sortie = json.loads(chemin.read_text(encoding="utf-8"))
+    sortie.setdefault("scenarios", scenarios_du_portefeuille(sortie))
+    return sortie
+
+
+def repondre(methode: str, chemin: str, requete: dict[str, list[str]], corps: dict[str, Any]) -> dict[str, Any]:
+    """Aiguillage, séparé du serveur pour être testé sans réseau."""
+    if methode == "GET" and chemin == "/sante":
+        return {"ok": True, "service": "Eagle", "simulation": True}
+    if methode == "GET" and chemin == "/actif":
+        symbole = (requete.get("symbole") or [""])[0]
+        if not symbole:
+            raise Refus("Paramètre « symbole » manquant.")
+        try:
+            return fiche_actif(symbole, (requete.get("tolerance") or ["modéré"])[0],
+                               int((requete.get("horizon") or ["10"])[0]))
+        except ValueError as e:
+            raise Refus(str(e)) from e
+    if methode == "GET" and chemin.startswith("/demonstration/"):
+        return demonstration(chemin.rsplit("/", 1)[1])
+    if methode == "POST" and chemin == "/scenarios":
+        try:
+            return eventail_scenarios(corps["poids"], int(corps["horizon_annees"]),
+                                      float(corps.get("capital", 10_000)), corps.get("devise", "CAD"))
+        except (KeyError, ValueError, TypeError) as e:
+            raise Refus(f"Requête invalide : {e}") from e
+    if methode == "POST" and chemin == "/analyse":
+        return analyser(corps)
+    raise Refus(f"Route inconnue : {methode} {chemin}")
+
+
+class Gestionnaire(BaseHTTPRequestHandler):
+    def _envoyer(self, code: int, contenu: dict[str, Any]) -> None:
+        donnees = json.dumps(contenu, ensure_ascii=False).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(donnees)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.end_headers()
+        self.wfile.write(donnees)
+
+    def _traiter(self, methode: str) -> None:
+        url = urlparse(self.path)
+        try:
+            corps: dict[str, Any] = {}
+            if methode == "POST":
+                longueur = int(self.headers.get("Content-Length") or 0)
+                corps = json.loads(self.rfile.read(longueur) or b"{}")
+            self._envoyer(200, repondre(methode, url.path.rstrip("/") or "/", parse_qs(url.query), corps))
+        except Refus as e:
+            self._envoyer(400, {"erreur": str(e)})
+        except json.JSONDecodeError:
+            self._envoyer(400, {"erreur": "Le corps de la requête n'est pas du JSON valide."})
+        except Exception as e:  # le pipeline a échoué : message court, détail dans le terminal
+            traceback.print_exc()
+            self._envoyer(500, {"erreur": f"{type(e).__name__} : le pipeline a échoué. Détail dans le terminal du serveur."})
+
+    def do_GET(self) -> None:  # noqa: N802
+        self._traiter("GET")
+
+    def do_POST(self) -> None:  # noqa: N802
+        self._traiter("POST")
+
+    def do_OPTIONS(self) -> None:  # noqa: N802
+        self._envoyer(200, {})
+
+
+def main() -> int:
+    port = int(os.environ.get("PORT", "8000"))
+    serveur = ThreadingHTTPServer(("127.0.0.1", port), Gestionnaire)
+    print(f"Eagle : serveur local sur http://localhost:{port} (Ctrl+C pour arrêter). Simulation uniquement.")
+    try:
+        serveur.serve_forever()
+    except KeyboardInterrupt:
+        print("\nArrêt.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
