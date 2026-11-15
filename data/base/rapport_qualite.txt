@@ -1,4 +1,4 @@
-Ingestion du 2026-11-14, fenêtre 2021-11-12 au 2026-11-14.
+Ingestion du 2026-11-15, fenêtre 2021-11-12 au 2026-11-15.
 
 OK      USDCAD : 1245 observations, 2021-11-12 au 2026-11-12, délai 1 j
 OK      V39079 : 1293 observations, 2021-11-12 au 2026-11-12, délai 1 j
