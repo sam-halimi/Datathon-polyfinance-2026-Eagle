@@ -32,6 +32,7 @@ from typing import Any, Callable, Literal
 from pydantic import BaseModel, Field
 from strands import tool
 
+from agents import adequation as adq
 from agents import gouvernance as gv
 from agents.journal import Journal, cle
 from agents.modele import creer_agent
@@ -196,13 +197,18 @@ class Session:
                         "symboles": symboles, "classes": list(d.classes), "part_risquee": d.part_risquee}
 
         # Thème : un centre d'intérêt devient un secteur de la table sourcée, plafonné.
+        # Texte libre : relié à un secteur de la table par agents.adequation.relier_interet.
         self.theme = None
+        self.interets_non_couverts = []
         for interet in self.profil.centres_interet:
-            secteur = SECTEURS.get(_normaliser(interet))
-            if secteur and self.c["limites"]["plafond_theme"] > 0:
-                membres = [s for s in table.index if table.at[s, "sector"] == secteur and table.at[s, "asset_class"] == "equity"]
-                self.theme = {"nom": interet, "secteur": secteur, "symboles": membres, "source": "data/assets_universe.csv"}
-                break
+            lien = adq.relier_interet(interet)
+            if lien["type"] == "non couvert":
+                self.interets_non_couverts.append({"interet": interet, "raison": lien["raison"]})
+            elif lien["type"] in ("secteur", "table_themes") and self.c["limites"]["plafond_theme"] > 0 and not self.theme:
+                membres = [s for s in lien["symboles"] if table.at[s, "asset_class"] in ("equity", "etf_equity")]
+                if membres:
+                    self.theme = {"nom": interet, "secteur": lien.get("secteur"), "symboles": membres,
+                                  "source": lien["source"]}
 
         # Univers des candidats : la table, moins les exclusions et les classes plafonnées à zéro.
         exclus: dict[str, str] = {}
@@ -515,9 +521,8 @@ class Session:
         sortie = []
         for a in self.acceptes:
             p, ptf = a["proposition"], a["ptf"]
-            base = cle("ptf", p.id)
-            st = j.mesurer("stats_portefeuille", base, poids=ptf["poids"], devise=devise)
-            parts = j.mesurer("parts_du_risque", cle("part", p.id), poids=ptf["poids"], devise=devise)
+            m = adq.mesures_portefeuille(j, p.id, ptf["poids"], devise)
+            st, parts = m["stats"], m["parts"]
             lignes = [{"symbole": s, "nom": table.at[s, "name"], "classe": CLASSE_LIBELLE[table.at[s, "asset_class"]],
                        "classe_code": table.at[s, "asset_class"], "role": ROLE_LIBELLE[ptf["roles"][s]],
                        "role_code": ptf["roles"][s], "poids": w} for s, w in sorted(ptf["poids"].items(), key=lambda x: -x[1])]
@@ -530,6 +535,7 @@ class Session:
                 "volatilites": {s: self.mesures[s]["vol"] for s in ptf["poids"]},
                 "theme": ptf["theme"], "essai": a["essai"],
                 "controles": [gv.pour_interface(x) for x in a["verdict"]["controles"]],
+                "adequation": adq.evaluer(self.profil, ptf["poids"], j, p.id, self.ids_limites),
             })
         return sortie
 
@@ -690,8 +696,9 @@ class Session:
             "theme": self.theme,
             "exclus": self.exclus,
             "journal": {"appels": self.journal.appels, "textes_retires": self.textes_retires},
+            "adequation": retenu["adequation"],
             "meta": {"modele": modele_bedrock() or "défaut de Strands", "duree_secondes": round(time.time() - debut, 1),
-                     "date": date.today().isoformat()},
+                     "date": date.today().isoformat(), "version_format": 2},
         }
 
 

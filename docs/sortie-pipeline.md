@@ -173,7 +173,7 @@ Une entrée par critère du profil : `horizon`, `objectif`, `tolerance`, `capita
 | `reponse` | string | Ce que fait le portefeuille, avec repères `{id}` |
 | `statut` | `respecté`, `partiel` ou `non couvert` | `non couvert` : l'univers ou les données ne permettent pas de répondre |
 | `raison` | string ou null | Obligatoire si `non couvert` : quelle donnée manque |
-| `chiffres` | id[] | Au moins un chiffre de `tools/`, sauf si `non couvert` |
+| `chiffres` | id[] | Au moins un chiffre, sauf si `non couvert` ou si la liste du profil est vide (« aucune exclusion déclarée ») |
 | `regle` | string | La règle appliquée (hypothèse de l'équipe), par exemple « pire baisse du portefeuille au-dessus du seuil du profil » |
 
 ### Limites et hypothèses
