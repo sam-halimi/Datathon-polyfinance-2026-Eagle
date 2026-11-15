@@ -3,6 +3,9 @@
 1. Clés : lues dans `.env` ou dans les variables d'environnement (seuls les noms s'affichent).
 2. FRED : une vraie requête à l'API officielle, avec les dates de publication.
 3. Bedrock : un agent Strands avec un seul outil (la volatilité) répond à une question.
+4. yfinance, SEC EDGAR, Finnhub, CoinGecko : un seul appel réel chacun (`tools/api.py`).
+   SEC : en-tête User-Agent lu dans SEC_USER_AGENT. Finnhub et CoinGecko : FINNHUB_API_KEY et
+   COINGECKO_API_KEY, ou le proxy réseau d'une session cloud qui ajoute la clé lui-même.
 
 Bedrock s'authentifie par un jeton ou par le proxy réseau d'une session cloud : le mécanisme est
 partagé avec les agents dans `tools/bedrock.py`. Ici, le jeton factice n'est posé que le temps de
@@ -114,8 +117,58 @@ def verifier_bedrock() -> tuple[bool, str]:
     return False, masquer(f"l'agent a répondu, mais sans le chiffre attendu ({chiffre} %). Réponse : {reponse[:300]}")
 
 
+def verifier_yfinance() -> tuple[bool, str]:
+    """yfinance, sans clé : cinq jours de SPY."""
+    try:
+        import yfinance as yf
+    except ImportError:
+        return False, "yfinance n'est pas installé : pip install -r tools/requirements.txt"
+    try:
+        df = yf.download("SPY", period="5d", interval="1d", auto_adjust=False, progress=False)
+    except Exception as e:
+        return False, f"{type(e).__name__} : {e}"
+    if df is None or df.empty:
+        return False, "yfinance n'a renvoyé aucune ligne pour SPY"
+    return True, f"{len(df)} jours de SPY, dernier le {df.index.max().date()}, colonnes {sorted({c[0] for c in df.columns})}"
+
+
+def _appel(source: str, url: str, params: dict | None, resume) -> tuple[bool, str]:
+    from tools.api import ErreurApi, get_json, valeur_entete
+
+    try:
+        _, mode = valeur_entete(source)
+        rep = get_json(source, url, params, max_age_heures=0)
+    except ErreurApi as e:
+        return False, masquer(str(e))
+    except Exception as e:  # noqa: BLE001
+        return False, masquer(f"{type(e).__name__} : {e}")
+    origine = {"variable": "clé lue dans l'environnement", "proxy": "clé ajoutée par le proxy réseau"}[mode]
+    if source == "sec":
+        origine = "User-Agent lu dans SEC_USER_AGENT"
+    return True, f"{resume(rep['donnees'])} ({origine})"
+
+
+def verifier_sec() -> tuple[bool, str]:
+    return _appel("sec", "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json", None,
+                  lambda d: f"faits XBRL de {d['entityName']} : {len(d['facts'].get('us-gaap', {}))} concepts us-gaap")
+
+
+def verifier_finnhub() -> tuple[bool, str]:
+    return _appel("finnhub", "https://finnhub.io/api/v1/stock/profile2", {"symbol": "AAPL"},
+                  lambda d: f"fiche de AAPL : {d.get('name')}, {d.get('exchange')}" if d.get("name")
+                  else f"réponse vide pour AAPL : {d}")
+
+
+def verifier_coingecko() -> tuple[bool, str]:
+    return _appel("coingecko", "https://api.coingecko.com/api/v3/simple/price",
+                  {"ids": "bitcoin", "vs_currencies": "usd"},
+                  lambda d: f"prix du Bitcoin reçu ({'bitcoin' in d and 'usd' in d['bitcoin']})")
+
+
 def main() -> int:
-    etapes = [("Clés", verifier_env), ("FRED", verifier_fred), ("Bedrock", verifier_bedrock)]
+    etapes = [("Clés", verifier_env), ("FRED", verifier_fred), ("Bedrock", verifier_bedrock),
+              ("yfinance", verifier_yfinance), ("SEC EDGAR", verifier_sec), ("Finnhub", verifier_finnhub),
+              ("CoinGecko", verifier_coingecko)]
     tout_bon = True
     for nom, verifier in etapes:
         ok, message = verifier()
