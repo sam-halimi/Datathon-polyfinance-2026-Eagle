@@ -475,8 +475,10 @@ class Session:
             "fractions dont la somme vaut exactement 1. Le nom et l'intention ne contiennent aucun chiffre. "
             "Chaque ligne se justifie par rapport à CETTE personne : le critère de son profil qu'elle sert "
             "(horizon, objectif, tolérance, préférences, exclusions, centres d'intérêt, capital, ou sa demande), "
-            "une phrase « pourquoi » avec un repère {id} de la liste des candidats, et le candidat comparable que "
-            "tu as écarté (plutot_que) avec la raison, elle aussi avec un repère. Une ligne mal justifiée fait "
+            "une phrase « pourquoi » avec au moins un repère copié tel quel de la liste des candidats, et le "
+            "candidat comparable que tu as écarté (plutot_que) avec la raison, elle aussi avec un repère. Un repère a "
+            "toujours la forme {vol_<symbole>} ou {pb_<symbole>} de la liste, par exemple {vol_qqq} ou {pb_xbb_to} ; "
+            "jamais {id_qqq}, jamais un symbole entre accolades comme {QQQ}. Une ligne mal justifiée fait "
             "rejeter le portefeuille par la gouvernance. " + REGLE_CHIFFRES + " " + VOCABULAIRE), [essayer])
         demande = []
         if self.theme:
