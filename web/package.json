@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "exemple": "cd .. && python web/scripts/exemple.py"
+    "start": "next start"
   },
   "dependencies": {
     "next": "^16.4.6",
