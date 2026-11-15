@@ -8,6 +8,8 @@ Un assistant recueille le profil d'un investisseur, puis une chaîne d'agents pr
 
 La question traitée : que répondre à un investisseur dont la demande ne correspond pas à son profil ? Les trois personas de l'énoncé posent chacun une demande piège, et la solution doit la relever au lieu d'acquiescer.
 
+Les personas sont des cas de test, pas le produit. Le pipeline accepte n'importe quel profil : `python -m agents.pipeline chemin/profil.json`.
+
 ## 2. Méthodes et technologies
 
 | Choix | Justification |
@@ -117,6 +119,7 @@ Chaque exécution demande entre 93 et 120 appels d'outils et dure de 46 à 79 se
 - **ESGV** : seules neuf lignes de sa composition sont connues, lues dans un formulaire SEC. Le regard à travers ce fonds est donc partiel, et la solution le signale.
 - **Thème** : le plafond porte sur les titres détenus en direct. L'exposition à la technologie à travers QQQ ou SPY n'est pas plafonnée.
 - **Rééquilibrage quotidien** supposé dans les mesures de portefeuille.
+- **Interface** : elle affiche les sorties enregistrées des trois personas. Le questionnaire libre ne lance pas encore le pipeline en direct : pour un autre profil, la commande ci-dessus s'utilise depuis un terminal.
 - **Accueil en texte** : la voix n'a pas été réalisée.
 - **AWS** : les modèles tournent sur Bedrock. Le pipeline n'est pas déployé sur AgentCore.
 

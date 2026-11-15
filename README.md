@@ -66,6 +66,8 @@ cd web && npm install && npm run dev  # http://localhost:3000
 python -m agents.pipeline robert amira mateo   # écrit agents/sorties/*.json, environ une minute par persona
 ```
 
+Robert, Amira et Mateo sont les trois personas de l'énoncé, utilisés comme cas de test. Pour un autre profil : `python -m agents.pipeline chemin/profil.json`, avec un fichier au format de `tests/scenarios/robert.json`.
+
 ## Reproduire les données
 
 ```bash
