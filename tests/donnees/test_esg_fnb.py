@@ -31,7 +31,10 @@ def preuves():
 
 @pytest.fixture(scope="module")
 def fnb():
-    return pd.read_csv(DATA / "fnb_composition.csv", dtype={"poids": float})
+    # keep_default_na=False : « NA » est le symbole de la Banque Nationale dans XIU.
+    f = pd.read_csv(DATA / "fnb_composition.csv", dtype=str, keep_default_na=False)
+    f["poids"] = f["poids"].astype(float)
+    return f
 
 
 # --- Table ESG -------------------------------------------------------------
@@ -87,7 +90,7 @@ def test_fnb_les_quatre_fonds(fnb):
 
 
 def test_fnb_poids_en_fraction(fnb):
-    titres = fnb.dropna(subset=["poids"])
+    titres = fnb
     assert ((titres["poids"] > -0.05) & (titres["poids"] < 0.25)).all()
     sommes = titres.groupby("fnb")["poids"].sum()
     assert (sommes < 1.05).all(), sommes
@@ -99,10 +102,14 @@ def test_fnb_date_et_source(fnb):
 
 
 def test_fnb_symboles_de_l_univers_existent(fnb, univers):
-    """Un symbole qui ressemble à un titre de l'univers doit être écrit comme dans l'univers."""
+    """Dans XIU.TO, un titre canadien de l'univers s'écrit comme dans l'univers (RY.TO, pas RY).
+
+    Les FNB américains gardent la cotation américaine : QQQ détient SHOP (Nasdaq, USD),
+    la même société que SHOP.TO mais une autre cotation et une autre devise.
+    """
     tickers = set(univers["ticker"])
     racines = {t.removesuffix(".TO"): t for t in tickers if t.endswith(".TO")}
-    for s in fnb["symbole_detenu"].dropna():
+    for s in fnb.loc[fnb["fnb"] == "XIU.TO", "symbole_detenu"]:
         assert s not in racines, f"{s} doit s'écrire {racines[s]}"
 
 
@@ -110,6 +117,26 @@ def test_fnb_xiu_ne_detient_que_des_titres_canadiens_de_l_univers(fnb, univers):
     us = set(univers.loc[(univers["asset_class"] == "equity") & (univers["currency"] == "USD"), "ticker"])
     xiu = set(fnb.loc[fnb["fnb"] == "XIU.TO", "symbole_detenu"])
     assert not (xiu & us)
+
+
+def test_fnb_complets_pour_spy_qqq_xiu(fnb):
+    sommes = fnb.groupby("fnb")["poids"].sum()
+    for f in ["SPY", "QQQ", "XIU.TO"]:
+        assert sommes[f] == pytest.approx(1.0, abs=0.005), f
+
+
+def test_esgv_coherent_avec_la_table_esg(esg, fnb):
+    esgv = set(fnb.loc[fnb["fnb"] == "ESGV", "symbole_detenu"])
+    for _, r in esg.iterrows():
+        if r["ticker"].endswith(".TO"):
+            assert r["retenu_par_esgv"] == "sans objet"
+        else:
+            assert r["retenu_par_esgv"] == ("oui" if r["ticker"] in esgv else "non"), r["ticker"]
+
+
+def test_esgv_exclut_les_titres_fossiles_americains(esg):
+    us = esg[~esg["ticker"].str.endswith(".TO")]
+    assert (us.loc[us["activite_fossile"] == "oui", "retenu_par_esgv"] == "non").all()
 
 
 # --- Traçabilité -----------------------------------------------------------
