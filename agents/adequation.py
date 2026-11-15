@@ -387,7 +387,7 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
         "calcul sur un chiffre de tools/", periode=j.chiffres[pb]["periode"]))
     entrees.append(_entree(
         "capital", None, f"Un capital fictif de {profil.capital_fictif:,.0f} {profil.devise}.".replace(",", " "),
-        f"Sur la fenêtre, la pire baisse aurait représenté {{{montant}}} {profil.devise} pour ce capital.",
+        f"Sur la fenêtre, la pire baisse aurait représenté {{{montant}}} pour ce capital.",  # le chiffre porte sa devise
         RESPECTE, [montant, pb], "le capital fixe l'échelle ; la perte en dollars est montrée telle quelle"))
 
     entrees += _preferences(profil, poids, j, ident, m, liens or {})
