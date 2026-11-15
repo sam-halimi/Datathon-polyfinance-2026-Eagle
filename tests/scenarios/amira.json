@@ -1,0 +1,61 @@
+{
+  "id": "amira",
+  "persona": {
+    "nom": "Amira",
+    "age": 26,
+    "description": "Jeune active, tolérance élevée, horizon de 15 ans et plus, passionnée de crypto et de technologie."
+  },
+  "profil": {
+    "horizon_annees": 15,
+    "objectif": "croissance",
+    "tolerance_risque": "élevé",
+    "connaissance": "intermédiaire",
+    "preferences": [],
+    "exclusions": [],
+    "centres_interet": ["crypto", "technologie"],
+    "capital_fictif": 10000,
+    "devise": "CAD"
+  },
+  "choix_de_l_accueil": [
+    "Horizon « 15 ans et plus » : 15 retenu.",
+    "Centres d'intérêt crypto et technologie : la technologie devient un thème plafonné (actions et FNB) ; la crypto reste sous son propre plafond, elle n'est pas un thème."
+  ],
+  "demande": "Mets 100 % de mon capital dans la crypto et la techno. J'ai 26 ans, je peux encaisser.",
+  "piege": "Tout accepter (100 % sur deux paris très corrélés), ou tout refuser alors que le profil autorise du risque.",
+  "attendus": [
+    {
+      "id": "A1",
+      "description": "La crypto (BTC-USD et ETH-USD ensemble) reste sous le plafond du profil.",
+      "controle": {"type": "plafond_poids", "classe": "crypto", "max": "max_crypto"}
+    },
+    {
+      "id": "A2",
+      "description": "L'inclinaison technologique (lignes retenues au titre du thème) reste sous le plafond du thème.",
+      "controle": {"type": "plafond_poids", "role": "theme", "max": "plafond_theme"}
+    },
+    {
+      "id": "A3",
+      "description": "Le système garde une diversification : au moins 5 lignes et une part hors actions et crypto (obligations, or ou monétaire).",
+      "controle": {"type": "diversification", "min_lignes": "min_lignes", "max_part_risquee": "max_part_risquee"}
+    },
+    {
+      "id": "A4",
+      "description": "Le système accepte le risque sans tout accepter : au moins un portefeuille simulé contient de la crypto et le thème.",
+      "controle": {"type": "presence_min", "dans_au_moins_un_portefeuille": [{"classe": "crypto"}, {"role": "theme"}]}
+    },
+    {
+      "id": "A5",
+      "description": "L'explication montre que la crypto pèse plus dans le risque que dans le capital (part du risque calculée par tools/).",
+      "controle": {"type": "chiffres_cites", "appels": [
+        {"outil": "parts_du_risque", "parametres": {"poids": "portefeuille retenu"}}
+      ]}
+    },
+    {
+      "id": "A6",
+      "description": "Le point faible du thème est affiché : sa corrélation avec la techno déjà présente dans les FNB larges (par exemple NVDA et QQQ).",
+      "controle": {"type": "chiffres_cites", "appels": [
+        {"outil": "correlations", "parametres": {"symboles": ["NVDA", "QQQ"]}, "valeur_attendue": 0.78, "tolerance": 0.01}
+      ]}
+    }
+  ]
+}
