@@ -42,21 +42,55 @@ def _meta(fichier: str) -> dict[str, Any]:
             "source": r["source"] if isinstance(r["source"], str) else None}
 
 
+FICHIER_COUVERTURE = RACINE / "data" / "base" / "couverture.csv"
+
+
 def pays(symbole: str) -> str:
-    return PAYS_PAR_MARCHE.get(univers().at[symbole, "market"], "inconnu")
+    marche = str(univers(etendu=True).at[symbole, "market"])
+    if marche in PAYS_PAR_MARCHE:
+        return PAYS_PAR_MARCHE[marche]
+    return "États-Unis" if marche.startswith("U.S.") else "inconnu"
+
+
+@lru_cache(maxsize=1)
+def _couverture() -> pd.DataFrame | None:
+    if not FICHIER_COUVERTURE.is_file():
+        return None
+    return pd.read_csv(FICHIER_COUVERTURE, dtype=str, keep_default_na=False).set_index("ticker")
+
+
+def fondamentaux(symbole: str) -> dict[str, Any]:
+    """Statut des fondamentaux d'une action : « information manquante » tant que data/fondamentaux.csv n'existe pas."""
+    present = FICHIER_FONDAMENTAUX.is_file()
+    cv = _couverture()
+    note = cv.at[symbole, "fondamentaux_source"] if cv is not None and symbole in cv.index else None
+    return {"statut": "fichier présent, non branché" if present else "information manquante",
+            "fichier": "data/fondamentaux.csv", "couverture": note,
+            "source_couverture": "data/base/couverture.csv" if note else None}
 
 
 def sources_ligne(symbole: str, devise_profil: str) -> list[dict[str, Any]]:
     """D'où vient chaque information d'une ligne : fichier, adresse, date, objet."""
-    table = univers()
+    table = univers(etendu=True)
     classe, devise = table.at[symbole, "asset_class"], table.at[symbole, "currency"]
-    u = _meta("assets_universe.csv")
-    sources = [
-        {"fichier": "data/assets_universe.csv", "url": u["url"], "date": u["date"],
-         "objet": "nom, classe, secteur, marché et devise (table des organisateurs)"},
-        {"fichier": "data/prices_daily.csv", **{k: v for k, v in _meta("prices_daily.csv").items() if k != "source"},
-         "objet": "prix quotidiens ajustés (adj_close) : volatilité, pire baisse, part du risque"},
-    ]
+    if table.at[symbole, "univers"] == "étendu":
+        e = _meta("univers_etendu.csv")
+        sources = [
+            {"fichier": "data/univers_etendu.csv", "url": table.at[symbole, "source_url"] or e["url"],
+             "date": table.at[symbole, "source_date"] or table.at[symbole, "consulte_le"] or e["date"],
+             "objet": f"nom, classe, secteur, marché et devise ({table.at[symbole, 'regle']})"},
+            {"fichier": "data/base/prix_etendus.csv",
+             **{k: v for k, v in _meta("base/prix_etendus.csv").items() if k != "source"},
+             "objet": "prix quotidiens ajustés (adj_close) : volatilité, pire baisse, part du risque"},
+        ]
+    else:
+        u = _meta("assets_universe.csv")
+        sources = [
+            {"fichier": "data/assets_universe.csv", "url": u["url"], "date": u["date"],
+             "objet": "nom, classe, secteur, marché et devise (table des organisateurs)"},
+            {"fichier": "data/prices_daily.csv", **{k: v for k, v in _meta("prices_daily.csv").items() if k != "source"},
+             "objet": "prix quotidiens ajustés (adj_close) : volatilité, pire baisse, part du risque"},
+        ]
     if devise == "USD" and devise_profil == "CAD":
         sources.append({"fichier": "data/fx_usdcad_daily.csv",
                         **{k: v for k, v in _meta("fx_usdcad_daily.csv").items() if k != "source"},
@@ -71,9 +105,10 @@ def sources_ligne(symbole: str, devise_profil: str) -> list[dict[str, Any]]:
         else:
             sources.append({"fichier": esg_outils.FICHIER_ESG, "url": None, "date": None,
                             "objet": "ESG : information manquante"})
-        sources.append({"fichier": "data/fondamentaux.csv", "url": None, "date": None,
-                        "objet": ("fondamentaux : fichier présent, non branché" if FICHIER_FONDAMENTAUX.is_file()
-                                  else "fondamentaux (bénéfices, dette, dividendes) : information manquante")})
+        fd = fondamentaux(symbole)
+        sources.append({"fichier": fd["fichier"], "url": None, "date": None,
+                        "objet": f"fondamentaux (bénéfices, dette, dividendes) : {fd['statut']}"
+                                 + (f" ; data/base/couverture.csv : {fd['couverture']}" if fd["couverture"] else "")})
     if classe == "etf_equity":
         c = esg_outils.composition()
         lignes = c[c["fnb"] == symbole]
@@ -88,7 +123,7 @@ def sources_ligne(symbole: str, devise_profil: str) -> list[dict[str, Any]]:
 
 def detail_ligne(symbole: str, devise_profil: str, ids: dict[str, str]) -> dict[str, Any]:
     """Secteur, pays, devise, repères des chiffres et sources d'une ligne."""
-    table = univers()
+    table = univers(etendu=True)
     return {"secteur": table.at[symbole, "sector"], "pays": pays(symbole), "devise": table.at[symbole, "currency"],
             "chiffres": ids, "sources": sources_ligne(symbole, devise_profil)}
 
@@ -121,7 +156,7 @@ def problemes_ligne(ligne: Any, profil: Profil, demande: dict[str, Any], candida
         problemes += [f"{nom} : {e}" for e in journal.verifier_texte(texte)]
         if not REPERE.findall(texte):
             problemes.append(f"{nom} sans repère chiffré {{id}}")
-    if not ligne.plutot_que or ligne.plutot_que == s or ligne.plutot_que not in univers().index:
+    if not ligne.plutot_que or ligne.plutot_que == s or ligne.plutot_que not in univers(etendu=True).index:
         problemes.append("plutot_que doit nommer un autre actif de l'univers")
     elif ligne.plutot_que not in candidats and ligne.plutot_que not in {d["symbole"] for d in demande.get("symboles", [])}:
         problemes.append(f"plutot_que {ligne.plutot_que} n'est pas un candidat de ce profil")

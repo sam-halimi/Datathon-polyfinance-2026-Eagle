@@ -147,7 +147,7 @@ def test_parametres_invalides():
     with pytest.raises(ValueError):
         volatilite("SPY", debut="2030-01-01")
     with pytest.raises(SymboleInconnu):
-        pire_baisse("GME")
+        pire_baisse("ZZZZ")
 
 
 # --- référence d'appel -----------------------------------------------------------

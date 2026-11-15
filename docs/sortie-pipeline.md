@@ -159,7 +159,8 @@ Dans un symbole, tout caractère autre qu'une lettre ou un chiffre devient `_`, 
 ### Profil
 
 - `connaissance_niveau` (1 à 5) : curseur d'Eagle. Absent, il découle de `connaissance` (débutant 2, intermédiaire 3, avancé 4) et `profil.connaissance_niveau` est rempli dans la sortie.
-- `centres_interet` : texte libre (« les jeux vidéo », « l'IA »). Un centre d'intérêt que l'univers ne couvre pas donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- `centres_interet` : texte libre (« les jeux vidéo », « le solaire », « l'IA »). Il se relie d'abord à un thème de `data/themes.csv` par son nom ou un synonyme (jeu vidéo, énergie propre, international, Europe, marchés émergents), sinon à un secteur de l'univers sourcé par mots-clés. Un centre d'intérêt que rien ne couvre donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- Univers : celui de départ (`data/assets_universe.csv`) et l'univers étendu ajouté par API (`data/univers_etendu.csv`, cours dans `data/base/prix_etendus.csv`). Les deux fournissent des candidats au constructeur. `theme.source` vaut `data/themes.csv` quand le thème vient de la table des thèmes ; `lignes[].sources` cite alors la page de l'émetteur et `data/base/prix_etendus.csv`.
 
 ### Adequation
 

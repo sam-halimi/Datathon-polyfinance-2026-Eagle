@@ -22,7 +22,7 @@ from __future__ import annotations
 import unicodedata
 from typing import Any
 
-from tools.donnees import FICHIER_UNIVERS, univers
+from tools.donnees import FICHIER_UNIVERS, FICHIER_UNIVERS_ETENDU, univers
 from tools.portefeuille import TOLERANCE_SOMME, stats_portefeuille
 from tools.trace import resultat
 
@@ -156,7 +156,7 @@ def verifier_contraintes(
         seuils_profil["crypto"] = 0.0
     devise_calcul = "CAD" if str(profil.get("devise", "CAD")).upper() == "CAD" else "cotation"
 
-    table = univers()
+    table = univers(etendu=True)
     controles: list[dict[str, Any]] = []
 
     # 1. Somme et signe des poids.
@@ -174,8 +174,8 @@ def verifier_contraintes(
     hors_univers = sorted(s for s in poids if s not in table.index)
     controles.append(_controle(
         "univers_source", "non conforme" if hors_univers else "conforme",
-        f"Symboles absents de {FICHIER_UNIVERS} : {hors_univers}." if hors_univers
-        else f"Tous les symboles viennent de {FICHIER_UNIVERS}.", mesure=hors_univers))
+        f"Symboles absents de {FICHIER_UNIVERS} et de {FICHIER_UNIVERS_ETENDU} : {hors_univers}." if hors_univers
+        else f"Tous les symboles viennent de {FICHIER_UNIVERS} ou de {FICHIER_UNIVERS_ETENDU}.", mesure=hors_univers))
     connus = {s: w for s, w in poids.items() if s in table.index and w != 0}
     classe = {s: table.at[s, "asset_class"] for s in connus}
     interdits = sorted(s for s in connus if classe[s] not in CLASSES_AUTORISEES)

@@ -146,7 +146,7 @@ def table_index(table) -> set[str]:
 
 
 def _lignes_univers(symboles) -> str:
-    t = univers()
+    t = univers(etendu=True)
     return "\n".join(f"{s} | {t.at[s, 'name']} | {t.at[s, 'asset_class']} | {t.at[s, 'sector']} | {t.at[s, 'currency']}"
                      for s in symboles)
 
@@ -159,7 +159,7 @@ class Session:
         self.journal = Journal()
         self.textes_retires: list[dict[str, str]] = []
         self.c = gv.limites_du_profil(profil)
-        self.table = univers()
+        self.table = univers(etendu=True)
 
     # -- textes de modèle : vérification mécanique --------------------------
 
@@ -223,7 +223,8 @@ class Session:
                 membres = [s for s in lien["symboles"] if table.at[s, "asset_class"] in ("equity", "etf_equity")]
                 if membres:
                     self.theme = {"nom": interet, "secteur": lien.get("secteur"), "symboles": membres,
-                                  "source": lien["source"]}
+                                  "source": lien["source"], "theme_table": lien.get("theme"),
+                                  "source_url": lien.get("source_url")}
 
         # Univers des candidats : la table, moins les exclusions et les classes plafonnées à zéro.
         exclus: dict[str, str] = {}
@@ -238,7 +239,8 @@ class Session:
         self.candidats = [s for s in table.index if s not in exclus]
         self.ids_limites = gv.enregistrer_limites(self.journal, self.c)
 
-        theme = (f" Thème « {self.theme['nom']} » ({self.theme['secteur']}), plafonné." if self.theme else "")
+        theme = (f" Thème « {self.theme['nom']} » ({self.theme['secteur'] or self.theme['source']}), plafonné."
+                 if self.theme else "")
         self.journal.etape("Orchestrateur", f"Lit votre profil et votre demande, fixe les plafonds du profil.{theme}")
 
     # -- 2. Spécialiste marché et risque ---------------------------------------

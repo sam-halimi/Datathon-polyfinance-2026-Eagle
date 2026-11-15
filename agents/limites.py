@@ -60,7 +60,7 @@ def _serie_taux(symbole: str) -> str:
 def limites_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: Journal,
                         mesures: dict[str, dict[str, str]], ids_limites: dict[str, str],
                         interets_non_couverts: list[dict[str, str]]) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
     nom = lambda s: f"{table.at[s, 'name']} ({s})"  # noqa: E731
@@ -150,7 +150,7 @@ def limites_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: 
 
 
 def _recoupements(profil: Profil, poids: dict[str, float], ident: str, j: Journal) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     comp = esg_outils.composition()
     connus = set(esg_outils.fnb_connus())
     fnb = [x for x in poids if table.at[x, "asset_class"] == "etf_equity" and x in connus]
@@ -189,7 +189,7 @@ def _recoupements(profil: Profil, poids: dict[str, float], ident: str, j: Journa
 
 
 def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: Journal) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     sortie = []
     connus = set(esg_outils.fnb_connus())
     comp = esg_outils.composition()
@@ -219,7 +219,7 @@ def _donnees_manquantes(profil: Profil, poids: dict[str, float], ident: str, j: 
 
 def hypotheses_specifiques(profil: Profil, poids: dict[str, float], ident: str, j: Journal,
                            ids_limites: dict[str, str], c: dict[str, Any]) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
     vol, pb = m["stats"]["volatilite"], m["stats"]["pire_baisse"]

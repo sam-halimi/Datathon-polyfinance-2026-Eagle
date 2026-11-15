@@ -170,3 +170,34 @@ def test_post_analyse_par_le_serveur_http(monkeypatch):
     assert s["meta"]["version_format"] == 2 and s["scenarios"]["outil"] == "eventail_scenarios"
     assert s["adequation"] and s["limites"]["limites_specifiques"] and s["explication"]["lexique"]
     assert s["portefeuilles"][0]["lignes"][0]["sources"]
+
+
+def test_theme_de_data_themes_csv_et_candidats_etendus(monkeypatch):
+    """Léa (« les jeux vidéo ») : thème tiré de data/themes.csv, actifs étendus proposés au constructeur."""
+    lea = json.loads((Path(__file__).parents[2] / "agents" / "profils_libres" / "libre_niveau1.json").read_text(encoding="utf-8"))
+    prompts = []
+
+    def repondre(modele, prompt):
+        if modele.__name__ == "Propositions":
+            prompts.append(prompt)
+            lignes = LIGNES[:-1] + [("ESPO", 0.05, "theme")]
+            justif = {**REPONSES_LIGNES, "ESPO": {**_justif("ESPO", "centres_interet", "QQQ")}}
+            return modele(portefeuilles=[{"id": i, "nom": "Équilibre", "intention": "Équilibrer.",
+                                          "lignes": [{"symbole": s, "poids": w, "role": r, **justif[s]} for s, w, r in lignes]}
+                                         for i in ("A", "B")])
+        if modele.__name__ == "DemandeAnalysee":
+            return modele(symboles=[], resume="Un peu d'IA, surtout du Canada.")
+        return reponse(modele, prompt)
+
+    monkeypatch.setattr(FauxAgent, "repondre", staticmethod(repondre))
+    monkeypatch.setattr(pipeline, "creer_agent", FauxAgent)
+    s = pipeline.Session(Profil(**lea["profil"]), lea["demande"], "Léa").executer()
+    assert s["theme"]["nom"] == "les jeux vidéo" and s["theme"]["source"] == "data/themes.csv"
+    assert {"ESPO", "TTWO", "RBLX", "GME"} <= set(s["theme"]["symboles"])
+    for symbole in ("ESPO", "ICLN", "VWO", "GME"):
+        assert f"\n{symbole} |" in prompts[0], symbole  # candidat du constructeur, avec ses chiffres
+    jeu = next(e for e in s["adequation"] if e["element"] == "les jeux vidéo")
+    assert jeu["statut"] == "respecté" and "ESPO" in jeu["reponse"]
+    espo = next(l for l in s["portefeuilles"][0]["lignes"] if l["symbole"] == "ESPO")
+    assert espo["pays"] == "États-Unis" and any(x["fichier"] == "data/base/prix_etendus.csv" for x in espo["sources"])
+    assert s["chiffres"][espo["chiffres"]["volatilite"]]["sources"][0] == "base/prix_etendus.csv (adj_close)"
