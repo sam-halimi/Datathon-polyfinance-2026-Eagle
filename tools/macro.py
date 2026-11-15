@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 from tools.calendriers import convertir_cad
-from tools.donnees import DATA, FICHIER_FX, FICHIER_PRIX, charger_prix, classe_actif, verifier_symboles
+from tools.donnees import sources_prix, DATA, FICHIER_FX, charger_prix, classe_actif, verifier_symboles
 from tools.mesures import DEVISES
 from tools.trace import periode_de, resultat
 
@@ -128,7 +128,7 @@ def sensibilite_taux(
     }
     if classe_actif(symbole) == "etf_bond":
         details["duration_implicite_annees"] = float(-b * 100)
-    sources = [FICHIER_PRIX + " (adj_close)", _source_serie(serie_taux)]
+    sources = [*sources_prix([symbole]), _source_serie(serie_taux)]
     if devise == "CAD" and FICHIER_FX not in sources:
         sources.append(FICHIER_FX)
     return resultat(

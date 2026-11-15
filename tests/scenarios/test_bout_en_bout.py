@@ -18,7 +18,7 @@ DOSSIER = Path(__file__).parent
 SORTIES = DOSSIER.parent.parent / "agents" / "sorties"
 SCENARIOS = {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in sorted(DOSSIER.glob("*.json"))}
 REPERE = re.compile(r"\{([a-z0-9_]+)\}")
-TABLE = univers()
+TABLE = univers(etendu=True)  # univers de départ et univers étendu, tous deux sourcés
 
 
 def _sortie(nom):
@@ -28,16 +28,25 @@ def _sortie(nom):
     return json.loads(f.read_text(encoding="utf-8"))
 
 
+def _phrases(valeurs):
+    """Les chaînes d'une liste de limites : texte brut, ou `texte` et `si_elle_tombe` d'un objet (format v2)."""
+    for v in valeurs:
+        if isinstance(v, dict):
+            yield from (v[k] for k in ("texte", "si_elle_tombe") if v.get(k))
+        else:
+            yield v
+
+
 def _textes(s, zone=None):
     """Tout le texte affiché, ou celui d'une carte."""
     if zone == "limites":
-        return [t for v in s["limites"].values() for t in v]
+        return [t for v in s["limites"].values() for t in _phrases(v)]
     e = s["explication"]
     textes = [x["fait"] for x in s["etapes"]]
     textes += [t for p in s["portefeuilles"] for t in (p["nom"], p["intention"])]
     textes += [t for c in s["gouvernance"]["controles"] for t in (c["titre"], c["detail"])]
     textes += [e["sujet"], e["niveau1"], *e["niveau2"], *e["niveau3"]["lignes"]]
-    textes += [t for v in s["limites"].values() for t in v] + list(s["messages"].values())
+    textes += [t for v in s["limites"].values() for t in _phrases(v)] + list(s["messages"].values())
     textes += [t for v in s.get("specialistes", {}).values() if isinstance(v, list) for t in v if isinstance(t, str)]
     return textes
 

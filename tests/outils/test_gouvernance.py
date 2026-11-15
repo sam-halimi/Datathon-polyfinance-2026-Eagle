@@ -117,7 +117,7 @@ def test_exclusion_par_symbole_et_par_classe():
 # --- Contrôles de base et références --------------------------------------------
 
 def test_poids_et_symboles_invalides():
-    res = verifier_contraintes({"SPY": 0.7, "GME": 0.2}, AMIRA)
+    res = verifier_contraintes({"SPY": 0.7, "ZZZZ": 0.2}, AMIRA)
     s = statuts(res)
     assert s["somme_des_poids"] == "non conforme"
     assert s["univers_source"] == "non conforme"

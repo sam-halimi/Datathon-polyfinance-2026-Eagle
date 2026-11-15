@@ -113,6 +113,10 @@ class Journal:
     def verifier_texte(self, texte: str) -> list[str]:
         """Erreurs d'un texte écrit par un modèle : chiffre en dur, repère inconnu."""
         erreurs = []
+        faux = [m for m in re.findall(r"\{([^{}]*)\}", texte) if not REPERE.fullmatch("{" + m + "}")]
+        if faux:
+            erreurs.append(f"accolades autour de « {', '.join(faux[:3])} », qui n'est pas un repère : écrire le symbole "
+                           "sans accolades, et n'entourer que des identifiants de la liste des chiffres")
         sans_reperes = REPERE.sub("", texte)
         if CHIFFRE.search(sans_reperes):
             erreurs.append(f"chiffre écrit en dur dans « {texte} » : utiliser un repère {{id}}")

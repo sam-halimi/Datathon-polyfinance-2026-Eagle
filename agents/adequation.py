@@ -22,12 +22,11 @@ import pandas as pd
 from agents.journal import Journal, cle
 from agents.profil import Profil
 from tools import esg as esg_outils
-from tools.donnees import FICHIER_UNIVERS, univers
+from tools.donnees import univers
 from tools.gouvernance import SEUILS_PAR_TOLERANCE
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHIER_THEMES = RACINE / "data" / "themes.csv"
-FICHIER_FONDAMENTAUX = RACINE / "data" / "fondamentaux.csv"
 RESPECTE, PARTIEL, NON_COUVERT = "respecté", "partiel", "non couvert"
 CLASSES_RISQUEES = ("equity", "etf_equity", "crypto")
 
@@ -74,32 +73,50 @@ def contient(texte: str, mots: tuple[str, ...]) -> bool:
     return any(f" {m} " in t for m in mots)
 
 
+SOURCE_UNIVERS = "data/assets_universe.csv, data/univers_etendu.csv"
+
+
 def table_themes() -> pd.DataFrame | None:
-    """data/themes.csv s'il existe (colonnes `theme`, `symbole`), sinon None : information manquante."""
+    """data/themes.csv s'il existe (colonnes `theme`, `synonymes`, `symbole`…), sinon None."""
     if not FICHIER_THEMES.is_file():
         return None
-    t = pd.read_csv(FICHIER_THEMES, keep_default_na=False)
+    t = pd.read_csv(FICHIER_THEMES, dtype=str, keep_default_na=False)
     return t if {"theme", "symbole"} <= set(t.columns) else None
+
+
+def theme_de(interet: str) -> dict[str, Any] | None:
+    """Le thème de data/themes.csv qui correspond à un centre d'intérêt en texte libre (nom ou synonyme)."""
+    themes = table_themes()
+    if themes is None:
+        return None
+    table = univers(etendu=True)
+    for nom, lignes in themes.groupby("theme", sort=False):
+        termes = [nom] + [x for s in lignes.get("synonymes", pd.Series(dtype=str)) for x in str(s).split(";") if x.strip()]
+        if contient(interet, tuple(normaliser(x) for x in termes)):
+            symboles = [s for s in lignes["symbole"] if s in table.index]
+            if symboles:
+                premiere = lignes.iloc[0]
+                return {"type": "table_themes", "theme": nom, "symboles": symboles, "source": "data/themes.csv",
+                        "source_url": premiere.get("source_url") or None, "source_date": premiere.get("source_date") or None,
+                        "roles": dict(zip(lignes["symbole"], lignes.get("role", [""] * len(lignes))))}
+    return None
 
 
 def relier_interet(interet: str) -> dict[str, Any]:
     """Ce qu'un centre d'intérêt désigne dans l'univers sourcé : secteur, crypto, ou rien."""
-    table = univers()
-    themes = table_themes()
-    if themes is not None:
-        lignes = themes[themes["theme"].map(lambda x: normaliser(x) in normaliser(interet))]
-        symboles = [s for s in lignes["symbole"] if s in table.index]
-        if symboles:
-            return {"type": "table_themes", "symboles": symboles, "source": "data/themes.csv"}
+    table = univers(etendu=True)
+    lien = theme_de(interet)
+    if lien:
+        return lien
     if contient(interet, MOTS_CLES_CRYPTO):
         return {"type": "crypto", "symboles": [s for s in table.index if table.at[s, "asset_class"] == "crypto"],
-                "source": f"data/{FICHIER_UNIVERS}"}
+                "source": SOURCE_UNIVERS}
     for secteur, mots in MOTS_CLES_SECTEUR.items():
         if contient(interet, mots):
             membres = [s for s in table.index if table.at[s, "sector"] == secteur and table.at[s, "asset_class"] == "equity"]
-            return {"type": "secteur", "secteur": secteur, "symboles": membres, "source": f"data/{FICHIER_UNIVERS}"}
-    raison = ("data/themes.csv absent (aucune table de thèmes) et aucun secteur de data/assets_universe.csv "
-              f"ne correspond à « {interet} »")
+            return {"type": "secteur", "secteur": secteur, "symboles": membres, "source": SOURCE_UNIVERS}
+    raison = (("ni thème de data/themes.csv ni " if FICHIER_THEMES.is_file() else "data/themes.csv absent ; aucun ")
+              + f"secteur de l'univers sourcé ne correspond à « {interet} »")
     return {"type": "non couvert", "symboles": [], "raison": raison}
 
 
@@ -141,7 +158,7 @@ def mesures_portefeuille(j: Journal, ident: str, poids: dict[str, float], devise
 
 
 def part_risquee(poids: dict[str, float]) -> float:
-    table = univers()
+    table = univers(etendu=True)
     return sum(w for s, w in poids.items() if s in table.index and table.at[s, "asset_class"] in CLASSES_RISQUEES)
 
 
@@ -158,7 +175,7 @@ def _entree(critere: str, element: str | None, attente: str, reponse: str, statu
 def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
             ids_limites: dict[str, str] | None = None) -> list[dict[str, Any]]:
     """Adéquation d'un portefeuille simulé (`poids`) au profil. Écrit ses chiffres dans `j`."""
-    table = univers()
+    table = univers(etendu=True)
     devise = "CAD" if profil.devise == "CAD" else "cotation"
     m = mesures_portefeuille(j, ident, poids, devise)
     vol, pb = m["stats"]["volatilite"], m["stats"]["pire_baisse"]
@@ -179,12 +196,11 @@ def evaluer(profil: Profil, poids: dict[str, float], j: Journal, ident: str,
     risquee = part_risquee(poids)
     rid = j.enregistrer(cle("risquee", ident), _ref(
         "agents.adequation.part_risquee", {"portefeuille": ident}, risquee, "fraction du capital",
-        "Σ poids des actions, FNB d'actions et cryptoactifs", [f"data/{FICHIER_UNIVERS} (asset_class)"],
+        "Σ poids des actions, FNB d'actions et cryptoactifs", [f"{SOURCE_UNIVERS} (asset_class)"],
         "calcul sur les poids décidés par le constructeur"))
     if profil.objectif == "revenu":
-        raison = ("aucune donnée de dividendes ni de fondamentaux dans data/ "
-                  + ("(data/fondamentaux.csv présent mais non branché)" if FICHIER_FONDAMENTAUX.is_file()
-                     else "(data/fondamentaux.csv absent : information manquante)"))
+        from agents.lignes import statut_fondamentaux
+        raison = f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
         entrees.append(_entree("objectif", None, "Tirer un revenu régulier du capital.",
                                f"Le rendement en revenu des lignes n'est pas mesurable. Part risquée : {{{rid}}}.",
                                NON_COUVERT, [rid], "revenu mesuré par les dividendes", raison))
@@ -248,8 +264,13 @@ def _verdict_transparence(d: dict, valeur: float) -> str:
     return RESPECTE
 
 
+def _raison_fondamentaux() -> str:
+    from agents.lignes import statut_fondamentaux
+    return f"dividendes et fondamentaux : {statut_fondamentaux()} (data/fondamentaux.csv)"
+
+
 def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m: dict) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     if not profil.preferences:
         return [_entree("preferences", None, "Aucune préférence déclarée.",
                         f"Rien à vérifier. Volatilité du portefeuille : {{{m['stats']['volatilite']}}}.",
@@ -266,12 +287,12 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
         elif contient(pref, MOTS_REVENU):
             sortie.append(_entree("preferences", pref, f"« {pref} ».", "Les dividendes ne sont pas mesurés.", NON_COUVERT,
                                   [], "revenu mesuré par les dividendes",
-                                  "aucune donnée de dividendes ; data/fondamentaux.csv absent : information manquante"))
+                                  _raison_fondamentaux()))
         elif contient(pref, MOTS_CANADA):
             cad = sum(w for s, w in poids.items() if table.at[s, "currency"] == "CAD")
             cid = j.enregistrer(cle("expo_cad", ident), _ref(
                 "agents.adequation.exposition_devise", {"portefeuille": ident, "devise": "CAD"}, cad,
-                "fraction du capital", "Σ poids des lignes cotées en CAD", [f"data/{FICHIER_UNIVERS} (currency)"],
+                "fraction du capital", "Σ poids des lignes cotées en CAD", [f"{SOURCE_UNIVERS} (currency)"],
                 "calcul sur les poids décidés par le constructeur"))
             sortie.append(_entree("preferences", pref, f"« {pref} » : privilégier le Canada.",
                                   f"Part du capital cotée en dollars canadiens : {{{cid}}}.",
@@ -296,7 +317,7 @@ def _preferences(profil: Profil, poids: dict[str, float], j: Journal, ident: str
 
 
 def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str) -> list[dict[str, Any]]:
-    table = univers()
+    table = univers(etendu=True)
     if not profil.exclusions:
         return [_entree("exclusions", None, "Aucune exclusion déclarée.", "Rien à écarter.", RESPECTE, [], "aucune")]
     sortie = []
@@ -325,7 +346,7 @@ def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str)
             crypto = sum(w for s, w in poids.items() if table.at[s, "asset_class"] == "crypto")
             cid = j.enregistrer(cle("crypto", ident), _ref(
                 "agents.adequation.part_classe", {"portefeuille": ident, "classe": "crypto"}, crypto, "fraction du capital",
-                "Σ poids des cryptoactifs", [f"data/{FICHIER_UNIVERS}"], "calcul sur les poids décidés"))
+                "Σ poids des cryptoactifs", [SOURCE_UNIVERS], "calcul sur les poids décidés"))
             sortie.append(_entree("exclusions", terme, f"Écarter « {terme} ».", f"Crypto : {{{cid}}} du capital.",
                                   RESPECTE if crypto == 0 else PARTIEL, [cid], "respecté si aucune crypto"))
         else:
@@ -340,7 +361,7 @@ def _exclusions(profil: Profil, poids: dict[str, float], j: Journal, ident: str)
             sid = j.enregistrer(cle("secteur", ident, secteur), _ref(
                 "agents.adequation.part_secteur", {"portefeuille": ident, "secteur": secteur}, direct,
                 "fraction du capital", "Σ poids des actions détenues en direct du secteur",
-                [f"data/{FICHIER_UNIVERS} (sector)"], "calcul sur les poids décidés"))
+                [f"{SOURCE_UNIVERS} (sector)"], "calcul sur les poids décidés"))
             statut = PARTIEL if direct > 0 or fnb else RESPECTE
             sortie.append(_entree(
                 "exclusions", terme, f"Écarter le secteur {secteur}.",
@@ -369,7 +390,7 @@ def _interets(profil: Profil, poids: dict[str, float], j: Journal, ident: str, m
             part, "fraction du capital", "Σ poids des lignes de l'univers reliées au centre d'intérêt",
             [lien["source"]], "calcul sur les poids décidés"))
         risque = [m["parts"][s] for s in membres if s in m["parts"]]
-        quoi = lien.get("secteur") or "crypto"
+        quoi = lien.get("secteur") or (f"thème « {lien['theme']} », data/themes.csv" if lien.get("theme") else "crypto")
         reponse = (f"Lignes liées à « {interet} » ({quoi}) : {', '.join(membres)}, {{{pid}}} du capital"
                    + (", part du risque " + ", ".join(f"{s} {{{r}}}" for s, r in zip(membres, risque)) if risque else "")
                    + "." if membres else f"Aucune ligne liée à « {interet} » ({quoi}) n'a été retenue : {{{pid}}}.")

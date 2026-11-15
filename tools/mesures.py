@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from tools.calendriers import convertir_cad
-from tools.donnees import FICHIER_FX, FICHIER_PRIX, charger_prix, jours_par_an
+from tools.donnees import sources_prix, FICHIER_FX, charger_prix, jours_par_an
 from tools.donnees import devise as devise_cotation
 from tools.trace import periode_de, resultat
 
@@ -47,7 +47,7 @@ def _prix_actif(symbole: str, debut: str | None, fin: str | None, devise_calcul:
 
 def _contexte(symbole: str, debut: str | None, fin: str | None, devise_calcul: str) -> dict[str, Any]:
     parametres = {"symbole": symbole, "debut": debut, "fin": fin, "devise": devise_calcul}
-    sources = [FICHIER_PRIX + " (adj_close)"]
+    sources = sources_prix([symbole])
     if devise_calcul == "CAD" and devise_cotation(symbole) == "USD":
         sources.append(FICHIER_FX)
     return {"parametres": parametres, "sources": sources}
@@ -204,7 +204,7 @@ def rendement_en_cad(
     def annualise(total: float) -> float:
         return float((1 + total) ** (1 / annees) - 1)
 
-    sources = [FICHIER_PRIX + " (adj_close)"]
+    sources = sources_prix([symbole])
     if d == "USD":
         sources.append(FICHIER_FX)
     return resultat(

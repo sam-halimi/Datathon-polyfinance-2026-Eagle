@@ -44,7 +44,7 @@ def verifier_env() -> tuple[bool, str]:
     fichier = (RACINE / ".env").is_file()
     if fichier:
         charger_env()
-    attendues = CLES if mode_bedrock() != "proxy" else ("FRED_API_KEY",)
+    attendues = CLES if mode_bedrock() == "jeton" or mode_bedrock() is None else ("FRED_API_KEY",)
     manquantes = [nom for nom in attendues if not os.environ.get(nom, "").strip()]
     if manquantes and not fichier:
         return False, (f"clé(s) absente(s) : {', '.join(manquantes)}. Session cloud : les ajouter aux variables "
@@ -55,6 +55,8 @@ def verifier_env() -> tuple[bool, str]:
     message = f"clés lues ({origine}) : " + ", ".join(attendues)
     if mode_bedrock() == "proxy":
         message += " ; Bedrock : pas de jeton local, authentification par le proxy réseau"
+    elif mode_bedrock() == "identifiants":
+        message += " ; Bedrock : identifiants AWS (AWS_ACCESS_KEY_ID), signature SigV4"
     return True, message
 
 
@@ -79,7 +81,7 @@ def verifier_fred() -> tuple[bool, str]:
 def verifier_bedrock() -> tuple[bool, str]:
     mode = mode_bedrock()
     if mode is None:
-        return False, ("AWS_BEARER_TOKEN_BEDROCK absente et aucun proxy réseau pour authentifier à sa place")
+        return False, ("AWS_BEARER_TOKEN_BEDROCK absente, pas d'identifiants AWS et aucun proxy réseau pour authentifier à sa place")
     try:
         from strands import Agent, tool
     except ImportError:
@@ -98,7 +100,8 @@ def verifier_bedrock() -> tuple[bool, str]:
     reglages = {"tools": [volatilite_actif]}
     if modele_bedrock():
         reglages["model"] = modele_bedrock()
-    auth = "jeton AWS_BEARER_TOKEN_BEDROCK" if mode == "jeton" else "proxy réseau, sans jeton local"
+    auth = {"jeton": "jeton AWS_BEARER_TOKEN_BEDROCK", "identifiants": "identifiants AWS, signature SigV4",
+            "proxy": "proxy réseau, sans jeton local"}[mode]
     try:
         with jeton_temporaire():
             reponse = str(Agent(**reglages)(

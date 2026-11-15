@@ -50,7 +50,7 @@ def test_correlations_parametres_invalides():
     with pytest.raises(ValueError):
         correlations(["SPY"])
     with pytest.raises(SymboleInconnu):
-        correlations(["SPY", "GME"])
+        correlations(["SPY", "ZZZZ"])
 
 
 # --- stats_portefeuille --------------------------------------------------------
@@ -107,7 +107,7 @@ def test_poids_invalides():
     with pytest.raises(ValueError):
         stats_portefeuille({})
     with pytest.raises(SymboleInconnu):
-        stats_portefeuille({"SPY": 0.5, "GME": 0.5})
+        stats_portefeuille({"SPY": 0.5, "ZZZZ": 0.5})
 
 
 # --- parts_du_risque -----------------------------------------------------------
