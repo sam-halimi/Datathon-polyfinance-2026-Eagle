@@ -40,6 +40,9 @@ CONCURRENCE_MAX = 5
 DEPENDANCES = ["strands-agents==1.65.0", "pandas==3.0.5", "numpy==2.5.3"]
 POLITIQUE_CACHE_OPTIMISEE = "658327ea-f89d-4fab-a63d-7e88639e58f6"  # politique gérée « CachingOptimized »
 COMMENTAIRE_SITE = "eagle-site"
+# Agent vocal Eagle (ElevenLabs Agents, docs/agent-elevenlabs.md). Identifiant public, pas une clé :
+# il figure dans le code du site. NEXT_PUBLIC_ELEVENLABS_AGENT_ID le remplace si l'agent est recréé.
+AGENT_VOCAL = "agent_1201m7gj8np7fmnvcgfq6a5gqt68"
 
 # Code et données embarqués dans la fonction.
 A_EMBARQUER = ["agents", "tools", "data", "tests/scenarios"]
@@ -179,8 +182,13 @@ def construire_site(url_api: str) -> Path:
     web = RACINE / "web"
     if not (web / "node_modules").exists():
         subprocess.run(["npm", "ci", "--no-audit", "--no-fund"], cwd=web, check=True)
-    env = {**os.environ, "EAGLE_EXPORT": "1", "NEXT_PUBLIC_API_URL": url_api}
-    _dire("export statique de web/")
+    # Les tables du site (secteur, zone, cours, éventails des démonstrations) sont recalculées
+    # depuis data/ et agents/sorties/ : le site déployé ne peut pas être en retard sur les données.
+    _dire("tables du site : python web/scripts/graphiques.py")
+    subprocess.run([sys.executable, str(web / "scripts" / "graphiques.py")], cwd=RACINE, check=True)
+    env = {**os.environ, "EAGLE_EXPORT": "1", "NEXT_PUBLIC_API_URL": url_api,
+           "NEXT_PUBLIC_ELEVENLABS_AGENT_ID": os.environ.get("NEXT_PUBLIC_ELEVENLABS_AGENT_ID") or AGENT_VOCAL}
+    _dire(f"export statique de web/ (API {url_api}, agent vocal {env['NEXT_PUBLIC_ELEVENLABS_AGENT_ID']})")
     subprocess.run(["npx", "next", "build"], cwd=web, env=env, check=True)
     return web / "out"
 
