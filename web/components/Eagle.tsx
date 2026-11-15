@@ -9,7 +9,7 @@ import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
 import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
-import { chargerSortie, PERSONAS, type Persona } from "@/lib/personas";
+import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
 import { Choix, Curseur } from "./Questions";
 import { chargerUnivers, completerGraphiques } from "@/lib/repartition";
@@ -53,6 +53,8 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
   const [prenom, setPrenom] = useState("");
   const [demande, setDemande] = useState("");
   const [sortie, setSortie] = useState<SortiePipeline | null>(null);
+  // Persona de démonstration affiché ; null pour une analyse en direct.
+  const [demo, setDemo] = useState<Persona["id"] | null>(null);
   const [diapo, setDiapoBrut] = useState(0);
   // Sens de la dernière navigation, pour faire glisser la diapositive du bon côté.
   const [sens, setSens] = useState<"avant" | "arriere">("avant");
@@ -76,8 +78,14 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
   useEffect(() => { chargerUnivers().then((u) => setUnivers(u.actifs)); }, []);
 
   const dire = useCallback((texte: string, qui: Replique["qui"] = "eagle") => {
-    setTranscription((t) => [...t.slice(-30), { qui, texte }]);
+    setTranscription((t) => [...t.slice(-200), { qui, texte }]);
   }, []);
+  // La transcription défile : elle suit le dernier message, et on peut remonter lire le début.
+  const filTranscription = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const f = filTranscription.current;
+    if (f) f.scrollTop = f.scrollHeight;
+  }, [transcription]);
 
   const diapos = useMemo<Diapositive[]>(() => (sortie ? construireDiapositives(sortie) : []), [sortie]);
   const chiffres = useMemo<Record<string, Reference>>(() => ({
@@ -131,6 +139,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     dire("Je transmets votre profil aux spécialistes. L'analyse prend environ une minute.");
     try {
       const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom);
+      setDemo(null);
       await presenter(s, "L'analyse de votre profil est prête.");
       return "Analyse terminée.";
     } catch (e) {
@@ -149,8 +158,22 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     setPrenom(s.profil.prenom ?? p.nom);
     setDemande(s.profil.demande ?? "");
     setQuestion(QUESTIONS.length);
+    setDemo(p.id);
     dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "vous");
     await presenter(s, `Voici l'analyse enregistrée pour ${p.nom} (agents/sorties/${p.id}.json).`);
+  };
+
+  // Dossier imprimable. Persona de démonstration : sa sortie enregistrée. Analyse en direct :
+  // la réponse du pipeline, déposée dans le stockage local du navigateur pour la page /rapport.
+  const exporter = () => {
+    if (!sortie) return;
+    if (demo) { window.open(`/rapport/?persona=${demo}`, "_blank"); return; }
+    try {
+      window.localStorage.setItem(CLE_DOSSIER, JSON.stringify(sortie));
+      window.open("/rapport/?source=analyse", "_blank");
+    } catch {
+      dire("Le navigateur refuse d'enregistrer le dossier (stockage local indisponible). L'analyse reste affichée ici.");
+    }
   };
 
   // ---------- Questions sur un actif, à tout moment ----------
@@ -397,7 +420,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
           </div>
           <Voix api={api} dire={dire} surParole={setVoixParle} />
-          <div className="transcription" aria-live="polite" aria-label="Transcription">
+          <div className="transcription" ref={filTranscription} tabIndex={0} aria-live="polite" aria-label="Transcription, défilement vertical">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>
                 <span className="replique__qui">{r.qui === "eagle" ? "Eagle" : prenom || "Vous"}</span>
@@ -452,8 +475,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             ))}
           </dl>
           {sortie ? (
-            <button type="button" className="bouton bouton--secondaire" onClick={() => window.open(`/rapport?persona=${sortie.scenario}`, "_blank")}
-              disabled={!PERSONAS.some((p) => p.id === sortie.scenario)}>Exporter le dossier</button>
+            <button type="button" className="bouton bouton--secondaire" onClick={exporter}>Exporter le dossier</button>
           ) : null}
           <div className="demos">
             <p className="demos__titre">Démonstration</p>

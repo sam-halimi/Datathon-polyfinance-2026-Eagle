@@ -168,7 +168,10 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
   const pic = proche(points, d.pic), creux = proche(points, d.creux);
   const vol = ptf.volatilites?.[symbole] ?? (s.chiffres[`vol_${cle(symbole)}`] ? `vol_${cle(symbole)}` : null);
   const ratt = s.chiffres[`rattrapage_${cle(symbole)}`] ? `rattrapage_${cle(symbole)}` : null;
-  const annees = Array.from(new Set(points.map((p) => p.date.slice(0, 4)))).slice(1).map((a) => proche(points, `${a}-01-01`)!.date);
+  // Une graduation par année : le premier cours de l'année (le point le plus proche du 1er janvier
+  // pouvait tomber fin décembre et afficher l'année précédente).
+  const annees = Array.from(new Set(points.map((p) => p.date.slice(0, 4)))).slice(1)
+    .map((a) => points.find((p) => p.date.slice(0, 4) === a)!.date);
 
   return (
     <div className="cours-commentes">
@@ -219,7 +222,7 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
               {ratt ? <> Pour effacer cette baisse, il fallait un gain de <Chiffre id={ratt} />.</> : null}
               {vol ? <> Variation typique par an : <Chiffre id={vol} />.</> : null}
             </p>
-            <p className="cours__source">Cours ajusté hebdomadaire, en {actif.devise} · data/prices_daily.csv (adj_close), via web/data/univers.json. Le passé ne promet rien.</p>
+            <p className="cours__source">Cours ajusté hebdomadaire, en {actif.devise} · {actif.source ?? "data/prices_daily.csv"} (adj_close), via web/data/univers.json. Le passé ne promet rien.</p>
           </div>
         </>
       )}

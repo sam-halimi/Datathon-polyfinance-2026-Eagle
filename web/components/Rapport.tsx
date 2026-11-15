@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Chiffre, FicheReference, FournisseurChiffres, Texte, typo } from "./Chiffres";
 import { Camembert, Cours, Legende, LegendeCours, PhraseCours, SourceCours } from "./Graphiques";
 import { formaterDate, formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
-import { chargerSortie, estPersona, PERSONAS } from "@/lib/personas";
+import { chargerSortie, CLE_DOSSIER, estPersona, PERSONAS } from "@/lib/personas";
 import type { SortiePipeline } from "@/lib/types";
 
 // Le dossier imprimable : tout le contenu des cartes sur des pages A4/Lettre,
@@ -25,13 +25,26 @@ export function Rapport() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [fiche, setFiche] = useState<string | null>(null);
 
+  // /rapport?source=analyse : le dossier de l'analyse en direct, déposée par l'écran principal
+  // dans le stockage local du navigateur (rien n'est envoyé ailleurs). Sinon, un persona.
+  const enDirect = params.get("source") === "analyse";
   useEffect(() => {
+    if (enDirect) {
+      try {
+        const brut = window.localStorage.getItem(CLE_DOSSIER);
+        if (!brut) throw new Error("vide");
+        setSortie(JSON.parse(brut) as SortiePipeline);
+      } catch {
+        setErreur("Aucune analyse à exporter : relancez l'analyse dans l'écran principal, puis « Exporter le dossier ».");
+      }
+      return;
+    }
     if (!estPersona(id)) {
       setErreur("Persona inconnu : choisissez robert, amira ou mateo.");
       return;
     }
     chargerSortie(id).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
-  }, [id]);
+  }, [id, enDirect]);
 
   useEffect(() => {
     if (!sortie || !imprimer) return;
@@ -43,7 +56,8 @@ export function Rapport() {
   if (erreur) return <main className="rapport"><p>{erreur}</p></main>;
   if (!sortie) return <main className="rapport"><p>Préparation du dossier…</p></main>;
 
-  const persona = PERSONAS.find((p) => p.id === sortie.scenario);
+  const persona = enDirect ? undefined : PERSONAS.find((p) => p.id === sortie.scenario);
+  const origine = enDirect ? "réponse de POST /analyse, profil saisi à l'écran" : `agents/sorties/${sortie.scenario}.json`;
   const profil = sortie.profil;
   const g = sortie.gouvernance;
   const ptf = sortie.portefeuilles.find((p) => p.id === g.portefeuille_retenu) ?? sortie.portefeuilles[0];
@@ -60,7 +74,7 @@ export function Rapport() {
           <header className="rapport__titre">
             <p className="rapport__surtitre">Eagle · dossier de portefeuille simulé</p>
             <h1>{profil.prenom}{persona ? `, ${persona.age} ans` : ""}</h1>
-            <p>Sortie du pipeline du {formaterDate(sortie.meta?.date ?? null)} (agents/sorties/{sortie.scenario}.json). Portefeuille simulé retenu : {ptf.id}, « {typo(ptf.nom)} ».</p>
+            <p>Sortie du pipeline du {formaterDate(sortie.meta?.date ?? null)} ({origine}). Portefeuille simulé retenu : {ptf.id}, « {typo(ptf.nom)} ».</p>
             <button type="button" className="bouton bouton--principal rapport__imprimer" onClick={() => window.print()}>Imprimer ou enregistrer en PDF</button>
           </header>
 
@@ -174,7 +188,7 @@ export function Rapport() {
             <ul className="rapport__liste">
               {sources.map((s) => <li key={s}>{s}</li>)}
               <li>data/assets_universe.csv (secteur, marché), via web/scripts/graphiques.py</li>
-              <li>agents/sorties/{sortie.scenario}.json : {sortie.note}</li>
+              <li>{origine} : {sortie.note}</li>
             </ul>
             <p className="rapport__petit">Chaque chiffre souligné renvoie à l&apos;appel d&apos;outil qui l&apos;a produit (outil, paramètres, période, formule). Les données passées décrivent, elles ne promettent rien.</p>
           </section>
