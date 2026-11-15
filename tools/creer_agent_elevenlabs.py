@@ -1,4 +1,7 @@
-"""Crée l'agent vocal Eagle sur ElevenLabs Agents et écrit son identifiant dans web/.env.local.
+"""Crée un agent vocal Eagle NEUF sur ElevenLabs Agents et écrit son identifiant dans web/.env.local.
+
+L'agent Eagle existe déjà (agent_1201m7gj8np7fmnvcgfq6a5gqt68, voir docs/agent-elevenlabs.md) :
+ce script ne sert qu'à repartir de zéro (agent supprimé, autre compte). Il crée un nouvel agent.
 
     python -m tools.creer_agent_elevenlabs            # crée les trois outils, puis l'agent
     python -m tools.creer_agent_elevenlabs --a-blanc  # affiche ce qui serait envoyé, sans clé

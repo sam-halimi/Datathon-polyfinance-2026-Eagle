@@ -155,8 +155,14 @@ export const ETAPES = ["Profil", "Analyse", "Proposition", "Vérification", "Exp
 
 // Données des graphiques : web/data/graphiques/<persona>.json, calculées par
 // web/scripts/graphiques.py. Leurs chiffres rejoignent la table « chiffres ».
-export type Part = { libelle: string; id: string; symboles: string[] };
-export type Regroupement = "actif" | "classe" | "secteur" | "zone";
+export type Part = {
+  libelle: string; id: string; symboles: string[];
+  /** Couleur fixe de la charte (classes d'actif, régions) ; sinon ordre par poids décroissant. */
+  couleur?: string;
+  /** Région de la carte du monde (id du groupe dans carte-monde-neutre.svg). */
+  region?: string;
+};
+export type Regroupement = "actif" | "classe" | "secteur" | "zone" | "region";
 
 export type Graphiques = {
   note: string;

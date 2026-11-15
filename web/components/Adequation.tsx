@@ -3,6 +3,7 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
 import { Chiffre, Texte, typo } from "./Chiffres";
+import { cleIllustration, Illustration } from "./Da";
 import { Pages, type Element } from "./Pages";
 import { formaterDate, formaterPoids } from "@/lib/format";
 import type { Adequation, Ligne, Portefeuille, SortiePipeline } from "@/lib/types";
@@ -14,8 +15,8 @@ import type { Adequation, Ligne, Portefeuille, SortiePipeline } from "@/lib/type
 
 export const MANQUE = "Information manquante";
 
-export function Manque({ quoi }: { quoi: string }) {
-  return <span className="manque">{MANQUE} : {quoi}</span>;
+export function Manque({ quoi }: { quoi?: string }) {
+  return <span className="manque">{MANQUE}{quoi ? ` : ${quoi}` : ""}</span>;
 }
 
 const CRITERES: Record<string, string> = {
@@ -109,7 +110,9 @@ export function FichesLignes({ s }: { s: SortiePipeline }) {
       </div>
       <article className="fiche-ligne" key={l.symbole} role="tabpanel">
         <header className="fiche-ligne__entete">
-          <div>
+          <Illustration taille={72} cle={cleIllustration(
+            { etf_bond: "obligations", etf_commodity: "or", crypto: "crypto" }[l.classe_code], l.secteur, l.nom)} />
+          <div className="fiche-ligne__titre">
             <h3 className="fiche-ligne__nom">{l.nom}</h3>
             <p className="fiche-ligne__symbole">{l.symbole} · {typo(l.role)}</p>
           </div>
@@ -117,13 +120,13 @@ export function FichesLignes({ s }: { s: SortiePipeline }) {
         </header>
         <div className="fiche-ligne__corps">
           <dl className="fiche-ligne__identite">
-            <Champ nom="Classe">{l.classe || <Manque quoi="classe" />}</Champ>
-            <Champ nom="Secteur">{l.secteur ?? <Manque quoi="secteur" />}</Champ>
-            <Champ nom="Pays">{l.pays ?? <Manque quoi="pays" />}</Champ>
-            <Champ nom="Devise">{l.devise ?? <Manque quoi="devise" />}</Champ>
-            <Champ nom="Volatilité">{vol ? <Chiffre id={vol} /> : <Manque quoi="volatilité" />}</Champ>
-            <Champ nom="Pire baisse">{pb ? <Chiffre id={pb} /> : <Manque quoi="pire baisse" />}</Champ>
-            <Champ nom="Part du risque">{part ? <Chiffre id={part} /> : <Manque quoi="part du risque" />}</Champ>
+            <Champ nom="Classe">{l.classe || <Manque />}</Champ>
+            <Champ nom="Secteur">{l.secteur ?? <Manque />}</Champ>
+            <Champ nom="Pays">{l.pays ?? <Manque />}</Champ>
+            <Champ nom="Devise">{l.devise ?? <Manque />}</Champ>
+            <Champ nom="Volatilité">{vol ? <Chiffre id={vol} /> : <Manque />}</Champ>
+            <Champ nom="Pire baisse">{pb ? <Chiffre id={pb} /> : <Manque />}</Champ>
+            <Champ nom="Part du risque">{part ? <Chiffre id={part} /> : <Manque />}</Champ>
           </dl>
           <div className="fiche-ligne__raisons">
             <h4>Pourquoi cette ligne, pour votre profil</h4>

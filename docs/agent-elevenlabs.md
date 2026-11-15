@@ -6,7 +6,25 @@ Côté site : `web/components/Voix.tsx` (`@elevenlabs/react`). L'identifiant de 
 
 Le premier message et la consigne ci-dessous sont la seule source : le script de création les lit dans ce fichier.
 
-## Créer l'agent par script
+## L'agent existant
+
+L'agent Eagle existe déjà : il a été créé par le connecteur ElevenLabs, avec ses trois outils (`noter_profil`, `lancer_analyse`, `afficher_diapositive`), la langue française et la consigne de ce document.
+
+| Variable | Valeur |
+| --- | --- |
+| `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` | `agent_1201m7gj8np7fmnvcgfq6a5gqt68` |
+
+À mettre dans `web/.env.local` (jamais poussé), puis relancer `npm run dev` ou `npm run build` dans `web/` : la variable est lue au démarrage.
+
+```bash
+echo "NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_1201m7gj8np7fmnvcgfq6a5gqt68" >> web/.env.local
+```
+
+Si l'on modifie la consigne ou le premier message de ce document, il faut aussi les modifier sur cet agent (console ElevenLabs ou connecteur) : l'agent existant ne relit pas ce fichier.
+
+## Repartir de zéro (script)
+
+Le script ne sert plus qu'à recréer un agent neuf, par exemple si l'agent ci-dessus est supprimé ou si l'on change de compte ElevenLabs. Il crée un nouvel agent avec un nouvel identifiant : ne pas le lancer pour l'agent existant.
 
 ```bash
 python -m tools.creer_agent_elevenlabs
@@ -24,7 +42,7 @@ Réglages facultatifs, dans `.env` :
 
 `python -m tools.creer_agent_elevenlabs --a-blanc` affiche ce qui serait envoyé, sans clé et sans rien créer.
 
-## Créer l'agent à la main (secours)
+## Repartir de zéro à la main (secours)
 
 Si le script échoue (clé, réseau, changement d'API), dans la console ElevenLabs : Agents, puis « Create agent ».
 
@@ -105,7 +123,7 @@ Trois outils de type « Client », qui attendent la réponse (`expects_response`
 
 ## Vérifier
 
-1. `web/.env.local` contient `NEXT_PUBLIC_ELEVENLABS_AGENT_ID=<identifiant de l'agent>`.
+1. `web/.env.local` contient `NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_1201m7gj8np7fmnvcgfq6a5gqt68` (ou l'identifiant d'un agent recréé).
 2. `python -m agents.serveur` à la racine, puis `cd web && npm run dev`, ouvrir http://localhost:3000, cliquer « Démarrer l'appel », autoriser le micro.
 3. Répondre aux huit questions à voix haute : le profil se remplit à droite, les curseurs bougent.
 4. Sans serveur sur http://localhost:8000, l'analyse échoue en une phrase, avec la commande à lancer. Aucune démonstration ne la remplace.

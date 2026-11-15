@@ -5,6 +5,7 @@ import {
   Bitcoin, BrainCircuit, Building2, Cpu, Gamepad2, Gem, HeartPulse, Landmark, Leaf, Plus, Rocket, Trophy, Wheat, X,
   type LucideIcon,
 } from "lucide-react";
+import { cleIllustration, Illustration, useDa } from "./Da";
 import { formaterMontant } from "@/lib/format";
 import type { QuestionChoix, QuestionCurseur } from "@/lib/questions";
 
@@ -23,6 +24,7 @@ export function Choix({ q, choisis, choisir, vider }: {
   vider: () => void;
 }) {
   const [libre, setLibre] = useState("");
+  const { illustrations } = useDa();
   const proposes = new Set(q.options.map((o) => String(o.valeur)));
   const ajoutes = choisis.map(String).filter((v) => !proposes.has(v));
   const avecIcones = q.options.some((o) => o.icone);
@@ -39,12 +41,15 @@ export function Choix({ q, choisis, choisir, vider }: {
       <div className={`choix choix--${avecIcones ? "icones" : n > 6 ? "serre" : "large"}`} role={q.multiple ? "group" : "radiogroup"}>
         {q.options.map((o, i) => {
           const actif = choisis.includes(o.valeur);
-          const Icone = o.icone ? ICONES[o.icone] : null;
+          // Illustration de la charte quand elle existe pour ce thème, sinon pictogramme.
+          const cleDa = o.icone ? cleIllustration(String(o.valeur)) : null;
+          const Icone = o.icone && !(cleDa && illustrations[cleDa]) ? ICONES[o.icone] : null;
           return (
             <button key={String(o.valeur)} type="button" role={q.multiple ? "checkbox" : "radio"} aria-checked={actif}
               className={actif ? "choix__bouton choix__bouton--actif" : "choix__bouton"} style={{ "--rang": i } as CSSProperties}
               onClick={() => choisir(o.valeur, o.titre)}>
-              {Icone ? <Icone className="choix__icone" aria-hidden="true" strokeWidth={1.6} /> : null}
+              {cleDa && illustrations[cleDa] ? <Illustration cle={cleDa} taille={44} /> : null}
+              {Icone ? <Icone className="choix__icone" aria-hidden="true" strokeWidth={2} /> : null}
               <span className="choix__textes">
                 <span className="choix__titre">{o.titre}</span>
                 {o.detail ? <span className="choix__detail">{o.detail}</span> : null}

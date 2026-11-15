@@ -1,7 +1,7 @@
 "use client";
 
 import { ConversationProvider, useConversation } from "@elevenlabs/react";
-import type { MutableRefObject } from "react";
+import { useEffect, type MutableRefObject } from "react";
 import type { EagleApi } from "./Eagle";
 
 // La voix d'Eagle : un agent ElevenLabs (configuration dans
@@ -10,9 +10,14 @@ import type { EagleApi } from "./Eagle";
 
 const AGENT = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
 
-type Props = { api: MutableRefObject<EagleApi | null>; dire: (texte: string, qui?: "eagle" | "vous") => void };
+type Props = {
+  api: MutableRefObject<EagleApi | null>;
+  dire: (texte: string, qui?: "eagle" | "vous") => void;
+  /** Remonte « la voix émet » pour l'état « parle » de l'avatar. */
+  surParole?: (parle: boolean) => void;
+};
 
-function Controle({ api, dire }: Props) {
+function Controle({ api, dire, surParole }: Props) {
   const conversation = useConversation({
     clientTools: {
       noter_profil: ({ champ, valeur }: Record<string, unknown>) => api.current?.noterProfil(String(champ), valeur) ?? "Indisponible.",
@@ -23,6 +28,8 @@ function Controle({ api, dire }: Props) {
     onError: (message) => dire(`Voix interrompue : ${message}. Vous pouvez poursuivre par écrit.`),
   });
   const enLigne = conversation.status === "connected";
+  const parle = enLigne && conversation.isSpeaking;
+  useEffect(() => { surParole?.(parle); }, [parle, surParole]);
   const demarrer = async () => {
     try {
       // Le navigateur exige un geste de l'utilisateur et HTTPS (ou localhost) pour le micro.
