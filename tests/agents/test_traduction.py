@@ -105,6 +105,15 @@ def test_les_textes_sont_traduits_les_codes_et_les_chiffres_ne_bougent_pas():
     assert en["langue"] == "en" and en["meta"]["traduction"]["restes_en_francais"] == 0
 
 
+def test_un_objet_partage_entre_deux_endroits_est_traduit_et_compte_une_fois():
+    source = exemple()
+    # Comme dans le pipeline : les contrôles de la gouvernance sont ceux du portefeuille retenu, le même objet.
+    source["gouvernance"] = {"controles": source["portefeuilles"][0]["controles"]}
+    en = T.traduire_sortie(source, "en", faux_modele)
+    assert en["gouvernance"]["controles"][0]["titre"] == "EN Le capital est réparti en entier"
+    assert en["meta"]["traduction"]["restes_en_francais"] == 0
+
+
 def test_unite_et_formule_restent_en_francais_avec_l_anglais_a_cote():
     c = T.traduire_sortie(exemple(), "en", faux_modele)["chiffres"]["ptf_a_volatilite"]
     assert c["unite"] == "fraction du capital" and c["unite_en"] == "EN fraction du capital"

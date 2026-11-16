@@ -268,6 +268,10 @@ def traduire_sortie(sortie: dict[str, Any], langue: str = "en", modele: Modele |
         _visiter(copie, chemin.split("."), lambda c, k: places.append((c, k, None)))
     for chemin in CHEMINS_A_COTE:
         _visiter(copie, chemin.split("."), lambda c, k: places.append((c, k, f"{k}_en")))
+    # La sortie du pipeline réutilise des objets (les contrôles du portefeuille retenu sont aussi ceux de
+    # la gouvernance) : un même emplacement atteint par deux chemins n'est traité, et compté, qu'une fois.
+    vus: set[tuple[int, Any]] = set()
+    places = [p for p in places if (cle := (id(p[0]), p[1])) not in vus and not vus.add(cle)]
 
     textes: list[str] = []
     for conteneur, cle, voisine in places:
