@@ -54,9 +54,11 @@ type Props = {
   compte?: { identifiant: string; deconnecter: () => void } | null;
   /** Rouvre la présentation du début (components/Entree.tsx). */
   ouvrirModeEmploi?: () => void;
+  /** Choix fait à la fin de la présentation : son propre profil, ou l'un des trois cas du datathon. */
+  depart?: ({ type: "profil" } | { type: "cas"; id: Persona["id"] }) & { n: number } | null;
 };
 
-export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Props) {
+export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depart = null }: Props) {
   const [voixParle, setVoixParle] = useState(false);
   // Appel vocal en cours : l'agent dit lui-même chaque question, l'écran ne la répète pas dans la transcription.
   const voixEnLigne = useRef(false);
@@ -201,6 +203,20 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
     dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "vous");
     await presenter(s, `Voici l'analyse enregistrée pour ${p.nom} (agents/sorties/${p.id}.json).`);
   };
+
+  // Choix de la fin de la présentation : ouvrir un cas du datathon, ou repartir sur ses propres réponses.
+  useEffect(() => {
+    if (!depart) return;
+    if (depart.type === "cas") {
+      const p = PERSONAS.find((x) => x.id === depart.id);
+      if (p) void demonstration(p);
+    } else if (demo) {
+      // On quitte un cas pour créer son propre profil : questions remises à zéro.
+      setDemo(null); setSortie(null); setVueId(null); setActif(null); setProfil(PROFIL_VIDE); setPrenom(""); setDemande("");
+      repondues.current = new Set(); setQuestion(0); setPhase("accueil");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depart?.n]);
 
   // Dossier imprimable. Persona de démonstration : sa sortie enregistrée. Analyse en direct :
   // la réponse du pipeline, déposée dans le stockage local du navigateur pour la page /rapport.
@@ -594,11 +610,14 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
             </div>
           ) : null}
           <div className="demos">
-            <p className="demos__titre">Démonstration</p>
+            <p className="demos__titre">Cas du datathon</p>
             {PERSONAS.map((p) => (
-              <button key={p.id} type="button" className="demo" onClick={() => void demonstration(p)}>
-                <strong>{p.nom}, {p.age} ans</strong>
-                <span>{typo(`« ${p.demande} »`)}</span>
+              <button key={p.id} type="button" className={demo === p.id ? "demo demo--actif" : "demo"} onClick={() => void demonstration(p)}>
+                <img className="demo__avatar" src={`/da/personas/${p.id}.svg`} alt="" width={40} height={40} />
+                <span className="demo__textes">
+                  <strong>{p.nom}, {p.age} ans</strong>
+                  <span>{typo(`« ${p.demande} »`)}</span>
+                </span>
               </button>
             ))}
           </div>

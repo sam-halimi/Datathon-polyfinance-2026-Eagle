@@ -1496,3 +1496,177 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 .voix__pause--actif { background: var(--alerte-fond); border-color: var(--alerte); color: var(--alerte); }
 .eagle__actions { display: grid; gap: 8px; }
 .eagle__actions .bouton { min-height: 42px; font-size: 14.5px; }
+
+/* ======================================================================
+   Questions 5 et 6 : fiches avec illustration. Fin de présentation : deux chemins, trois cas.
+   ====================================================================== */
+
+.eagle .choix--fiches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.eagle .choix--fiches .choix__bouton { min-height: 0; padding: 10px 14px; display: flex; align-items: center; gap: 12px; text-align: left; }
+.eagle .choix--fiches .choix__titre { font-size: 16.5px; line-height: 1.25; }
+.eagle .choix--fiches .choix__detail { font-size: 13px; line-height: 1.3; }
+.eagle .choix--fiches .choix__bouton--aucun { grid-column: 1 / -1; justify-content: center; }
+.choix--fiches .choix__bouton--actif .choix__titre::before { content: none; }
+.choix--fiches .choix__bouton--actif, .choix--icones .choix__bouton--actif { position: relative; }
+.choix--fiches .choix__bouton--actif::after, .choix--icones .choix__bouton--actif::after {
+  content: "✓"; position: absolute; top: 6px; right: 8px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent); font-size: 13px; font-weight: 700; display: grid; place-items: center;
+}
+
+.entree__captures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; }
+.entree__captures figure { margin: 0; display: grid; gap: 6px; align-content: start; }
+/* Même cadre pour toutes les captures : le haut de l'écran capturé, sans déformation. */
+.entree__captures img {
+  display: block; width: 100%; aspect-ratio: 5 / 6; object-fit: cover; object-position: top center;
+  border-radius: var(--rayon-m); border: 1px solid var(--border-strong); background: var(--bg);
+}
+.entree__captures figcaption { font-size: 13px; color: var(--encre-douce); }
+.entree__visuel--captures { padding: 16px; }
+.entree__carte:has(.entree__visuel--captures) { grid-template-columns: minmax(0, 0.85fr) minmax(360px, 1.15fr); }
+
+.entree__choix { align-self: center; width: 100%; max-width: 1040px; margin: 0 auto; display: grid; gap: 14px; animation: glisse-avant var(--duree-moyenne) var(--courbe) both; }
+.entree__deux { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 12px; }
+.chemin {
+  display: grid; gap: 10px; align-content: start; text-align: left; padding: 26px 26px 22px; min-height: 190px;
+  background: var(--surface-1); border: 1px solid var(--border-strong); border-radius: var(--rayon-carte); color: var(--encre);
+  transition: transform var(--duree-courte) ease-out, border-color var(--duree-courte) ease-out;
+}
+.chemin:hover { transform: translateY(-2px); border-color: var(--accent); }
+.chemin strong { font-family: var(--police-titres); font-weight: 500; font-size: 26px; line-height: 1.2; }
+.chemin span { font-size: 16px; line-height: 1.45; color: var(--encre-douce); }
+.chemin--principal { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chemin--principal span { color: var(--on-accent); opacity: 0.86; }
+.chemin__avatars { display: flex; gap: 8px; margin-top: 4px; }
+.chemin__avatars img { width: 44px; height: 44px; }
+.entree__cas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.cas {
+  display: grid; gap: 8px; justify-items: center; text-align: center; padding: 22px 18px 18px; color: var(--encre);
+  background: var(--surface-1); border: 1px solid var(--border-strong); border-radius: var(--rayon-carte);
+  transition: transform var(--duree-courte) ease-out, border-color var(--duree-courte) ease-out;
+}
+.cas:hover { transform: translateY(-2px); border-color: var(--accent); }
+.cas__avatar { width: 96px; height: 96px; }
+.cas__nom { font-family: var(--police-titres); font-weight: 500; font-size: 22px; }
+.cas__profil { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.cas__demande { font-size: 15px; line-height: 1.4; color: var(--encre-douce); }
+.cas__ouvrir { margin-top: 6px; font-size: 14.5px; font-weight: 600; color: var(--accent); }
+
+.demo { display: flex; align-items: center; gap: 10px; text-align: left; }
+.demo__avatar { width: 40px; height: 40px; flex: none; }
+.demo__textes { display: grid; min-width: 0; }
+.demo--actif { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+@media (max-width: 899px) {
+  .eagle .choix--fiches { grid-template-columns: minmax(0, 1fr); }
+  .entree__deux, .entree__cas { grid-template-columns: minmax(0, 1fr); }
+  .entree__carte:has(.entree__visuel--captures) { grid-template-columns: minmax(0, 1fr); }
+  .chemin { min-height: 0; padding: 20px; }
+  .chemin strong { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .entree__choix { animation: none; } }
+
+/* ======================================================================
+   Dossier exporté (/rapport), refait : camemberts pleins, courbes avec axes, légendes alignées.
+   À l'écran : la charte Graphite. À l'impression : fond blanc, encre sombre, mêmes couleurs de graphique.
+   ====================================================================== */
+
+.dossier__ecran { height: 100dvh; overflow-y: auto; background: var(--fond); color: var(--encre); }
+.dossier { max-width: 900px; margin: 0 auto; padding: 24px 20px 40px; display: grid; gap: 28px; font-size: 15px; line-height: 1.5; }
+.dossier section { display: grid; gap: 10px; }
+.dossier h1 { font-family: var(--police-titres); font-weight: 500; font-size: 34px; line-height: 1.15; }
+.dossier h2 { font-family: var(--police-titres); font-weight: 500; font-size: 22px; line-height: 1.25; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+.dossier h3 { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--encre-douce); margin-top: 6px; }
+.dossier__mention { text-align: center; font-size: 12.5px; color: var(--encre-douce); padding: 8px 16px; }
+.dossier__tete { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.dossier__surtitre { font-size: 12.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.dossier__chapeau { margin-top: 8px; color: var(--encre-douce); max-width: 62ch; }
+.dossier__imprimer { min-height: 46px; }
+.dossier__source { font-size: 0.86em; color: var(--encre-discrete); font-weight: 400; }
+.dossier__note { font-size: 13.5px; color: var(--encre-douce); }
+.dossier__petit { display: block; font-size: 12.5px; color: var(--encre-douce); font-weight: 400; }
+.dossier__phrase { font-size: 17px; font-weight: 600; }
+.dossier__demande { font-style: italic; border-left: 3px solid var(--accent); padding-left: 12px; }
+
+.dossier__cles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px !important; }
+.dossier__cle { display: grid; gap: 4px; align-content: start; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--rayon-m); padding: 14px 16px; }
+.dossier__cle > span { font-size: 12.5px; color: var(--encre-douce); }
+.dossier__cle strong { font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.dossier__cle small { font-size: 11.5px; line-height: 1.3; }
+.dossier__cle small .dossier__source { font-size: 1em; }
+
+.dossier__profil { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+.dossier__profil div { display: grid; grid-template-columns: 11em minmax(0, 1fr); gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--trait); }
+.dossier__profil dt { color: var(--encre-douce); }
+.dossier__profil dd { font-weight: 600; }
+
+.dossier__camemberts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.dossier__camembert { margin: 0; display: grid; gap: 12px; justify-items: center; }
+.dossier__camembert figcaption { font-family: var(--police-titres); font-weight: 500; font-size: 17px; justify-self: start; }
+.dossier__camembert svg { width: 100%; max-width: 210px; height: auto; display: block; }
+.dossier__etiquette { fill: #fff; font-size: 13px; font-weight: 700; paint-order: stroke; stroke: rgba(17, 20, 23, 0.4); stroke-width: 2px; }
+.dossier__etiquette--sombre { fill: #111417; stroke: none; }
+/* Légende en trois colonnes fixes : pastille, libellé, valeur alignée à droite sur la même verticale. */
+.dossier__legende { width: 100%; display: grid; gap: 0; }
+.dossier__legende li { display: grid; grid-template-columns: 12px minmax(0, 1fr) 4.6em; gap: 10px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--trait); font-size: 13.5px; line-height: 1.3; }
+.dossier__pastille { display: inline-block; width: 12px; height: 12px; border-radius: 3px; flex: none; vertical-align: -1px; }
+.dossier__valeur { text-align: right; font-variant-numeric: tabular-nums; }
+
+.dossier__table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.dossier__table th, .dossier__table td { text-align: left; padding: 8px 8px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+.dossier__table thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-douce); }
+.dossier__table .dossier__num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dossier__total td { font-weight: 700; border-bottom: 0; background: var(--surface-1); }
+.dossier__barre { display: block; height: 5px; margin-top: 5px; background: var(--surface-2); border-radius: 3px; overflow: hidden; min-width: 70px; }
+.dossier__barre span { display: block; height: 100%; border-radius: 3px; }
+.dossier__table--adequation td:nth-child(2) { white-space: nowrap; }
+
+.dossier__courbe { display: block; width: 100%; height: auto; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--rayon-m); }
+.dossier__grille { stroke: var(--trait); stroke-width: 1; }
+.dossier__ligne-axe { stroke: var(--border-strong); stroke-width: 1.2; }
+.dossier__axe { font-size: 12px; fill: var(--encre-douce); font-variant-numeric: tabular-nums; }
+.dossier__cours { fill: none; stroke: var(--chart-1); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.dossier__baisse { fill: var(--danger); fill-opacity: 0.13; }
+.dossier__repere { font-size: 12.5px; font-weight: 700; paint-order: stroke; stroke: var(--surface-1); stroke-width: 4px; }
+.dossier__capital { stroke: var(--encre-douce); stroke-width: 1.4; stroke-dasharray: 6 5; }
+.dossier__cles-graphique { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 14px; }
+.dossier__cles-graphique i { display: inline-block; width: 18px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+
+.dossier__liste { list-style: disc; padding-left: 20px; display: grid; gap: 6px; }
+.dossier__liste--discrete { font-size: 13px; color: var(--encre-douce); gap: 3px; }
+.dossier__controles { display: grid; gap: 6px; }
+.dossier__controles li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 4px; }
+.dossier__statut { font-weight: 800; }
+.dossier__controle--ok .dossier__statut { color: var(--ok); }
+.dossier__controle--alerte .dossier__statut { color: var(--alerte); }
+.dossier__controle--echec .dossier__statut { color: var(--echec); }
+
+@media (max-width: 760px) {
+  .dossier__cles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dossier__camemberts, .dossier__profil { grid-template-columns: minmax(0, 1fr); }
+  .dossier__table { font-size: 12.5px; }
+}
+
+@media print {
+  /* Fond blanc et encre sombre : on change les jetons de la charte, tout le dossier suit. */
+  :root {
+    --bg: #fff; --surface-1: #fff; --surface-2: #eef1f4; --surface-3: #dfe4e9; --text: #111417; --text-muted: #3a424c; --text-subtle: #56606c;
+    --border: #cfd5db; --border-strong: #9aa4af; --accent: #1f5fa8; --on-accent: #fff;
+    --success: #1d7a4c; --success-bg: #e3f3ea; --warning: #9a5600; --warning-bg: #fcefd9; --danger: #b3261e; --danger-bg: #fbe4e2;
+  }
+  .dossier__ecran { height: auto; overflow: visible; background: #fff; }
+  .dossier { max-width: none; padding: 0; gap: 16px; font-size: 10.5pt; display: block; }
+  .dossier > *, .dossier section { margin-bottom: 14px; }
+  .dossier section { display: block; }
+  .dossier section > * + * { margin-top: 8px; }
+  .dossier__imprimer, .dossier__mention { display: none !important; }
+  .dossier h1 { font-size: 24pt; } .dossier h2 { font-size: 15pt; break-after: avoid; } .dossier h3 { break-after: avoid; }
+  .dossier__bloc, .dossier__cles, .dossier__camembert, .dossier__table tr, .dossier li, .dossier__courbe { break-inside: avoid; }
+  .dossier section.dossier__cles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .dossier section.dossier__cles > * + * { margin-top: 0; }
+  .dossier__cle strong { font-size: 15pt; }
+  .dossier__camemberts { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .dossier__profil { display: grid; grid-template-columns: repeat(2, 1fr); }
+  .dossier .chiffre { text-decoration: none; border: 0; color: inherit; }
+  .dossier__courbe, .dossier__cle, .dossier__total td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .dossier__camembert svg, .dossier__barre span, .dossier__pastille, .dossier__cles-graphique i, .statut { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

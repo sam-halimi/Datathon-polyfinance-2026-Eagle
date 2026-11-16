@@ -3,19 +3,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Chiffre, FicheReference, FournisseurChiffres, Texte, typo } from "./Chiffres";
-import { Camembert, Cours, Legende, LegendeCours, PhraseCours, SourceCours } from "./Graphiques";
-import { formaterDate, formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
+import { BarrePoids, CamembertPlein, COULEURS, CourbeCours, EventailFixe, Source, sourceCourte } from "./DossierGraphiques";
+import { formaterDate, formaterHorizon, formaterMontant, formaterPoids, majuscule, secteurEnFrancais } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, estPersona, PERSONAS } from "@/lib/personas";
+import { completerGraphiques } from "@/lib/repartition";
+import { lireEventail } from "@/lib/scenarios";
 import type { SortiePipeline } from "@/lib/types";
 
-// Le dossier imprimable : tout le contenu des cartes sur des pages A4/Lettre,
-// à enregistrer en PDF par l'impression du navigateur. Comme les cartes, il ne
-// contient que des données du pipeline et de web/scripts/graphiques.py.
+// Le dossier exporté : tout le résultat sur des pages A4 ou Lettre, à enregistrer en PDF par
+// l'impression du navigateur. Il ne contient que des données du pipeline et des fichiers de data/.
+// Les données clés portent leur provenance entre parenthèses ; la liste complète est à la fin.
 
 export const MENTION = "Simulation, ne constitue pas un conseil en placement";
 
 const ICONE = { ok: "✓", alerte: "!", echec: "✕" } as const;
-const REGROUPEMENTS = [["actif", "Par actif"], ["secteur", "Par secteur"], ["zone", "Par zone géographique"]] as const;
+const CRITERES: Record<string, string> = {
+  horizon: "Horizon", objectif: "Objectif", tolerance: "Tolérance au risque", preferences: "Préférence",
+  exclusions: "Exclusion", centres_interet: "Centre d'intérêt", capital: "Capital", demande: "Demande",
+};
 
 export function Rapport() {
   const params = useSearchParams();
@@ -25,7 +30,7 @@ export function Rapport() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [fiche, setFiche] = useState<string | null>(null);
 
-  // /rapport?source=analyse : le dossier de l'analyse en direct, déposée par l'écran principal
+  // /rapport?source=analyse : le dossier de l'analyse affichée, déposée par l'écran principal
   // dans le stockage local du navigateur (rien n'est envoyé ailleurs). Sinon, un persona.
   const enDirect = params.get("source") === "analyse";
   useEffect(() => {
@@ -33,7 +38,7 @@ export function Rapport() {
       try {
         const brut = window.localStorage.getItem(CLE_DOSSIER);
         if (!brut) throw new Error("vide");
-        setSortie(JSON.parse(brut) as SortiePipeline);
+        void completerGraphiques(JSON.parse(brut) as SortiePipeline).then(setSortie);
       } catch {
         setErreur("Aucune analyse à exporter : relancez l'analyse dans l'écran principal, puis « Exporter le dossier ».");
       }
@@ -43,18 +48,19 @@ export function Rapport() {
       setErreur("Persona inconnu : choisissez robert, amira ou mateo.");
       return;
     }
-    chargerSortie(id).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
+    chargerSortie(id).then(completerGraphiques).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
   }, [id, enDirect]);
 
   useEffect(() => {
     if (!sortie || !imprimer) return;
-    const t = window.setTimeout(() => window.print(), 400);
+    const t = window.setTimeout(() => window.print(), 600);
     return () => window.clearTimeout(t);
   }, [sortie, imprimer]);
 
-  const ctx = useMemo(() => ({ chiffres: sortie?.chiffres ?? {}, ouvrir: setFiche }), [sortie]);
-  if (erreur) return <main className="rapport"><p>{erreur}</p></main>;
-  if (!sortie) return <main className="rapport"><p>Préparation du dossier…</p></main>;
+  const ev = useMemo(() => (sortie ? lireEventail(sortie) : null), [sortie]);
+  const ctx = useMemo(() => ({ chiffres: { ...(sortie?.chiffres ?? {}), ...(ev?.chiffres ?? {}) }, ouvrir: setFiche }), [sortie, ev]);
+  if (erreur) return <main className="dossier"><p>{erreur}</p></main>;
+  if (!sortie) return <main className="dossier"><p>Préparation du dossier…</p></main>;
 
   const persona = enDirect ? undefined : PERSONAS.find((p) => p.id === sortie.scenario);
   const origine = enDirect ? "réponse de POST /analyse, profil saisi à l'écran" : `agents/sorties/${sortie.scenario}.json`;
@@ -62,138 +68,231 @@ export function Rapport() {
   const g = sortie.gouvernance;
   const ptf = sortie.portefeuilles.find((p) => p.id === g.portefeuille_retenu) ?? sortie.portefeuilles[0];
   const reps = sortie.graphiques.repartitions[ptf.id];
+  const c = sortie.chiffres;
   const e = sortie.explication;
+  const cours = sortie.graphiques.cours;
+  const pb = cours ? c[cours.reference] : undefined;
+  const retour = typeof pb?.details?.date_retour === "string" ? pb.details.date_retour : null;
+  const adequation = ptf.adequation ?? sortie.adequation ?? [];
   const sources = Array.from(new Set(Object.values(sortie.chiffres).flatMap((r) => r.sources))).sort();
   const exclus = Object.entries(sortie.exclus ?? {});
+  const plusLourde = [...ptf.lignes].sort((a, b) => b.poids - a.poids)[0];
+  const idPoids = (symbole: string) => reps.actif.find((p) => p.symboles[0] === symbole && p.symboles.length === 1)?.id ?? "";
+  const limites = sortie.limites;
 
   return (
     <FournisseurChiffres valeur={ctx}>
-      <div className="rapport__ecran">
-        <p className="rapport__mention rapport__mention--haut">{MENTION}</p>
-        <main className="rapport">
-          <header className="rapport__titre">
-            <p className="rapport__surtitre">Eagle · dossier de portefeuille simulé</p>
-            <h1>{profil.prenom}{persona ? `, ${persona.age} ans` : ""}</h1>
-            <p>Sortie du pipeline du {formaterDate(sortie.meta?.date ?? null)} ({origine}). Portefeuille simulé retenu : {ptf.id}, « {typo(ptf.nom)} ».</p>
-            <button type="button" className="bouton bouton--principal rapport__imprimer" onClick={() => window.print()}>Imprimer ou enregistrer en PDF</button>
+      <div className="dossier__ecran">
+        <p className="dossier__mention">{MENTION}</p>
+        <main className="dossier">
+          <header className="dossier__tete">
+            <div>
+              <p className="dossier__surtitre">Eagle · dossier de portefeuille simulé</p>
+              <h1>{profil.prenom || "Votre profil"}{persona ? `, ${persona.age} ans` : ""}</h1>
+              <p className="dossier__chapeau">
+                Portefeuille simulé {ptf.id} : « {typo(ptf.nom)} ».{" "}
+                {sortie.vue ? `Autre proposition consultée ; la gouvernance a retenu la proposition ${sortie.vue.retenu}. ` : ""}
+                Analyse du {formaterDate(sortie.meta?.date ?? null)}<Source>{origine}</Source>.
+              </p>
+            </div>
+            <button type="button" className="bouton bouton--principal dossier__imprimer" onClick={() => window.print()}>Imprimer ou enregistrer en PDF</button>
           </header>
 
-          <section>
-            <h2>Profil</h2>
-            <table className="rapport__table rapport__table--profil"><tbody>
-              <tr><th>Horizon</th><td>{formaterHorizon(profil.horizon_annees)}</td></tr>
-              <tr><th>But</th><td>{majuscule(profil.objectif)}</td></tr>
-              <tr><th>Tolérance au risque</th><td>{majuscule(profil.tolerance_risque)}</td></tr>
-              <tr><th>Connaissance</th><td>{majuscule(profil.connaissance)}</td></tr>
-              <tr><th>Préférences</th><td>{profil.preferences.join(", ") || "Rien de particulier"}</td></tr>
-              <tr><th>Exclusions</th><td>{profil.exclusions.join(", ") || "Rien"}</td></tr>
-              <tr><th>Centres d&apos;intérêt</th><td>{profil.centres_interet.join(", ") || "Aucun"}</td></tr>
-              <tr><th>Capital fictif</th><td>{formaterMontant(profil.capital_fictif, profil.devise)}</td></tr>
-              {profil.demande ? <tr><th>Demande</th><td>{typo(`« ${profil.demande} »`)}</td></tr> : null}
-            </tbody></table>
-            {persona?.choix.length ? <ul className="rapport__notes">{persona.choix.map((c) => <li key={c}>{typo(c)}</li>)}</ul> : null}
-          </section>
-
-          <section className="rapport__bloc">
-            <h2>Répartition du portefeuille simulé {ptf.id}</h2>
-            <p>{typo(ptf.intention)}</p>
-            <div className="rapport__camemberts">
-              {REGROUPEMENTS.map(([cle, nom]) => (
-                <figure key={cle}>
-                  <figcaption>{nom}</figcaption>
-                  <Camembert parts={reps[cle]} taille={110} libelle={`Répartition ${nom.toLowerCase()}`} />
-                  <Legende parts={reps[cle]} />
-                </figure>
-              ))}
+          <section className="dossier__cles" aria-label="Données clés">
+            <div className="dossier__cle">
+              <span>Variation annuelle (volatilité)</span>
+              <strong><Chiffre id={ptf.volatilite} /></strong>
+              <small><Source>{sourceCourte(c[ptf.volatilite]) ?? "information manquante"}</Source></small>
+            </div>
+            <div className="dossier__cle">
+              <span>Pire baisse passée</span>
+              <strong><Chiffre id={ptf.pire_baisse} /></strong>
+              <small><Source>{sourceCourte(c[ptf.pire_baisse]) ?? "information manquante"}</Source></small>
+            </div>
+            <div className="dossier__cle">
+              <span>Ligne la plus lourde</span>
+              <strong>{plusLourde ? <>{plusLourde.symbole} · {idPoids(plusLourde.symbole) ? <Chiffre id={idPoids(plusLourde.symbole)} /> : formaterPoids(plusLourde.poids)}</> : "—"}</strong>
+              <small><Source>poids du portefeuille simulé {ptf.id}</Source></small>
+            </div>
+            <div className="dossier__cle">
+              <span>Capital fictif</span>
+              <strong>{formaterMontant(profil.capital_fictif, profil.devise)}</strong>
+              <small><Source>votre profil</Source></small>
             </div>
           </section>
 
-          <section className="rapport__bloc">
-            <h2>Cours de {sortie.graphiques.cours.nom} ({sortie.graphiques.cours.symbole})</h2>
-            <Cours sortie={sortie} hauteur={130} />
-            <LegendeCours sortie={sortie} />
-            <PhraseCours sortie={sortie} />
-            <SourceCours sortie={sortie} />
+          <section>
+            <h2>Votre profil</h2>
+            <dl className="dossier__profil">
+              <div><dt>Horizon</dt><dd>{formaterHorizon(profil.horizon_annees)}</dd></div>
+              <div><dt>Objectif</dt><dd>{majuscule(profil.objectif)}</dd></div>
+              <div><dt>Tolérance au risque</dt><dd>{majuscule(profil.tolerance_risque)}</dd></div>
+              <div><dt>Connaissance</dt><dd>{profil.connaissance_niveau ? `Niveau ${profil.connaissance_niveau} sur 5` : majuscule(profil.connaissance ?? "")}</dd></div>
+              <div><dt>Préférences</dt><dd>{profil.preferences.join(", ") || "Rien de particulier"}</dd></div>
+              <div><dt>Exclusions</dt><dd>{profil.exclusions.join(", ") || "Aucune"}</dd></div>
+              <div><dt>Thèmes d&apos;intérêt</dt><dd>{profil.centres_interet.join(", ") || "Aucun"}</dd></div>
+              <div><dt>Capital fictif</dt><dd>{formaterMontant(profil.capital_fictif, profil.devise)}</dd></div>
+            </dl>
+            {profil.demande ? <p className="dossier__demande">Votre demande : {typo(`« ${profil.demande} »`)}</p> : null}
+            {persona?.choix.length ? <ul className="dossier__liste dossier__liste--discrete">{persona.choix.map((x) => <li key={x}>{typo(x)}</li>)}</ul> : null}
+          </section>
+
+          <section className="dossier__bloc">
+            <h2>Répartition du portefeuille simulé {ptf.id}</h2>
+            <p>{typo(ptf.intention)}</p>
+            <div className="dossier__camemberts">
+              <CamembertPlein titre="Par classe d'actif" parts={reps.classe ?? []} />
+              <CamembertPlein titre="Par secteur" parts={reps.secteur ?? []} />
+              <CamembertPlein titre="Par zone" parts={reps.zone ?? []} />
+            </div>
+            <p className="dossier__note">
+              Parts du capital fictif, pas une mesure de marché<Source>poids du portefeuille simulé {ptf.id} ; classe, secteur et marché de chaque actif : data/assets_universe.csv et data/univers_etendu.csv</Source>.
+            </p>
           </section>
 
           <section>
-            <h2>Lignes du portefeuille simulé {ptf.id}</h2>
-            <table className="rapport__table">
-              <thead><tr><th>Actif</th><th>Rôle</th><th>Poids</th><th>Volatilité</th><th>Pire baisse</th><th>Part du risque</th></tr></thead>
+            <h2>Les lignes</h2>
+            <table className="dossier__table">
+              <thead><tr><th>Actif</th><th>Rôle</th><th className="dossier__num">Poids</th><th className="dossier__num">Volatilité</th><th className="dossier__num">Pire baisse</th><th className="dossier__num">Part du risque</th></tr></thead>
               <tbody>
-                {ptf.lignes.map((l) => (
+                {ptf.lignes.map((l, i) => (
                   <tr key={l.symbole}>
-                    <td><strong>{l.symbole}</strong><br /><span className="rapport__petit">{l.nom} · {l.classe}</span></td>
+                    <td>
+                      <strong><span className="dossier__pastille" style={{ background: COULEURS[i % COULEURS.length] }} aria-hidden="true" /> {l.symbole}</strong>
+                      <span className="dossier__petit">{l.nom} · {l.classe}{l.secteur ? ` · ${secteurEnFrancais(l.secteur)}` : ""}</span>
+                    </td>
                     <td>{typo(l.role)}</td>
-                    <td><Chiffre id={reps.actif.find((p) => p.symboles[0] === l.symbole)?.id ?? ""} /></td>
-                    <td><Chiffre id={ptf.volatilites[l.symbole]} /></td>
-                    <td><Chiffre id={ptf.pires_baisses[l.symbole]} /></td>
-                    <td><Chiffre id={ptf.parts_du_risque[l.symbole]} /></td>
+                    <td className="dossier__num">
+                      {idPoids(l.symbole) ? <Chiffre id={idPoids(l.symbole)} /> : formaterPoids(l.poids)}
+                      <BarrePoids poids={l.poids / (plusLourde?.poids || 1)} couleur={COULEURS[i % COULEURS.length]} />
+                    </td>
+                    <td className="dossier__num"><Chiffre id={ptf.volatilites[l.symbole]} /></td>
+                    <td className="dossier__num"><Chiffre id={ptf.pires_baisses[l.symbole]} /></td>
+                    <td className="dossier__num"><Chiffre id={ptf.parts_du_risque[l.symbole]} /></td>
                   </tr>
                 ))}
-                <tr className="rapport__total">
+                <tr className="dossier__total">
                   <td colSpan={3}>Portefeuille simulé {ptf.id}, en {profil.devise}</td>
-                  <td><Chiffre id={ptf.volatilite} /></td>
-                  <td><Chiffre id={ptf.pire_baisse} /></td>
+                  <td className="dossier__num"><Chiffre id={ptf.volatilite} /></td>
+                  <td className="dossier__num"><Chiffre id={ptf.pire_baisse} /></td>
                   <td />
                 </tr>
               </tbody>
             </table>
+            <p className="dossier__note">
+              Mesures passées, sur la fenêtre de données<Source>{sourceCourte(c[ptf.volatilite]) ?? "outils de tools/"} ; part du risque : {sourceCourte(c[Object.values(ptf.parts_du_risque)[0]]) ?? "parts_du_risque"}</Source>. Elles décrivent, elles ne promettent rien.
+            </p>
+            <ul className="dossier__liste">
+              {ptf.lignes.filter((l) => l.pourquoi).map((l) => <li key={l.symbole}><strong>{l.symbole}</strong> : <Texte>{l.pourquoi!}</Texte></li>)}
+            </ul>
           </section>
+
+          {cours ? (
+            <section className="dossier__bloc">
+              <h2>Cours de {cours.nom} ({cours.symbole})</h2>
+              <CourbeCours points={cours.points} devise={cours.devise} pic={cours.date_pic} creux={cours.date_creux} retour={retour} nom={cours.nom} />
+              <p>
+                Sur la fenêtre, {cours.nom} a perdu <Chiffre id={cours.reference} /> entre son sommet du {formaterDate(cours.date_pic)} et son creux du {formaterDate(cours.date_creux)}
+                {retour ? `, puis a retrouvé son sommet le ${formaterDate(retour)}` : " ; il n'avait pas retrouvé son sommet à la fin de la fenêtre"}
+                <Source>{cours.sources.join(", ")} ; baisse calculée par {sourceCourte(pb) ?? "pire_baisse"}</Source>.
+                {c[`rattrapage_${cours.id}`] ? <> Pour effacer cette baisse, il fallait un gain de <Chiffre id={`rattrapage_${cours.id}`} />.</> : null}
+                {c[`vol_${cours.id}`] ? <> Variation typique par an : <Chiffre id={`vol_${cours.id}`} />.</> : null}
+              </p>
+              <p className="dossier__note">Zone ombrée : la pire baisse. Le passé ne promet rien.</p>
+            </section>
+          ) : null}
+
+          <section className="dossier__bloc">
+            <h2>Scénarios, pas une prévision</h2>
+            {ev ? (
+              <>
+                <EventailFixe ev={ev} />
+                <ul className="dossier__cles-graphique">
+                  <li><i style={{ background: "var(--chart-2)" }} /> Médiane à l&apos;horizon : <Chiffre id="scen_p50_fin" /></li>
+                  <li><i style={{ background: "var(--chart-3)", opacity: 0.6 }} /> Un scénario sur deux</li>
+                  <li><i style={{ background: "var(--chart-1)", opacity: 0.45 }} /> Huit sur dix : de <Chiffre id="scen_p10_fin" /> à <Chiffre id="scen_p90_fin" /></li>
+                </ul>
+                <p>
+                  <strong>{ev.avertissement ?? "Ce n'est pas une prévision."}</strong>
+                  <Source>{sourceCourte(ev.chiffres.scen_p50_fin) ?? "eventail_scenarios"}, mois observés tirés au hasard</Source>
+                </p>
+                <ul className="dossier__liste dossier__liste--discrete">{ev.hypotheses.map((h) => <li key={h}>{typo(h)}</li>)}</ul>
+              </>
+            ) : <p className="manque">Information manquante : cette sortie ne contient pas d&apos;éventail de scénarios. Rien n&apos;est tracé à sa place.</p>}
+          </section>
+
+          {adequation.length ? (
+            <section>
+              <h2>Pourquoi ce portefeuille vous correspond</h2>
+              <table className="dossier__table dossier__table--adequation">
+                <thead><tr><th>Critère du profil</th><th>Statut</th><th>Ce que fait le portefeuille</th></tr></thead>
+                <tbody>
+                  {adequation.map((a, i) => (
+                    <tr key={`${a.critere}-${a.element ?? i}`}>
+                      <td><strong>{CRITERES[a.critere] ?? a.critere}{a.element ? ` : ${a.element}` : ""}</strong><span className="dossier__petit">{typo(a.attente)}</span></td>
+                      <td><span className={`statut statut--${a.statut.replace(" ", "-")}`}>{a.statut}</span></td>
+                      <td><Texte>{a.reponse}</Texte>{a.statut === "non couvert" && a.raison ? <span className="dossier__petit">{typo(a.raison)}</span> : null}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          ) : null}
 
           <section>
             <h2>Contrôles de gouvernance</h2>
-            <p>Portefeuille {g.portefeuille_retenu} accepté · essai {g.essai} sur {g.essais_max}.</p>
-            <ul className="rapport__controles">
+            <p>Portefeuille {g.portefeuille_retenu} accepté · essai {g.essai} sur {g.essais_max}<Source>tools/gouvernance.py, verifier_contraintes</Source>.</p>
+            <ul className="dossier__controles">
               {g.historique.filter((h) => !h.accepte).map((h) => (
-                <li key={`${h.essai}${h.portefeuille}`}><span className="rapport__statut">↺</span> Essai {h.essai} : {h.portefeuille} rejeté ({h.rejets.join(", ")}), renvoyé au constructeur.</li>
+                <li key={`${h.essai}${h.portefeuille}`}><span className="dossier__statut">↺</span><span>Essai {h.essai} : {h.portefeuille} rejeté ({h.rejets.join(", ")}), renvoyé au constructeur.</span></li>
               ))}
-              {g.controles.map((c, i) => (
-                <li key={i} className={`rapport__controle--${c.statut}`}>
-                  <span className="rapport__statut">{ICONE[c.statut]}</span> <strong>{c.titre}.</strong> <Texte>{c.detail}</Texte>
+              {g.controles.map((k, i) => (
+                <li key={i} className={`dossier__controle--${k.statut}`}>
+                  <span className="dossier__statut">{ICONE[k.statut]}</span><span><strong>{k.titre}.</strong> <Texte>{k.detail}</Texte></span>
                 </li>
               ))}
             </ul>
             {exclus.length ? (
               <>
                 <h3>Écartés avant la construction</h3>
-                <ul className="rapport__liste">
-                  {exclus.map(([s, r]) => <li key={s}><strong>{s}</strong> : <Texte>{r}</Texte></li>)}
-                </ul>
+                <ul className="dossier__liste">{exclus.map(([s, r]) => <li key={s}><strong>{s}</strong> : <Texte>{r}</Texte></li>)}</ul>
               </>
             ) : null}
           </section>
 
           <section>
             <h2>Explication</h2>
-            <p className="rapport__sujet"><Texte>{e.sujet}</Texte></p>
-            <h3>En bref</h3>
-            <p><Texte>{e.niveau1}</Texte></p>
-            <h3>Les chiffres</h3>
-            <ul className="rapport__liste">{e.niveau2.map((t) => <li key={t}><Texte>{t}</Texte></li>)}</ul>
+            {sortie.vue ? <p className="dossier__note">L&apos;explication ci-dessous a été rédigée pour la proposition {sortie.vue.retenu}, retenue par la gouvernance.</p> : null}
+            <p className="dossier__phrase"><Texte>{e.niveau1}</Texte></p>
+            <ul className="dossier__liste">{e.niveau2.map((t) => <li key={t}><Texte>{t}</Texte></li>)}</ul>
           </section>
 
           <section>
-            <h2>Limites</h2>
-            {([["Faits", sortie.limites.faits], ["Hypothèses", sortie.limites.hypotheses], ["Limites", sortie.limites.limites]] as const).map(([titre, items]) => (
+            <h2>Limites et hypothèses</h2>
+            {limites.limites_specifiques?.length ? (
+              <>
+                <h3>Propres à ce portefeuille</h3>
+                <ul className="dossier__liste">{[...limites.limites_specifiques].sort((x, y) => x.importance - y.importance).map((x) => <li key={x.texte}><Texte>{x.texte}</Texte></li>)}</ul>
+              </>
+            ) : null}
+            {([["Faits", limites.faits], ["Hypothèses", limites.hypotheses], ["Limites générales", limites.limites]] as const).map(([titre, items]) => (
               <div key={titre}>
                 <h3>{titre}</h3>
-                <ul className="rapport__liste">{items.map((t) => <li key={t}><Texte>{t}</Texte></li>)}</ul>
+                <ul className="dossier__liste">{items.map((t) => <li key={t}><Texte>{t}</Texte></li>)}</ul>
               </div>
             ))}
           </section>
 
           <section>
-            <h2>Sources</h2>
-            <ul className="rapport__liste">
+            <h2>Toutes les sources</h2>
+            <ul className="dossier__liste dossier__liste--discrete">
               {sources.map((s) => <li key={s}>{s}</li>)}
-              <li>data/assets_universe.csv (secteur, marché), via web/scripts/graphiques.py</li>
               <li>{origine} : {sortie.note}</li>
             </ul>
-            <p className="rapport__petit">Chaque chiffre souligné renvoie à l&apos;appel d&apos;outil qui l&apos;a produit (outil, paramètres, période, formule). Les données passées décrivent, elles ne promettent rien.</p>
+            <p className="dossier__note">Chaque chiffre souligné renvoie à l&apos;appel d&apos;outil qui l&apos;a produit (outil, paramètres, période, formule) : touchez-le à l&apos;écran pour l&apos;ouvrir.</p>
           </section>
         </main>
-        <p className="rapport__mention rapport__mention--bas">{MENTION}</p>
+        <p className="dossier__mention">{MENTION}</p>
       </div>
       {fiche ? <FicheReference id={fiche} fermer={() => setFiche(null)} /> : null}
     </FournisseurChiffres>

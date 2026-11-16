@@ -38,11 +38,13 @@ export function Choix({ q, choisis, choisir, vider }: {
   const n = q.options.length + (q.multiple ? 1 : 0);
   return (
     <div className="reponses">
-      <div className={`choix choix--${avecIcones ? "icones" : n > 6 ? "serre" : "large"}`} role={q.multiple ? "group" : "radiogroup"}>
+      {/* Avec illustrations : tuiles pour les thèmes (libellé seul), fiches sur deux colonnes quand l'option a une précision. */}
+      <div className={`choix choix--${avecIcones ? (q.options.some((o) => o.detail) ? "fiches" : "icones") : n > 6 ? "serre" : "large"}`} role={q.multiple ? "group" : "radiogroup"}>
         {q.options.map((o, i) => {
           const actif = choisis.includes(o.valeur);
           // Illustration de la charte quand elle existe pour ce thème, sinon pictogramme.
-          const cleDa = o.icone ? cleIllustration(String(o.valeur)) : null;
+          // `icone` nomme directement un fichier de la charte (questions 5 et 6), sinon on le déduit du thème.
+          const cleDa = o.icone ? (illustrations[o.icone] ? o.icone : cleIllustration(String(o.valeur))) : null;
           const Icone = o.icone && !(cleDa && illustrations[cleDa]) ? ICONES[o.icone] : null;
           return (
             <button key={String(o.valeur)} type="button" role={q.multiple ? "checkbox" : "radio"} aria-checked={actif}

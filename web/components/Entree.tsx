@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Eagle } from "./Eagle";
+import { PERSONAS, type Persona } from "@/lib/personas";
 import { ecouterDeconnexion } from "@/lib/api";
 import {
   COMPTES_ACTIFS, fermerSession, lireSession, ouvrirSession, REGLE_IDENTIFIANT, REGLE_MOT_DE_PASSE, type Session,
@@ -16,7 +17,7 @@ import type { DirectionArtistique } from "@/lib/da";
 const CLE_INTRO = "eagle:intro-vue";
 const CLE_COMPTE_CONNU = "eagle:compte-connu";
 
-type Visuel = { titre: string; lignes: string[]; numerote?: boolean };
+type Visuel = { titre: string; lignes: string[]; numerote?: boolean; captures?: { src: string; legende: string }[] };
 type Diapo = { surtitre: string; titre: string; texte: string; points: string[]; visuel: Visuel };
 
 const DIAPOS: Diapo[] = [
@@ -62,7 +63,13 @@ const DIAPOS: Diapo[] = [
       "Une carte plus longue que l'écran défile : rien n'est masqué.",
       "« Scénarios » montre un éventail de trajectoires possibles, jamais une prévision.",
     ],
-    visuel: { titre: "Les diapositives", numerote: true, lignes: ["Démarche des agents", "Votre demande", "Pourquoi ce portefeuille", "Répartition", "Lignes", "Cours commentés", "Scénarios", "Vérifications", "Limites"] },
+    visuel: {
+      titre: "À l'écran", lignes: [],
+      captures: [
+        { src: "/presentation/repartition.webp", legende: "Répartition : survolez une part pour son détail." },
+        { src: "/presentation/chiffre.webp", legende: "Un chiffre touché : l'outil, la période, la source." },
+      ],
+    },
   },
   {
     surtitre: "À tout moment",
@@ -73,9 +80,62 @@ const DIAPOS: Diapo[] = [
       "« Exporter le dossier » ouvre une version imprimable, à enregistrer en PDF.",
       "Trois démonstrations (Robert, Amira, Mateo) montrent un résultat complet sans attendre.",
     ],
-    visuel: { titre: "Bon à savoir", lignes: ["Ce mode d'emploi se rouvre depuis le tableau de bord", "La voix est facultative : tout se fait aussi par écrit", "Sans micro ou sans réseau audio, l'écrit prend le relais"] },
+    visuel: {
+      titre: "À l'écran", lignes: [],
+      captures: [
+        { src: "/presentation/actif.webp", legende: "« et Tesla ? » : le verdict et ses raisons chiffrées." },
+        { src: "/presentation/dossier.webp", legende: "Le dossier exporté, prêt à imprimer." },
+      ],
+    },
   },
 ];
+
+export type Depart = { type: "profil" } | { type: "cas"; id: Persona["id"] };
+
+/** Dernier écran de la présentation : créer son profil, ou ouvrir l'un des trois cas du datathon. */
+function Choix({ da, choisir, retour }: { da: DirectionArtistique | null; choisir: (d: Depart) => void; retour: () => void }) {
+  const [cas, setCas] = useState(false);
+  return (
+    <div className="entree" role="dialog" aria-modal="true" aria-label="Par où commencer">
+      <header className="entree__haut">
+        {da?.logoHorizontal ? <img className="entree__logo" src={da.logoHorizontal} alt="Eagle" /> : <strong className="entree__nom">Eagle</strong>}
+        <button type="button" className="entree__passer" onClick={cas ? () => setCas(false) : retour}>{cas ? "Retour au choix" : "Revoir la présentation"}</button>
+      </header>
+      <main className="entree__choix" key={cas ? "cas" : "choix"}>
+        <p className="entree__surtitre">{cas ? "Les trois cas du datathon" : "Par où commencer"}</p>
+        <h1 className="entree__titre">{cas ? "Quel investisseur voulez-vous voir ?" : "Deux façons de découvrir Eagle"}</h1>
+        {cas ? (
+          <div className="entree__cas">
+            {PERSONAS.map((p) => (
+              <button key={p.id} type="button" className="cas" onClick={() => choisir({ type: "cas", id: p.id })}>
+                <img className="cas__avatar" src={`/da/personas/${p.id}.svg`} alt="" width={96} height={96} />
+                <strong className="cas__nom">{p.nom}, {p.age} ans</strong>
+                <span className="cas__profil">Risque {p.tolerance} · horizon de {p.horizon} ans</span>
+                <span className="cas__demande">« {p.demande} »</span>
+                <span className="cas__ouvrir">Voir la réponse d&apos;Eagle</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="entree__deux">
+            <button type="button" className="chemin chemin--principal" onClick={() => choisir({ type: "profil" })}>
+              <strong>Tester la simulation</strong>
+              <span>Vous répondez aux huit questions, à l&apos;écran ou à voix haute, et les agents construisent un portefeuille simulé pour votre profil. Comptez de une à trois minutes d&apos;analyse.</span>
+            </button>
+            <button type="button" className="chemin" onClick={() => setCas(true)}>
+              <strong>Voir les cas du datathon</strong>
+              <span>Robert, Amira et Mateo : les trois investisseurs proposés par le défi, avec la réponse complète d&apos;Eagle, sans attendre.</span>
+              <span className="chemin__avatars" aria-hidden="true">
+                {PERSONAS.map((p) => <img key={p.id} src={`/da/personas/${p.id}.svg`} alt="" width={44} height={44} />)}
+              </span>
+            </button>
+          </div>
+        )}
+      </main>
+      <p className="entree__mention">Simulation seulement : aucune transaction réelle.</p>
+    </div>
+  );
+}
 
 function Presentation({ da, terminer, suite }: { da: DirectionArtistique | null; terminer: () => void; suite: string }) {
   const [i, setI] = useState(0);
@@ -103,10 +163,20 @@ function Presentation({ da, terminer, suite }: { da: DirectionArtistique | null;
           <p className="entree__chapeau">{d.texte}</p>
           <ul className="entree__points">{d.points.map((p) => <li key={p}>{p}</li>)}</ul>
         </section>
-        <aside className="entree__visuel">
+        <aside className={d.visuel.captures ? "entree__visuel entree__visuel--captures" : "entree__visuel"}>
           {i === 0 && da?.avatar.ecoute ? <img className="entree__avatar" src={da.avatar.ecoute} alt="" width={132} height={132} /> : null}
           <p className="entree__visuel-titre">{d.visuel.titre}</p>
-          {d.visuel.numerote
+          {d.visuel.captures ? (
+            <div className="entree__captures">
+              {d.visuel.captures.map((c) => (
+                <figure key={c.src}>
+                  {/* Captures réelles du site (web/scripts/captures.js), pas des maquettes. */}
+                  <img src={c.src} alt={c.legende} loading="lazy" />
+                  <figcaption>{c.legende}</figcaption>
+                </figure>
+              ))}
+            </div>
+          ) : d.visuel.numerote
             ? <ol className="entree__liste entree__liste--numerotee">{d.visuel.lignes.map((l) => <li key={l}>{l}</li>)}</ol>
             : <ul className="entree__liste">{d.visuel.lignes.map((l) => <li key={l}>{l}</li>)}</ul>}
         </aside>
@@ -203,7 +273,9 @@ function Compte({ da, ouvert, raison }: { da: DirectionArtistique | null; ouvert
 
 export function Entree({ da }: { da: DirectionArtistique | null }) {
   // « attente » : le temps de lire le stockage du navigateur (présentation déjà vue ? session ouverte ?).
-  const [ecran, setEcran] = useState<"attente" | "intro" | "compte" | null>("attente");
+  const [ecran, setEcran] = useState<"attente" | "intro" | "choix" | "compte" | null>("attente");
+  // Ce que la personne a choisi à la fin de la présentation ; `n` change à chaque choix pour le rejouer.
+  const [depart, setDepart] = useState<(Depart & { n: number }) | null>(null);
   const [tableau, setTableau] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [raison, setRaison] = useState<string | null>(null);
@@ -226,6 +298,10 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
 
   const finIntro = () => {
     try { window.localStorage.setItem(CLE_INTRO, "1"); } catch { /* elle sera remontrée à la prochaine visite */ }
+    setEcran("choix");
+  };
+  const choisir = (d: Depart) => {
+    setDepart((avant) => ({ ...d, n: (avant?.n ?? 0) + 1 }));
     entrer(session);
   };
   const deconnecter = () => { fermerSession(); setSession(null); setRaison(null); setEcran("compte"); };
@@ -235,11 +311,12 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
       {tableau ? (
         <div aria-hidden={ecran ? true : undefined} inert={ecran ? true : undefined}>
           {/* window.eagle : les trois outils de la voix, pour les essais automatiques du site (ils ne font que ce que l'écran permet déjà). */}
-          <Eagle da={da} compte={session ? { identifiant: session.identifiant, deconnecter } : null} ouvrirModeEmploi={() => setEcran("intro")}
+          <Eagle da={da} compte={session ? { identifiant: session.identifiant, deconnecter } : null} ouvrirModeEmploi={() => setEcran("intro")} depart={depart}
             onApi={(api) => { (window as unknown as { eagle?: unknown }).eagle = api; }} />
         </div>
       ) : null}
-      {ecran === "intro" ? <Presentation da={da} terminer={finIntro} suite={tableau ? "Revenir au tableau de bord" : COMPTES_ACTIFS && !session ? "Continuer" : "Commencer"} /> : null}
+      {ecran === "intro" ? <Presentation da={da} terminer={finIntro} suite="Commencer" /> : null}
+      {ecran === "choix" ? <Choix da={da} choisir={choisir} retour={() => setEcran("intro")} /> : null}
       {ecran === "compte" ? <Compte da={da} raison={raison} ouvert={(s) => { setSession(s); setRaison(null); setTableau(true); setEcran(null); }} /> : null}
       {ecran === "attente" ? <div className="entree entree--attente" aria-busy="true" /> : null}
     </>
