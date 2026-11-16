@@ -55,6 +55,15 @@ Le 16 novembre 2026, entre 0 h 27 et 0 h 35 UTC, Bedrock a répondu « serviceUn
 - Démonstrations Robert, Amira et Mateo à 1440 × 900, Mateo à 1280 × 720, Robert à 390 × 844 : aucun contenu hors écran, aucun défilement horizontal.
 - « Exporter le dossier » pour une analyse en direct : `/rapport/?source=analyse` s'ouvre avec le bon profil.
 
+### Ajouts du 16 novembre, après l'essai de l'équipe
+
+- Comptes, sur le site CloudFront : présentation, création d'un compte (refus d'un mot de passe faible, d'une confirmation différente, d'un identifiant déjà pris), connexion, mauvais mot de passe, déconnexion, profil conservé après le mode d'emploi. `POST /analyse` sans jeton : 401.
+- Analyse complète avec un compte : 200 en 129 s, neuf diapositives, aucun chiffre absent.
+- Voix, hésitation : à « je ne sais pas, que me suggérez-vous ? », l'agent explique les quatre objectifs et pose une question sur la situation de la personne.
+- Voix, lancement : profil rempli à l'écran, « lancez l'analyse » dit à voix haute, puis deux phrases prononcées pendant que l'outil travaille. Une seule analyse lancée, aucune annulation, présentation affichée après 138 s.
+- Curseur de connaissance : écart de 0 px entre le pouce et chaque chiffre, à 1440 × 900 et 1280 × 720. Douze thèmes sur douze avec une illustration de la charte, aucun libellé qui déborde. Montant saisi au dollar près repris dans le profil.
+- Présentation et compte à 390 × 844 et 1280 × 600 : boutons atteignables, aucun débordement horizontal.
+
 Non vérifié : un appel vocal complet par une personne (huit questions, analyse, neuf diapositives lues) et un vrai téléphone ; les essais sont faits dans un navigateur piloté.
 
 ## Limites

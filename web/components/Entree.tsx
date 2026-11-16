@@ -34,7 +34,7 @@ const DIAPOS: Diapo[] = [
   {
     surtitre: "Étape 1",
     titre: "Votre profil, en huit questions",
-    texte: "Répondez à l'écran, ou à voix haute avec le bouton « Démarrer l'appel ». Le profil se remplit en direct, à droite.",
+    texte: "Répondez à l'écran, ou à voix haute avec le bouton « Démarrer l'appel ». Le profil se remplit en direct, sous vos yeux.",
     points: [
       "Une question à la fois ; le bouton « Précédente » permet de revenir en arrière.",
       "Si vous hésitez, dites-le : Eagle explique chaque choix avec un exemple concret.",

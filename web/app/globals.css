@@ -1356,7 +1356,9 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 
 .entree {
   position: fixed; inset: 0; z-index: 50; background: var(--fond); color: var(--encre);
-  display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: 18px;
+  /* La rangée du contenu ne descend jamais sous sa hauteur : sur un écran bas, la présentation
+     défile au lieu de passer sous les boutons. */
+  display: grid; grid-template-rows: auto minmax(min-content, 1fr) auto auto; gap: 18px;
   padding: 24px clamp(18px, 5vw, 64px) 18px; overflow-y: auto;
 }
 .entree--attente { display: block; }
@@ -1436,7 +1438,8 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .entree__carte { grid-template-columns: minmax(0, 1fr); align-self: start; }
   .entree__chapeau { font-size: 16.5px; }
   .entree__points li { font-size: 15.5px; }
-  .entree__bas { gap: 10px; }
+  /* Les boutons restent atteignables en bas de l'écran pendant que le texte défile. */
+  .entree__bas { gap: 10px; position: sticky; bottom: 0; z-index: 1; background: var(--fond); padding: 10px 0 4px; }
   .entree__bas .bouton { min-width: 0; flex: 1; }
   .entree__pas { display: none; }
   .compte { padding: 22px 18px 18px; }
