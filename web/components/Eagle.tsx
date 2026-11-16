@@ -204,7 +204,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     try {
       const v = await verifierActif(symbole, profil.tolerance_risque, profil.horizon_annees);
       setActif({ symbole, verdict: v });
-      dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.` : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
+      dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.`
+        : v.statut === "à plafonner" ? `${symbole} ne convient qu'en petite position pour votre profil. En voici les raisons.`
+        : v.statut === "inconnu" ? `${symbole} n'est pas dans les tables d'actifs : je ne donne aucun chiffre sans donnée.`
+        : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
     } catch (e) {
       setActif({ symbole, erreur: e instanceof ErreurService ? e.message : (e as Error).message });
       dire(`Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);

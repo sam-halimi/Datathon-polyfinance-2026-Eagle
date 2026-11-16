@@ -108,7 +108,7 @@ def fiche_actif(symbole: str, tolerance: str, horizon_annees: int) -> dict[str, 
     if trouve is None:
         return {"statut": "inconnu", "symbole": symbole,
                 "titre": f"« {symbole} » n'est pas dans la table des actifs",
-                "raisons": ["Seuls les actifs de data/assets_universe.csv sont mesurés. Aucun chiffre n'est donné sans donnée."]}
+                "raisons": ["Seuls les actifs de data/assets_universe.csv et de data/univers_etendu.csv sont mesurés. Aucun chiffre n'est donné sans donnée."]}
     ligne = univers(etendu=True).loc[trouve]
     niveau, note = tolerance_normalisee(tolerance)
     seuils = SEUILS_PAR_TOLERANCE[niveau]

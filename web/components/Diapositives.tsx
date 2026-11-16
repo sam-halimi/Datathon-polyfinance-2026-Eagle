@@ -196,12 +196,20 @@ export function DiapositiveActif({ symbole, verdict, erreur }: { symbole: string
     );
   }
   if (!verdict) return <div className="diapo-actif"><h2 className="diapo__titre">{symbole} et votre profil</h2><p className="diapo__justification">Vérification en cours…</p></div>;
-  const textes = [...(verdict.raisons ?? []), ...([] as string[]).concat(verdict.explication ?? [])];
+  const textes = [...(verdict.raisons ?? []), ...([] as string[]).concat(verdict.explication ?? []), ...(verdict.notes ?? [])];
+  // Le titre est celui du serveur (statut calculé par des règles) : compatible, à plafonner
+  // (petite position seulement), hors profil, ou actif absent des tables.
+  const titre = verdict.titre
+    ? `${verdict.titre}${verdict.statut === "inconnu" ? "" : ` (${symbole})`}`
+    : verdict.compatible ? `${symbole} : compatible avec votre profil` : `Pourquoi ${symbole} ne correspond pas à votre profil`;
   return (
     <div className="diapo-actif">
-      <h2 className={verdict.compatible ? "diapo__titre diapo__titre--ok" : "diapo__titre diapo__titre--non"}>
-        {verdict.compatible ? `${symbole} : compatible avec votre profil` : `Pourquoi ${symbole} ne correspond pas à votre profil`}
-      </h2>
+      <h2 className={verdict.compatible ? "diapo__titre diapo__titre--ok" : "diapo__titre diapo__titre--non"}>{typo(titre)}</h2>
+      {verdict.statut && verdict.statut !== "inconnu" ? (
+        <p className="diapo__justification">
+          Statut : <strong>{verdict.statut}</strong>. Verdict calculé par des règles sur des mesures passées, pas par un modèle.
+        </p>
+      ) : null}
       {verdict.verdict ? <p className="diapo__justification"><Texte>{verdict.verdict}</Texte></p> : null}
       <Pages elements={textes.map((t, i) => ({ cle: `r${i}`, contenu: <p className="puce"><Texte>{t}</Texte></p> }))} classe="diapo__liste" />
     </div>
