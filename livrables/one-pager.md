@@ -4,7 +4,7 @@ Défi AlphaForge AI, Datathon PolyFinances 2026, équipe 37. Texte du one pager 
 
 Eagle est une solution agentique auto-explicative : sept agents construisent un portefeuille **simulé** adapté au profil de la personne, et chaque chiffre affiché renvoie au calcul, à la période et à la source qui le soutiennent.
 
-Site : https://d1ah12vrfzso9b.cloudfront.net (sans inscription, français et anglais). Code : https://github.com/sam-halimi/Datathon-polyfinance-2026-Eagle
+Site : https://d1ah12vrfzso9b.cloudfront.net (sans inscription, français et anglais). Code : https://github.com/sam-halimi/Datathon-polyfinance-2026-Eagle-team37
 
 | 7 | 62 | 22 | 250+ | 431 | 2 |
 | --- | --- | --- | --- | --- | --- |
