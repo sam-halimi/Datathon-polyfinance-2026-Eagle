@@ -1,6 +1,6 @@
 // Format de la sortie du pipeline : docs/sortie-pipeline.md.
 // Les fichiers lus sont agents/sorties/<persona>.json. Seuls les champs
-// affichés sont typés ; les autres (journal, specialistes…) sont ignorés.
+// affichés sont typés ; les autres (journal…) sont ignorés.
 
 export type Reference = {
   outil: string;
@@ -108,6 +108,8 @@ export type SortiePipeline = {
   scenario: string;
   profil: Profil;
   etapes: { agent: string; fait: string }[];
+  /** Diagnostics rédigés par les spécialistes, avec repères {id} (docs/sortie-pipeline.md). */
+  specialistes?: { marche_et_risque?: string[]; macro?: string[]; esg?: { constats?: string[] } | null };
   portefeuilles: Portefeuille[];
   gouvernance: {
     essai: number;

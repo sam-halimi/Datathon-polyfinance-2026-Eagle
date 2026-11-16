@@ -54,6 +54,9 @@ const GRAPHIQUES: Record<Persona["id"], () => Promise<{ default: unknown }>> = {
   mateo: () => import("../data/graphiques/mateo.json"),
 };
 
+/** Clé du stockage local où l'écran dépose l'analyse en cours pour le dossier imprimable. */
+export const CLE_DOSSIER = "eagle:dossier";
+
 export function estPersona(id: string | null): id is Persona["id"] {
   return id === "robert" || id === "amira" || id === "mateo";
 }
@@ -63,6 +66,9 @@ export function estPersona(id: string | null): id is Persona["id"] {
 export async function chargerSortie(id: Persona["id"]): Promise<SortiePipeline> {
   const [m, g] = await Promise.all([CHARGEURS[id](), GRAPHIQUES[id]()]);
   const sortie = m.default as Omit<SortiePipeline, "graphiques">;
-  const graphiques = g.default as Graphiques;
-  return { ...sortie, graphiques, chiffres: { ...sortie.chiffres, ...graphiques.chiffres } };
+  const { scenarios, ...graphiques } = g.default as Graphiques & { scenarios?: SortiePipeline["scenarios"] };
+  // L'éventail de scénarios du portefeuille retenu est calculé avec les graphiques
+  // (tools.scenarios.eventail_scenarios) : la démonstration l'affiche sans serveur.
+  return { ...sortie, graphiques: graphiques as Graphiques, scenarios: sortie.scenarios ?? scenarios ?? undefined,
+    chiffres: { ...sortie.chiffres, ...graphiques.chiffres } };
 }

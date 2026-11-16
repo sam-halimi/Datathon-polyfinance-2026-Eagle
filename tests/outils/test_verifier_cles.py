@@ -6,6 +6,14 @@ import pytest
 from tools import verifier_cles
 
 
+@pytest.fixture(autouse=True)
+def sans_identifiants_aws(monkeypatch):
+    """L'environnement cloud fournit BEDROCK_AUTH=identifiants et des identifiants AWS : sans ce
+    nettoyage, six tests échouaient selon la machine. Chaque test pose lui-même ce qu'il vérifie."""
+    for nom in ("BEDROCK_AUTH", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN"):
+        monkeypatch.delenv(nom, raising=False)
+
+
 @pytest.fixture
 def sans_cles(monkeypatch):
     """Ni clé ni proxy : les tests ne dépendent pas de la machine qui les lance."""

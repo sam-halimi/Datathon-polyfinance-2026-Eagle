@@ -1,0 +1,26 @@
+{
+  "id": "libre_lea",
+  "persona": {
+    "nom": "Léa",
+    "description": "Profil libre : jeune, risque élevé, IA et jeu vidéo, sans crypto."
+  },
+  "profil": {
+    "horizon_annees": 20,
+    "objectif": "croissance",
+    "tolerance_risque": "élevé",
+    "connaissance_niveau": 1,
+    "preferences": [
+      "États-Unis"
+    ],
+    "exclusions": [
+      "crypto"
+    ],
+    "centres_interet": [
+      "intelligence artificielle",
+      "jeu vidéo"
+    ],
+    "capital_fictif": 20000,
+    "devise": "CAD"
+  },
+  "demande": "Je veux miser sur l'IA et les jeux vidéo, je ne touche pas aux cryptos."
+}

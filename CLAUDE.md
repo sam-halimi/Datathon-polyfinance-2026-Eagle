@@ -84,7 +84,7 @@ Tous testés avec pytest sur les vrais CSV.
 ## Interface
 
 - Mobile d'abord : conçue à 390 px de large, puis adaptée au bureau.
-- Aucun défilement dans un écran. Une seule chose à la fois.
+- Une seule chose à la fois. Sur ordinateur la page ne défile pas ; un contenu plus long que sa carte (diagnostic des agents, adéquation, vérifications, transcription) défile à l'intérieur de la carte, pour que tout reste lisible. Sur téléphone (moins de 900 px), une seule colonne et la page défile.
 - Écran d'appel : l'assistant en haut, une carte en dessous, le micro en bas. Bouton « Démarrer l'appel » obligatoire (le navigateur exige un geste pour l'audio) et site en HTTPS (exigé pour le micro).
 - Six cartes : profil, répartition, risque, pourquoi, limites, vérifications. Le contenu vient du pipeline, jamais de la voix.
 - Bouton « tout voir » en fin de parcours : toutes les cartes sur un écran.
@@ -96,7 +96,7 @@ Tous testés avec pytest sur les vrais CSV.
 - Agents : Strands Agents sur Amazon Bedrock, déployés sur AgentCore Runtime.
 - Voix : ElevenLabs Agents, pour la voix seulement. Trois outils : mettre à jour le profil, lancer l'analyse, afficher une carte.
 - Front : Next.js, hébergé sur AWS.
-- Clés : dans le fichier `.env` à la racine (modèle : `.env.example`), jamais poussé ni affiché. `FRED_API_KEY` pour FRED, `AWS_BEARER_TOKEN_BEDROCK` pour Bedrock. Tout script qui en a besoin commence par `from tools.env import charger_env; charger_env()`.
+- Clés : uniquement celles de l'environnement cloud « Sam » de Claude Code, pour toutes les sessions. Variables : `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_DEFAULT_REGION` (Bedrock, signature SigV4), `BEDROCK_AUTH=identifiants` (impose ce mode), `FRED_API_KEY`. Finnhub et CoinGecko passent par les secrets réseau de ce même environnement. Rien d'autre : pas de fichier `.env`, pas de jeton `AWS_BEARER_TOKEN_BEDROCK`, pas de secret réseau sur `bedrock-runtime` (il remplacerait la signature). Jamais affichées ni poussées. Vérification : `python -m tools.verifier_cles`.
 
 ## Branches
 

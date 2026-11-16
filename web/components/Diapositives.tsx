@@ -24,6 +24,18 @@ export type Diapositive = {
   texte: string;
 };
 
+/** Un constat de spécialiste : repères {id} touchables, et le gras « **…** » que le modèle
+ *  met parfois en tête de phrase rendu en gras plutôt qu'affiché tel quel. */
+function Constat({ texte }: { texte: string }) {
+  return (
+    <>
+      {texte.split(/\*\*(.+?)\*\*/g).map((m, i) => (
+        i % 2 ? <strong key={i}><Texte>{m}</Texte></strong> : m ? <Texte key={i}>{m}</Texte> : null
+      ))}
+    </>
+  );
+}
+
 function brut(t: string, c: Record<string, Reference>) {
   return texteBrut(t, c);
 }
@@ -48,17 +60,34 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
   const ev = lireEventail(s);
   const cev = { ...c, ...(ev?.chiffres ?? {}) };
   const etapes = s.etapes ?? [];
+  // Le diagnostic de chaque spécialiste (champ « specialistes » de la sortie), sous son étape.
+  const sp = s.specialistes;
+  const constats: Record<string, string[]> = {
+    "Marché et risque": sp?.marche_et_risque ?? [],
+    "Macro et taux": sp?.macro ?? [],
+    "ESG et qualité": sp?.esg?.constats ?? [],
+  };
+  const nbConstats = Object.values(constats).reduce((n, t) => n + t.length, 0);
   return [
     {
       id: "demarche", court: "Démarche", titre: "Comment ce portefeuille a été établi",
-      justification: "Les étapes suivies par les agents pour votre profil, dans l'ordre, telles que le pipeline les a enregistrées.",
+      justification: nbConstats
+        ? "Les étapes suivies par les agents pour votre profil, dans l'ordre, et le diagnostic que chaque spécialiste a rédigé. Touchez un chiffre pour son calcul."
+        : "Les étapes suivies par les agents pour votre profil, dans l'ordre, telles que le pipeline les a enregistrées.",
       contenu: etapes.length ? (
         <Pages classe="demarche" elements={etapes.map((e, i) => ({
           cle: `${i}-${e.agent}`,
           contenu: (
             <div className="demarche__etape" style={{ "--rang": i } as React.CSSProperties}>
               <span className="demarche__numero" aria-hidden="true">{i + 1}</span>
-              <span><strong className="demarche__agent">{e.agent}</strong> <span className="demarche__fait">{typo(e.fait)}</span></span>
+              <div className="demarche__corps">
+                <p><strong className="demarche__agent">{e.agent}</strong> <span className="demarche__fait">{typo(e.fait)}</span></p>
+                {constats[e.agent]?.length ? (
+                  <ul className="demarche__constats" aria-label={`Diagnostic de l'agent ${e.agent}`}>
+                    {constats[e.agent].map((t, k) => <li key={k}><Constat texte={t} /></li>)}
+                  </ul>
+                ) : null}
+              </div>
             </div>
           ),
         }))} />
@@ -124,8 +153,8 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
 // réellement suivies s'affichent ensuite dans la diapositive « Démarche ».
 const AGENTS = [
   ["Orchestrateur", "lit votre profil et votre demande, fixe les plafonds"],
-  ["Marché et risque", "mesure volatilité et pires baisses des actifs candidats"],
   ["ESG et qualité", "écarte ou signale les titres selon vos critères, avec leurs sources"],
+  ["Marché et risque", "mesure volatilité et pires baisses des actifs candidats"],
   ["Macro et taux", "mesure la sensibilité aux taux et la pente des courbes"],
   ["Constructeur", "propose deux ou trois portefeuilles simulés"],
   ["Gouvernance", "vérifie chaque proposition au regard de votre profil, deux essais au plus"],
@@ -151,7 +180,7 @@ export function DiapositiveAttente({ debut }: { debut: number }) {
       </ol>
       <p className="attente__temps" aria-live="off">
         <span className="attente__indicateur" aria-hidden="true" />
-        Analyse en cours depuis {ecoule} s, environ une minute au total. Le détail de chaque étape s&apos;affiche avec le résultat.
+        Analyse en cours depuis {ecoule} s. Comptez de une à trois minutes selon le profil. Le détail de chaque étape s&apos;affiche avec le résultat.
       </p>
     </div>
   );
@@ -167,12 +196,20 @@ export function DiapositiveActif({ symbole, verdict, erreur }: { symbole: string
     );
   }
   if (!verdict) return <div className="diapo-actif"><h2 className="diapo__titre">{symbole} et votre profil</h2><p className="diapo__justification">Vérification en cours…</p></div>;
-  const textes = [...(verdict.raisons ?? []), ...([] as string[]).concat(verdict.explication ?? [])];
+  const textes = [...(verdict.raisons ?? []), ...([] as string[]).concat(verdict.explication ?? []), ...(verdict.notes ?? [])];
+  // Le titre est celui du serveur (statut calculé par des règles) : compatible, à plafonner
+  // (petite position seulement), hors profil, ou actif absent des tables.
+  const titre = verdict.titre
+    ? `${verdict.titre}${verdict.statut === "inconnu" ? "" : ` (${symbole})`}`
+    : verdict.compatible ? `${symbole} : compatible avec votre profil` : `Pourquoi ${symbole} ne correspond pas à votre profil`;
   return (
     <div className="diapo-actif">
-      <h2 className={verdict.compatible ? "diapo__titre diapo__titre--ok" : "diapo__titre diapo__titre--non"}>
-        {verdict.compatible ? `${symbole} : compatible avec votre profil` : `Pourquoi ${symbole} ne correspond pas à votre profil`}
-      </h2>
+      <h2 className={verdict.compatible ? "diapo__titre diapo__titre--ok" : "diapo__titre diapo__titre--non"}>{typo(titre)}</h2>
+      {verdict.statut && verdict.statut !== "inconnu" ? (
+        <p className="diapo__justification">
+          Statut : <strong>{verdict.statut}</strong>. Verdict calculé par des règles sur des mesures passées, pas par un modèle.
+        </p>
+      ) : null}
       {verdict.verdict ? <p className="diapo__justification"><Texte>{verdict.verdict}</Texte></p> : null}
       <Pages elements={textes.map((t, i) => ({ cle: `r${i}`, contenu: <p className="puce"><Texte>{t}</Texte></p> }))} classe="diapo__liste" />
     </div>

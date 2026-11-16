@@ -9,7 +9,7 @@ import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
 import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
-import { chargerSortie, PERSONAS, type Persona } from "@/lib/personas";
+import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
 import { Choix, Curseur } from "./Questions";
 import { chargerUnivers, completerGraphiques } from "@/lib/repartition";
@@ -46,6 +46,9 @@ export type EagleApi = {
 
 export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; da?: DirectionArtistique | null }) {
   const [voixParle, setVoixParle] = useState(false);
+  // Appel vocal en cours : l'agent dit lui-même chaque question, l'écran ne la répète pas dans la transcription.
+  const voixEnLigne = useRef(false);
+  const surLigne = useCallback((enLigne: boolean) => { voixEnLigne.current = enLigne; }, []);
   const [phase, setPhase] = useState<Phase>("accueil");
   const [question, setQuestion] = useState(0);
   const [profil, setProfil] = useState<Partial<Profil>>(PROFIL_VIDE);
@@ -53,6 +56,8 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
   const [prenom, setPrenom] = useState("");
   const [demande, setDemande] = useState("");
   const [sortie, setSortie] = useState<SortiePipeline | null>(null);
+  // Persona de démonstration affiché ; null pour une analyse en direct.
+  const [demo, setDemo] = useState<Persona["id"] | null>(null);
   const [diapo, setDiapoBrut] = useState(0);
   // Sens de la dernière navigation, pour faire glisser la diapositive du bon côté.
   const [sens, setSens] = useState<"avant" | "arriere">("avant");
@@ -67,14 +72,23 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
   const [saisie, setSaisie] = useState("");
   const [fiche, setFiche] = useState<string | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
+  // Serveur injoignable : on donne la commande pour le lancer. Serveur qui répond par une erreur :
+  // il tourne déjà, on renvoie à son terminal et à la vérification des clés.
+  const [injoignable, setInjoignable] = useState(false);
   const [debutAnalyse, setDebutAnalyse] = useState(0);
   const [univers, setUnivers] = useState<Record<string, { nom: string }>>({});
 
   useEffect(() => { chargerUnivers().then((u) => setUnivers(u.actifs)); }, []);
 
   const dire = useCallback((texte: string, qui: Replique["qui"] = "eagle") => {
-    setTranscription((t) => [...t.slice(-30), { qui, texte }]);
+    setTranscription((t) => [...t.slice(-200), { qui, texte }]);
   }, []);
+  // La transcription défile : elle suit le dernier message, et on peut remonter lire le début.
+  const filTranscription = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const f = filTranscription.current;
+    if (f) f.scrollTop = f.scrollHeight;
+  }, [transcription]);
 
   const diapos = useMemo<Diapositive[]>(() => (sortie ? construireDiapositives(sortie) : []), [sortie]);
   const chiffres = useMemo<Record<string, Reference>>(() => ({
@@ -102,10 +116,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     const i = question + 1;
     if (i < QUESTIONS.length) {
       setQuestion(i);
-      dire(QUESTIONS[i].texte);
+      if (!voixEnLigne.current) dire(QUESTIONS[i].texte);
     } else {
       setPhase("recap");
-      dire("Voici le profil que j'ai retenu. Indiquez votre prénom et, si vous le souhaitez, votre demande en vos propres termes, puis lancez l'analyse.");
+      if (!voixEnLigne.current) dire("Voici le profil que j'ai retenu. Indiquez votre prénom et, si vous le souhaitez, votre demande en vos propres termes, puis lancez l'analyse.");
     }
   };
 
@@ -125,14 +139,16 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     setPhase("analyse");
     setErreur(null);
     setDebutAnalyse(Date.now());
-    dire("Je transmets votre profil aux spécialistes. L'analyse prend environ une minute.");
+    dire("Je transmets votre profil aux spécialistes. L'analyse prend de une à trois minutes.");
     try {
       const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom);
+      setDemo(null);
       await presenter(s, "L'analyse de votre profil est prête.");
       return "Analyse terminée.";
     } catch (e) {
       const message = e instanceof ErreurService ? e.message : `L'analyse a échoué : ${(e as Error).message}.`;
       setErreur(message);
+      setInjoignable(e instanceof ErreurService ? e.injoignable : false);
       setPhase("erreur");
       dire(message);
       return message;
@@ -145,8 +161,22 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     setPrenom(s.profil.prenom ?? p.nom);
     setDemande(s.profil.demande ?? "");
     setQuestion(QUESTIONS.length);
+    setDemo(p.id);
     dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "vous");
     await presenter(s, `Voici l'analyse enregistrée pour ${p.nom} (agents/sorties/${p.id}.json).`);
+  };
+
+  // Dossier imprimable. Persona de démonstration : sa sortie enregistrée. Analyse en direct :
+  // la réponse du pipeline, déposée dans le stockage local du navigateur pour la page /rapport.
+  const exporter = () => {
+    if (!sortie) return;
+    if (demo) { window.open(`/rapport/?persona=${demo}`, "_blank"); return; }
+    try {
+      window.localStorage.setItem(CLE_DOSSIER, JSON.stringify(sortie));
+      window.open("/rapport/?source=analyse", "_blank");
+    } catch {
+      dire("Le navigateur refuse d'enregistrer le dossier (stockage local indisponible). L'analyse reste affichée ici.");
+    }
   };
 
   // ---------- Questions sur un actif, à tout moment ----------
@@ -174,7 +204,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     try {
       const v = await verifierActif(symbole, profil.tolerance_risque, profil.horizon_annees);
       setActif({ symbole, verdict: v });
-      dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.` : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
+      dire(v.compatible ? `${symbole} est compatible avec votre profil. En voici les raisons.`
+        : v.statut === "à plafonner" ? `${symbole} ne convient qu'en petite position pour votre profil. En voici les raisons.`
+        : v.statut === "inconnu" ? `${symbole} n'est pas dans les tables d'actifs : je ne donne aucun chiffre sans donnée.`
+        : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
     } catch (e) {
       setActif({ symbole, erreur: e instanceof ErreurService ? e.message : (e as Error).message });
       dire(`Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);
@@ -332,8 +365,17 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     contenu = (
       <div className="panne">
         <p className="diapo__manque">{erreur ? typo(erreur) : null}</p>
-        <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
-        <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
+        {injoignable ? (
+          <>
+            <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
+            <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
+          </>
+        ) : (
+          <>
+            <p className="panne__aide">Le serveur répond : le détail est dans son terminal. Pour vérifier les clés (Bedrock, données), à la racine du dépôt :</p>
+            <pre className="panne__commande"><code>python -m tools.verifier_cles</code></pre>
+          </>
+        )}
         <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p>
       </div>
     );
@@ -383,8 +425,8 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             <Avatar etat={etatAvatar} taille={132} repli={<Aigle taille={120} actif={enCours} />} />
             <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
           </div>
-          <Voix api={api} dire={dire} surParole={setVoixParle} />
-          <div className="transcription" aria-live="polite" aria-label="Transcription">
+          <Voix api={api} dire={dire} surParole={setVoixParle} surLigne={surLigne} />
+          <div className="transcription" ref={filTranscription} tabIndex={0} aria-live="polite" aria-label="Transcription, défilement vertical">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>
                 <span className="replique__qui">{r.qui === "eagle" ? "Eagle" : prenom || "Vous"}</span>
@@ -439,8 +481,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             ))}
           </dl>
           {sortie ? (
-            <button type="button" className="bouton bouton--secondaire" onClick={() => window.open(`/rapport?persona=${sortie.scenario}`, "_blank")}
-              disabled={!PERSONAS.some((p) => p.id === sortie.scenario)}>Exporter le dossier</button>
+            <button type="button" className="bouton bouton--secondaire" onClick={exporter}>Exporter le dossier</button>
           ) : null}
           <div className="demos">
             <p className="demos__titre">Démonstration</p>

@@ -1,8 +1,9 @@
 Cours de l'univers étendu, téléchargés le 2026-11-15 (fenêtre 2021-11-12 au 2026-11-12).
-13494 lignes, 11 symboles.
+37557 lignes, 31 symboles.
 
 - BE: one-day adjusted move of 59% on 2024-11-15 (check for split/data error)
 - GME: one-day adjusted move of 74% on 2024-05-13 (check for split/data error)
 - GME: one-day adjusted move of 60% on 2024-05-14 (check for split/data error)
 - GME: one-day adjusted move of 47% on 2024-06-06 (check for split/data error)
+- GOLS: history starts 2026-01-02, later than 2021-11-12
 - NXT: history starts 2023-02-09, later than 2021-11-12

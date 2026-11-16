@@ -41,9 +41,14 @@ export async function analyser(profil: Profil, demande: string, prenom: string):
   return r.json();
 }
 
-/** Réponse de GET /actif : verdict, textes avec repères {id} et leurs chiffres. */
+/** Réponse de GET /actif (tools.scenarios.fiche_actif) : statut calculé par des règles, titre,
+ *  raisons chiffrées et notes. `compatible` est déduit du statut ici : le serveur ne l'envoie pas. */
 export type VerdictActif = {
   symbole: string;
+  statut?: "compatible" | "à plafonner" | "hors profil" | "inconnu";
+  titre?: string;
+  nom?: string;
+  notes?: string[];
   compatible?: boolean;
   verdict?: string;
   raisons?: string[];
@@ -54,5 +59,6 @@ export type VerdictActif = {
 
 export async function verifierActif(symbole: string, tolerance: string, horizon: number): Promise<VerdictActif> {
   const q = new URLSearchParams({ symbole, tolerance, horizon: String(horizon) });
-  return (await appeler(`/actif?${q}`)).json();
+  const v = (await (await appeler(`/actif?${q}`)).json()) as VerdictActif;
+  return { ...v, compatible: v.compatible ?? v.statut === "compatible" };
 }

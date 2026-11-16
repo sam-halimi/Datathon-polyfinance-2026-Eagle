@@ -4,7 +4,7 @@ import type { Graphiques, Part, Reference, Regroupement, SortiePipeline } from "
 // calculent ici, avec les tables de web/data/univers.json (produites par
 // web/scripts/graphiques.py). Mêmes règles et mêmes références que le script.
 
-type Univers = { note: string; actifs: Record<string, { nom: string; classe: string; secteur: string; zone: string; devise: string; hebdo: [string, number][] }> };
+type Univers = { note: string; actifs: Record<string, { nom: string; classe: string; secteur: string; zone: string; devise: string; source?: string; hebdo: [string, number][] }> };
 
 function cle(t: string): string {
   return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ']/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");

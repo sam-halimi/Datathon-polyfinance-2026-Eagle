@@ -39,7 +39,8 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `chiffres` | {id: Reference} | Table des chiffres |
 | `contraintes` | objet | **nouveau** : `limites`, `origine` de chaque limite, `exclusions`, `nature`, `seuils_risque` |
 | `specialistes` | objet | **nouveau** : `marche_et_risque` et `macro` (constats, string[]), `esg` : {`criteres`, `fiches` (une par action : valeurs, résumé, `source_url`, `source_date`, ou `statut` « information manquante »), `expositions_fnb`, `constats`} |
-| `theme` | objet ou null | **nouveau** : `nom`, `secteur`, `symboles`, `source` |
+| `theme` | objet ou null | **nouveau** : `nom`, `secteur`, `symboles`, `source`. Premier thème de `themes`, gardé pour compatibilité |
+| `themes` | objet[] | Tous les thèmes couverts, un par centre d'intérêt : `nom`, `secteur`, `symboles`, `source`, `plafond`. Le plafond global (`contraintes.limites.plafond_theme`) est partagé à parts égales ; le contrôle `plafond_par_theme` le vérifie pour chaque thème |
 | `exclus` | {symbole: raison} | **nouveau** : candidats écartés avant construction |
 | `journal` | objet | **nouveau** : `appels` (chaque appel d'outil : `agent`, `id`, `outil`, `parametres`) et `textes_retires` |
 | `meta` | objet | **nouveau** : `modele`, `duree_secondes`, `date` |
@@ -65,7 +66,7 @@ Champs de `agents/profil.py`, plus `demande` et `prenom`.
 | `parts_du_risque` | {symbole: id} | Somme des valeurs = 1 |
 | `pires_baisses` | {symbole: id} | Pire baisse de chaque actif, dans sa devise de cotation |
 | `volatilites` | {symbole: id} | **nouveau** |
-| `theme` | {`nom`, `symboles`} ou null | **nouveau** : lignes du thème plafonné |
+| `theme` | {`nom`, `symboles`} ou null | **nouveau** : toutes les lignes de rôle `theme` ; `nom` joint les thèmes présents par « + » |
 | `essai` | 1 ou 2 | **nouveau** : essai où la gouvernance l'a accepté |
 | `controles` | Controle[] | **nouveau** : contrôles de ce portefeuille |
 | `adequation` | Adequation[] | **v2** : même vérification que `adequation` à la racine, pour ce portefeuille |
@@ -159,7 +160,10 @@ Dans un symbole, tout caractère autre qu'une lettre ou un chiffre devient `_`, 
 ### Profil
 
 - `connaissance_niveau` (1 à 5) : curseur d'Eagle. Absent, il découle de `connaissance` (débutant 2, intermédiaire 3, avancé 4) et `profil.connaissance_niveau` est rempli dans la sortie.
-- `centres_interet` : texte libre (« les jeux vidéo », « le solaire », « l'IA »). Il se relie d'abord à un thème de `data/themes.csv` par son nom ou un synonyme (jeu vidéo, énergie propre, international, Europe, marchés émergents), sinon à un secteur de l'univers sourcé par mots-clés. Un centre d'intérêt que rien ne couvre donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- `centres_interet` : texte libre (« les jeux vidéo », « le solaire », « l'IA »). Il se relie d'abord à un thème de `data/themes.csv` par son nom ou un synonyme (jeu vidéo, énergie propre, intelligence artificielle, aérospatiale, immobilier, alimentation, sport, international, Europe, marchés émergents), sinon à un secteur de l'univers sourcé par mots-clés. Un thème marqué `non_couvert` dans `data/themes.csv` (le luxe) donne sa raison sourcée. Un centre d'intérêt que rien ne couvre donne une entrée `non couvert` dans `adequation` et une limite spécifique, jamais un symbole inventé.
+- Chaque centre d'intérêt couvert devient un thème (`themes` à la racine) ; le plafond global est partagé.
+- `preferences` et `exclusions` : reconnues par mots-clés (ESG, dividendes, Canada, États-Unis, FNB indiciels, sociétés établies, faible volatilité ; énergies fossiles, controverses, crypto, or, secteurs, tabac, armement, jeux d'argent, alcool, symbole). Un texte libre que les mots-clés ne reconnaissent pas est relié par l'orchestrateur à un critère de cette liste fermée, ou laissé `non couvert` avec la raison : `liens_libres` à la racine, {texte: {`genre`, `critere` ou null, `raison`}}. Le modèle ne crée jamais de critère ; un critère hors liste est refusé par le code.
+- Revenu et dividendes : `tools/dividendes.py` (rendement des 12 derniers mois, comparé à XIU.TO). Marchés : `tools/repartition.py`. Activités sensibles : `tools/activites.py` et `data/activites_sensibles.csv`, en direct et à travers les FNB.
 - Univers : celui de départ (`data/assets_universe.csv`) et l'univers étendu ajouté par API (`data/univers_etendu.csv`, cours dans `data/base/prix_etendus.csv`). Les deux fournissent des candidats au constructeur. `theme.source` vaut `data/themes.csv` quand le thème vient de la table des thèmes ; `lignes[].sources` cite alors la page de l'émetteur et `data/base/prix_etendus.csv`.
 
 ### Adequation

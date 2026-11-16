@@ -35,6 +35,8 @@ TITRES = {
     "plafond_crypto": "Plafond crypto",
     "plafond_par_secteur": "Plafond par secteur",
     "plafond_theme": "Thème plafonné",
+    "plafond_par_theme": "Plafond de chaque thème",
+    "exclusion_activite": "Activité exclue",
     "theme_actions_et_fnb": "Thème sur actions et FNB",
     "volatilite_max": "Volatilité historique",
     "pire_baisse_max": "Pire baisse historique",
@@ -204,3 +206,32 @@ def pour_interface(x: dict[str, Any]) -> dict[str, Any]:
 
 def source_univers() -> str:
     return FICHIER_UNIVERS
+
+
+def plafonds_par_theme(ptf: dict[str, Any], themes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Un contrôle par thème : ses lignes de rôle « theme » sous sa part du plafond global.
+
+    Une ligne de rôle « theme » qui n'appartient à aucun thème du profil est refusée.
+    """
+    poids = ptf["poids"]
+    membres = [s for s, r in ptf["roles"].items() if r == "theme"]
+    controles = []
+    for t in themes:
+        lignes = [s for s in membres if s in t["symboles"]]
+        part = sum(poids.get(s, 0.0) for s in lignes)
+        ok = part <= t["plafond"] + 1e-6
+        controles.append(_controle(
+            "plafond_par_theme", "conforme" if ok else "non conforme",
+            f"Thème « {t['nom']} » : {_pct1(part)} du capital ({', '.join(lignes) or 'aucune ligne'}), "
+            f"plafond {_pct1(t['plafond'])} (plafond global du thème partagé entre {len(themes)} thème(s)).",
+            mesure=part, seuil=t["plafond"], actifs=lignes, source=t["source"]))
+    orphelines = [s for s in membres if not any(s in t["symboles"] for t in themes)]
+    if orphelines:
+        controles.append(_controle(
+            "plafond_par_theme", "non conforme",
+            f"Lignes de rôle « theme » hors des thèmes du profil : {orphelines}.", actifs=orphelines))
+    return controles
+
+
+def _pct1(x: float) -> str:
+    return f"{x * 100:.1f} %".replace(".", ",")

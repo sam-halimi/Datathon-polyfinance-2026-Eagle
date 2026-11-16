@@ -28,7 +28,7 @@ def _differences(a, b):
 @pytest.mark.parametrize("changement,critere,statuts", [
     ({"horizon_annees": 1}, "horizon", ("respecté", "partiel")),  # pire baisse effacée en environ un an et demi
     ({"objectif": "préservation du capital"}, "objectif", ("respecté", "partiel")),  # part risquée de la moitié
-    ({"objectif": "revenu"}, "objectif", ("respecté", "non couvert")),
+    ({"objectif": "revenu"}, "objectif", ("respecté", "partiel")),  # rendement en dividendes sous celui de XIU.TO
     ({"capital_fictif": 200000}, "capital", None),
     ({"tolerance_risque": "faible"}, "tolerance", None),
 ])
@@ -61,10 +61,13 @@ def test_chaque_entree_est_chiffree_ou_dit_pourquoi_non():
         else:
             assert e["chiffres"] and set(REPERE.findall(e["reponse"])) <= set(j.chiffres), e
             assert any(j.chiffres[i]["outil"] in ("stats_portefeuille", "parts_du_risque", "exposition_transparente",
-                                                  "exposition_titre") or j.chiffres[i]["outil"].startswith("agents.")
+                                                  "exposition_titre", "rendement_dividende",
+                                                  "rendement_dividende_portefeuille", "exposition_activite",
+                                                  "part_par_marche", "part_fnb", "part_societes_etablies")
+                       or j.chiffres[i]["outil"].startswith("agents.")
                        for i in e["chiffres"])
     assert a[("centres_interet", "la pêche à la mouche")]["statut"] == NON_COUVERT
-    assert a[("preferences", "dividendes")]["statut"] == NON_COUVERT
+    assert a[("preferences", "dividendes")]["statut"] != NON_COUVERT  # mesuré par tools/dividendes.py
 
 
 def test_l_exclusion_voit_a_travers_les_fnb():
@@ -75,7 +78,9 @@ def test_l_exclusion_voit_a_travers_les_fnb():
 
 
 def test_centres_interet_en_texte_libre():
-    assert relier_interet("j'adore l'IA et les puces")["secteur"] == "Information Technology"
+    ia = relier_interet("j'adore l'IA et les puces")  # data/themes.csv : FNB ARTY et ses titres
+    assert ia["theme"] == "intelligence artificielle" and "ARTY" in ia["symboles"]
+    assert relier_interet("les semi-conducteurs")["secteur"] == "Information Technology"
     assert relier_interet("le bitcoin")["type"] == "crypto"
     lien = relier_interet("la pêche à la mouche")
     assert lien["type"] == NON_COUVERT and "themes.csv" in lien["raison"] and not lien["symboles"]

@@ -33,12 +33,14 @@ class Refus(Exception):
 
 
 def scenarios_du_portefeuille(sortie: dict[str, Any]) -> dict[str, Any] | None:
-    """Éventail du portefeuille retenu (le premier), à l'horizon et au capital du profil."""
+    """Éventail du portefeuille retenu par la gouvernance (à défaut le premier), à l'horizon et au capital du profil."""
     portefeuilles = sortie.get("portefeuilles") or []
     if not portefeuilles:
         return None
     profil = sortie.get("profil", {})
-    poids = {ligne["symbole"]: ligne["poids"] for ligne in portefeuilles[0]["lignes"]}
+    retenu_id = (sortie.get("gouvernance") or {}).get("portefeuille_retenu")
+    retenu = next((p for p in portefeuilles if p.get("id") == retenu_id), portefeuilles[0])
+    poids = {ligne["symbole"]: ligne["poids"] for ligne in retenu["lignes"]}
     return eventail_scenarios(poids, int(profil.get("horizon_annees", 10)),
                               float(profil.get("capital_fictif", 10_000)), profil.get("devise", "CAD"))
 

@@ -1177,3 +1177,132 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .fiches-lignes__onglets { gap: 6px; }
   .diapo__justification { font-size: 15px; line-height: 21px; }
 }
+.fiche-ligne__corps { flex: 1; min-height: 0; }
+.fiche-ligne__raisons { display: flex; flex-direction: column; min-height: 0; }
+.fiche-ligne__raisons-liste { display: grid; gap: 6px; font-size: 15px; }
+.fiche-ligne__raisons-liste h4 { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--encre-douce); margin: 4px 0 0; }
+@media (max-height: 820px) {
+  .eventail { gap: 6px; }
+  .eventail__graphique { min-height: 110px; }
+  .eventail__legende { font-size: 13px; gap: 4px 14px; }
+  .eventail__avertissement { font-size: 13px; line-height: 18px; }
+  .eventail__hypotheses { font-size: 12.5px; line-height: 17px; }
+}
+
+/* ======================================================================
+   Défilement à l'intérieur des cartes.
+   La page ne défile pas sur ordinateur, mais un contenu plus long que sa carte se lit en
+   entier : il défile dans la carte (molette, glissement, clavier). Remplace les pages ‹ ›,
+   qui ne montraient qu'un critère à la fois sur un écran bas.
+   ====================================================================== */
+
+.pages { position: relative; }
+.pages__zone {
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-gutter: stable; padding-right: 8px;
+}
+.pages__zone:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--rayon-m); }
+.pages--suite .pages__zone { mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent 100%); }
+.pages__indice {
+  flex: none; text-align: center; font-size: 12.5px; line-height: 16px; letter-spacing: 0.04em; color: var(--encre-discrete);
+}
+.pages__indice::before { content: "↓ "; }
+
+/* Les autres contenus (graphiques et leurs légendes, question, récapitulatif) défilent
+   aussi dans la carte quand l'écran est trop bas pour eux. */
+.diapo__contenu { overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+.eagle__droite { overflow-x: hidden; overflow-y: auto; }
+
+/* La transcription garde tout l'échange : elle suit le dernier message et on peut remonter. */
+.transcription {
+  overflow-y: auto; overscroll-behavior: contain; justify-content: flex-start; mask-image: none;
+}
+.transcription > :first-child { margin-top: auto; }
+.transcription:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pages__zone, .diapo__contenu, .transcription, .eagle__droite, .fiche__corps {
+  scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Légendes des anneaux : le libellé entier, sur deux lignes au besoin, plutôt que coupé. */
+.anneau__entree { align-items: start; }
+.anneau__pastille { margin-top: 4px; }
+.anneau__nom { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.25; }
+
+/* ======================================================================
+   Téléphone et fenêtre étroite (moins de 900 px de large) : une seule colonne.
+   L'assistant et l'appel en haut, la carte en cours, puis la transcription et le profil.
+   Ici la page défile, comme toute page sur un téléphone.
+   ====================================================================== */
+
+@media (max-width: 899px) {
+  html, body { height: auto; min-height: 100%; }
+  body { overflow: auto; }
+  .eagle {
+    height: auto; min-height: 100dvh; overflow: visible;
+    grid-template-columns: minmax(0, 1fr); gap: 12px;
+    padding: max(12px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
+  }
+  /* Rien ne déborde en largeur : la page ne défile que de haut en bas (les bulles d'aide
+     masquées et le plan des diapositives restent dans la largeur de l'écran). */
+  html, body { overflow-x: clip; }
+  .eagle { overflow-x: clip; }
+  .eagle > *, .eagle__centre, .diapo__haut, .diapo__plan { min-width: 0; max-width: 100%; }
+  .terme__bulle { max-width: min(300px, 80vw); }
+  /* Les trois colonnes se fondent dans la grille : leurs blocs s'ordonnent un à un. */
+  .eagle__gauche { display: contents; }
+  .eagle__logo-ligne, .eagle__nom { order: 1; }
+  .eagle__identite { order: 2; }
+  .voix { order: 3; }
+  .eagle__centre { order: 4; min-height: 0; }
+  .transcription { order: 5; flex: none; max-height: 34dvh; }
+  .eagle__droite { order: 6; overflow: visible; }
+  .eagle__mention { order: 7; text-align: center; }
+
+  .eagle__logo { height: 30px; }
+  .eagle__identite { justify-content: flex-start; }
+  .avatar { grid-auto-flow: column; align-items: center; }
+  .avatar__image { width: 64px; }
+  .avatar .eg-voice { grid-area: 1 / 2; }
+
+  .diapo__haut { flex-direction: column; gap: 8px; }
+  .diapo__plan { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; width: 100%; }
+  .diapo__plan li { flex: none; }
+  .registre { align-self: flex-start; }
+  .registre__bulle { left: 0; right: auto; }
+
+  .diapo { flex: none; overflow: visible; padding: 18px 16px; min-height: 46dvh; }
+  .diapo__titre { font-size: 21px; line-height: 27px; }
+  .diapo__titre.eg-title-question { font-size: 24px; line-height: 31px; }
+  .diapo__justification { font-size: 15px; }
+  .diapo__contenu, .pages__zone { overflow: visible; padding-right: 0; scrollbar-gutter: auto; }
+  .pages--suite .pages__zone { mask-image: none; }
+  .pages__indice { display: none; }
+
+  .diapo__nav { position: sticky; bottom: 0; z-index: 2; background: var(--fond); padding: 8px 0; gap: 8px; }
+  .diapo__nav .bouton { min-width: 0; flex: 1; }
+  .diapo__compte { flex: none; }
+
+  .eagle .choix, .eagle .choix--large, .eagle .choix--serre { grid-template-columns: minmax(0, 1fr); }
+  .eagle .choix--icones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .anneaux { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .anneau__graphique, .carte-monde__dessin { height: 180px; }
+  .cours-commentes__graphique, .eventail__graphique { flex: none; height: 240px; min-height: 0; }
+  .fiche-ligne__corps { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .adequation__ligne { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .adequation__ligne--entete { display: none; }
+  .attente__liste { gap: 8px; }
+  .demos { margin-top: 12px; }
+}
+
+/* ---------- Démarche : le diagnostic de chaque spécialiste sous son étape ---------- */
+
+.demarche__corps { display: grid; gap: 6px; min-width: 0; }
+.demarche__constats {
+  display: grid; gap: 6px; margin: 2px 0 4px; padding: 10px 14px;
+  border-left: 2px solid var(--border-strong); background: var(--surface-2); border-radius: 0 var(--rayon-m) var(--rayon-m) 0;
+  font-size: 14.5px; line-height: 1.45; color: var(--encre);
+}
+.demarche__constats li { position: relative; padding-left: 14px; }
+.demarche__constats li::before { content: "–"; position: absolute; left: 0; color: var(--encre-discrete); }
