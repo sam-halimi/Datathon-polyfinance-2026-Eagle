@@ -91,6 +91,14 @@ Tous testés avec pytest sur les vrais CSV.
 - Barre d'étapes : Profil, Analyse, Proposition, Vérification, Explication.
 - Repli en texte si le micro ne marche pas.
 
+## Anglais
+
+- Bouton « Français / English » sur chaque écran. Le site, le pipeline et les données restent en français : l'anglais est une traduction de ce qui s'affiche.
+- Interface : dictionnaire `web/lib/en.ts`. Un texte ajouté à l'interface a sa ligne dans ce fichier.
+- Résultat du pipeline : `agents/traduction.py`, à la demande (`langue: "en"`). Avant l'appel au modèle, chaque nombre, marqueur de chiffre, date, fichier et symbole est remplacé par un jeton, puis remis tel quel : le modèle ne voit et n'écrit aucun chiffre. Une traduction qui perd ou ajoute un jeton est refusée ; le texte reste en français et `meta.traduction` le compte.
+- Après un changement des sorties de démonstration : `python -m agents.traduction`, puis `python web/scripts/graphiques.py`.
+- Voix : un second agent ElevenLabs, en anglais (`docs/agent-elevenlabs-en.md`). Les valeurs envoyées aux outils restent celles du profil, en français.
+
 ## Technique (à confirmer avec les règles officielles et les accès fournis)
 
 - Agents : Strands Agents sur Amazon Bedrock, déployés sur AgentCore Runtime.

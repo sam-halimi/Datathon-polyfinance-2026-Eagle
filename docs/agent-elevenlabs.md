@@ -6,6 +6,8 @@ Côté site : `web/components/Voix.tsx` (`@elevenlabs/react`). L'identifiant de 
 
 Le premier message et la consigne ci-dessous sont la seule source : le script de création les lit dans ce fichier.
 
+L'option « English » du site a son propre agent, copie de celui-ci en anglais : `docs/agent-elevenlabs-en.md`. Un changement de consigne ici se reporte là-bas.
+
 ## L'agent existant
 
 L'agent Eagle existe déjà : il a été créé par le connecteur ElevenLabs, avec ses trois outils (`noter_profil`, `lancer_analyse`, `afficher_diapositive`), la langue française et la consigne de ce document.

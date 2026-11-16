@@ -5,6 +5,8 @@ import { Aigle } from "./Aigle";
 import { Avatar, FournisseurDa } from "./Da";
 import type { DirectionArtistique } from "@/lib/da";
 import { Voix } from "./Voix";
+import { ChoixLangue, useLangue } from "./Langue";
+import { langueCourante, tr, type Langue } from "@/lib/langue";
 import { FocusCtx, type Focus } from "./Focus";
 import { propositions, vueSur } from "@/lib/portefeuilles";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
@@ -193,20 +195,41 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
     return analyseEnCours.current;
   }, [lancerUneFois]);
 
-  const demonstration = async (p: Persona) => {
-    const s = await chargerSortie(p.id);
+  const langue = useLangue();
+  // Langue de la démonstration chargée : lue au moment du choix (langueCourante), pas dans l'état React,
+  // qui peut avoir un rendu de retard quand on choisit l'anglais juste avant d'ouvrir un cas.
+  const langueChargee = useRef<Langue | null>(null);
+  const demonstration = async (p: Persona, annoncer = true) => {
+    const l = langueCourante();
+    const s = await chargerSortie(p.id, l);
+    langueChargee.current = l;
     setProfil(s.profil);
     setPrenom(s.profil.prenom ?? p.nom);
     setDemande(s.profil.demande ?? "");
     setQuestion(QUESTIONS.length);
     setDemo(p.id);
+    if (!annoncer) { setSortie(await completerGraphiques(s)); return; }
     dire(`Démonstration : ${p.nom}, ${p.age} ans. « ${p.demande} »`, "vous");
     await presenter(s, `Voici l'analyse enregistrée pour ${p.nom} (agents/sorties/${p.id}.json).`);
   };
+  // Changement de langue pendant une démonstration : la même sortie, dans l'autre langue, sans quitter la diapositive.
+  // Une analyse en direct garde la langue dans laquelle elle a été demandée, jusqu'à la prochaine analyse.
+  const langueAffichee = useRef(langue);
+  useEffect(() => {
+    const change = langueAffichee.current !== langue;
+    langueAffichee.current = langue;
+    const p = PERSONAS.find((x) => x.id === demo);
+    if (p) { if (langueChargee.current && langueChargee.current !== langue) void demonstration(p, false); }
+    else if (change && brute) dire("Les textes de l'analyse restent dans la langue où elle a été demandée. Relancez l'analyse pour les obtenir dans l'autre langue.");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [langue, demo]);
 
   // Choix de la fin de la présentation : ouvrir un cas du datathon, ou repartir sur ses propres réponses.
+  const departTraite = useRef<number | null>(null);
   useEffect(() => {
-    if (!depart) return;
+    // Un même choix n'est traité qu'une fois (en développement, React rejoue les effets).
+    if (!depart || departTraite.current === depart.n) return;
+    departTraite.current = depart.n;
     if (depart.type === "cas") {
       const p = PERSONAS.find((x) => x.id === depart.id);
       if (p) void demonstration(p);
@@ -353,7 +376,9 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
   const api = useRef<EagleApi | null>(null);
   api.current = {
     noterProfil: (champ, valeur) => {
-      if (!QUESTIONS.some((q) => q.champ === champ) && champ !== "prenom" && champ !== "demande") return `Champ inconnu : ${champ}.`;
+      // Réponse rendue à la voix : en anglais pour l'agent anglais (les valeurs à envoyer restent celles du profil).
+      const L = (fr: string, en: string) => (langue === "en" ? en : fr);
+      if (!QUESTIONS.some((q) => q.champ === champ) && champ !== "prenom" && champ !== "demande") return L(`Champ inconnu : ${champ}.`, `Unknown field: ${champ}.`);
       if (champ === "prenom") setPrenom(String(valeur));
       else if (champ === "demande") setDemande(String(valeur));
       else {
@@ -383,13 +408,14 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
         : apres[q.champ] === undefined || apres[q.champ] === ""));
       const m = manque[0];
       const choix = !m ? "" : m.type === "choix"
-        ? `Choix : ${m.options.map((o) => `${o.titre} = ${o.valeur}`).join(" ; ")}${m.multiple ? " (plusieurs réponses possibles, ou une réponse libre)" : ""}.`
+        ? `${L("Choix", "Choices (say the label, send the value after the equals sign)")} : ${m.options.map((o) => `${tr(o.titre)} = ${o.valeur}`).join(" ; ")}${m.multiple ? L(" (plusieurs réponses possibles, ou une réponse libre)", " (several answers allowed, or a free answer)") : ""}.`
         : m.crans
-          ? `Curseur de ${m.min} à ${m.max} : ${Object.entries(m.crans).map(([k, t]) => `${k} = « ${t} »`).join(" ; ")}.`
-          : `Curseur de montant, de ${m.min} à ${m.max} dollars canadiens, par pas de ${m.pas}.`;
+          ? `${L("Curseur de", "Slider from")} ${m.min} ${L("à", "to")} ${m.max} : ${Object.entries(m.crans).map(([k, t]) => `${k} = « ${tr(t)} »`).join(" ; ")}.`
+          : L(`Curseur de montant, de ${m.min} à ${m.max} dollars canadiens, par pas de ${m.pas}.`, `Amount slider, from ${m.min} to ${m.max} Canadian dollars, in steps of ${m.pas}.`);
       return m
-        ? `Noté : ${champ}. Question suivante (${m.champ}) : ${m.texte} ${choix}`
-        : `Noté : ${champ}. Le profil est complet : demande le prénom et la demande en ses mots, puis appelle lancer_analyse.`;
+        ? `${L("Noté", "Recorded")} : ${champ}. ${L("Question suivante", "Next question")} (${m.champ}) : ${tr(m.texte)} ${choix}`
+        : L(`Noté : ${champ}. Le profil est complet : demande le prénom et la demande en ses mots, puis appelle lancer_analyse.`,
+          `Recorded: ${champ}. The profile is complete: ask for the first name and the request in their own words, then call lancer_analyse.`);
     },
     lancerAnalyse: lancer,
     afficherDiapositive: afficher,
@@ -577,6 +603,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
         <aside className="eagle__droite">
           {compte || ouvrirModeEmploi ? (
             <div className="eagle__compte">
+              <ChoixLangue />
               {ouvrirModeEmploi ? <button type="button" className="eagle__lien" onClick={ouvrirModeEmploi}>Mode d&apos;emploi</button> : null}
               {compte ? (
                 <>
@@ -615,7 +642,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
               <button key={p.id} type="button" className={demo === p.id ? "demo demo--actif" : "demo"} onClick={() => void demonstration(p)}>
                 <img className="demo__avatar" src={`/da/personas/${p.id}.svg`} alt="" width={40} height={40} />
                 <span className="demo__textes">
-                  <strong>{p.nom}, {p.age} ans</strong>
+                  <strong>{`${p.nom}, ${p.age} ans`}</strong>
                   <span>{typo(`« ${p.demande} »`)}</span>
                 </span>
               </button>

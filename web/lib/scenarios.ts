@@ -26,7 +26,8 @@ export function lireEventail(s: SortiePipeline): Eventail | null {
   const params = (sc.parametres ?? {}) as Record<string, unknown>;
   const devise = String(params.devise ?? s.profil?.devise ?? "CAD");
   const d = (sc.details ?? {}) as Record<string, unknown>;
-  const base = { outil: sc.outil, parametres: sc.parametres, periode: sc.periode, formule: sc.formule, sources: sc.sources };
+  const base = { outil: sc.outil, parametres: sc.parametres, periode: sc.periode, formule: sc.formule, sources: sc.sources,
+    formule_en: (sc as { formule_en?: string }).formule_en };
   const chiffre = (champ: string, valeur: number, unite: string, decrit: string): Reference => ({
     ...base, valeur, unite, champ, details: { avertissement: d.avertissement, nature: decrit },
   });

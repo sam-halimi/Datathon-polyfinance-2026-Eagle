@@ -1,0 +1,3846 @@
+{
+ "note": "Calculated by web/scripts/graphiques.py from agents/sorties/amira.json, data/assets_universe.csv, data/univers_etendu.csv and the price files.",
+ "repartitions": {
+  "A": {
+   "actif": [
+    {
+     "libelle": "QQQ",
+     "id": "rep_a_actif_qqq",
+     "symboles": [
+      "QQQ"
+     ]
+    },
+    {
+     "libelle": "SPY",
+     "id": "rep_a_actif_spy",
+     "symboles": [
+      "SPY"
+     ]
+    },
+    {
+     "libelle": "XBB.TO",
+     "id": "rep_a_actif_xbb_to",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "XIU.TO",
+     "id": "rep_a_actif_xiu_to",
+     "symboles": [
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "MSFT",
+     "id": "rep_a_actif_msft",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "BTC-USD",
+     "id": "rep_a_actif_btc_usd",
+     "symboles": [
+      "BTC-USD"
+     ]
+    },
+    {
+     "libelle": "RY.TO",
+     "id": "rep_a_actif_ry_to",
+     "symboles": [
+      "RY.TO"
+     ]
+    },
+    {
+     "libelle": "ENB.TO",
+     "id": "rep_a_actif_enb_to",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_a_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_a_secteur_obligations_fnb",
+     "symboles": [
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "Technologies de l'information",
+     "id": "rep_a_secteur_technologies_de_linformation",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "Crypto",
+     "id": "rep_a_secteur_crypto",
+     "symboles": [
+      "BTC-USD"
+     ]
+    },
+    {
+     "libelle": "Finance",
+     "id": "rep_a_secteur_finance",
+     "symboles": [
+      "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Énergie",
+     "id": "rep_a_secteur_energie",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_a_zone_etats_unis",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_a_zone_canada",
+     "symboles": [
+      "XBB.TO",
+      "XIU.TO",
+      "RY.TO",
+      "ENB.TO"
+     ]
+    },
+    {
+     "libelle": "Crypto, à part",
+     "id": "rep_a_zone_crypto_a_part",
+     "symboles": [
+      "BTC-USD"
+     ]
+    }
+   ]
+  },
+  "B": {
+   "actif": [
+    {
+     "libelle": "QQQ",
+     "id": "rep_b_actif_qqq",
+     "symboles": [
+      "QQQ"
+     ]
+    },
+    {
+     "libelle": "SPY",
+     "id": "rep_b_actif_spy",
+     "symboles": [
+      "SPY"
+     ]
+    },
+    {
+     "libelle": "XIU.TO",
+     "id": "rep_b_actif_xiu_to",
+     "symboles": [
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "MSFT",
+     "id": "rep_b_actif_msft",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "BTC-USD",
+     "id": "rep_b_actif_btc_usd",
+     "symboles": [
+      "BTC-USD"
+     ]
+    },
+    {
+     "libelle": "CNR.TO",
+     "id": "rep_b_actif_cnr_to",
+     "symboles": [
+      "CNR.TO"
+     ]
+    },
+    {
+     "libelle": "AGG",
+     "id": "rep_b_actif_agg",
+     "symboles": [
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "XEF.TO",
+     "id": "rep_b_actif_xef_to",
+     "symboles": [
+      "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "ENB.TO",
+     "id": "rep_b_actif_enb_to",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_b_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "Technologies de l'information",
+     "id": "rep_b_secteur_technologies_de_linformation",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "Crypto",
+     "id": "rep_b_secteur_crypto",
+     "symboles": [
+      "BTC-USD"
+     ]
+    },
+    {
+     "libelle": "Industrie",
+     "id": "rep_b_secteur_industrie",
+     "symboles": [
+      "CNR.TO"
+     ]
+    },
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_b_secteur_obligations_fnb",
+     "symboles": [
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "Actions internationales (FNB)",
+     "id": "rep_b_secteur_actions_internationales_fnb",
+     "symboles": [
+      "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "Énergie",
+     "id": "rep_b_secteur_energie",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_b_zone_etats_unis",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "MSFT",
+      "AGG"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_b_zone_canada",
+     "symboles": [
+      "XIU.TO",
+      "CNR.TO",
+      "ENB.TO"
+     ]
+    },
+    {
+     "libelle": "Crypto, à part",
+     "id": "rep_b_zone_crypto_a_part",
+     "symboles": [
+      "BTC-USD"
+     ]
+    },
+    {
+     "libelle": "International développé, à part",
+     "id": "rep_b_zone_international_developpe_a_part",
+     "symboles": [
+      "XEF.TO"
+     ]
+    }
+   ]
+  },
+  "C": {
+   "actif": [
+    {
+     "libelle": "QQQ",
+     "id": "rep_c_actif_qqq",
+     "symboles": [
+      "QQQ"
+     ]
+    },
+    {
+     "libelle": "SPY",
+     "id": "rep_c_actif_spy",
+     "symboles": [
+      "SPY"
+     ]
+    },
+    {
+     "libelle": "XIU.TO",
+     "id": "rep_c_actif_xiu_to",
+     "symboles": [
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "MSFT",
+     "id": "rep_c_actif_msft",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "XEF.TO",
+     "id": "rep_c_actif_xef_to",
+     "symboles": [
+      "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "RY.TO",
+     "id": "rep_c_actif_ry_to",
+     "symboles": [
+      "RY.TO"
+     ]
+    },
+    {
+     "libelle": "ZST.TO",
+     "id": "rep_c_actif_zst_to",
+     "symboles": [
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "ENB.TO",
+     "id": "rep_c_actif_enb_to",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "secteur": [
+    {
+     "libelle": "Actions, marché large (FNB)",
+     "id": "rep_c_secteur_actions_marche_large_fnb",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "XIU.TO"
+     ]
+    },
+    {
+     "libelle": "Technologies de l'information",
+     "id": "rep_c_secteur_technologies_de_linformation",
+     "symboles": [
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "Actions internationales (FNB)",
+     "id": "rep_c_secteur_actions_internationales_fnb",
+     "symboles": [
+      "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "Finance",
+     "id": "rep_c_secteur_finance",
+     "symboles": [
+      "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Obligations (FNB)",
+     "id": "rep_c_secteur_obligations_fnb",
+     "symboles": [
+      "ZST.TO"
+     ]
+    },
+    {
+     "libelle": "Énergie",
+     "id": "rep_c_secteur_energie",
+     "symboles": [
+      "ENB.TO"
+     ]
+    }
+   ],
+   "zone": [
+    {
+     "libelle": "États-Unis",
+     "id": "rep_c_zone_etats_unis",
+     "symboles": [
+      "QQQ",
+      "SPY",
+      "MSFT"
+     ]
+    },
+    {
+     "libelle": "Canada",
+     "id": "rep_c_zone_canada",
+     "symboles": [
+      "XIU.TO",
+      "RY.TO",
+      "ZST.TO",
+      "ENB.TO"
+     ]
+    },
+    {
+     "libelle": "International développé, à part",
+     "id": "rep_c_zone_international_developpe_a_part",
+     "symboles": [
+      "XEF.TO"
+     ]
+    }
+   ]
+  }
+ },
+ "cours": {
+  "symbole": "BTC-USD",
+  "id": "btc_usd",
+  "points": [
+   [
+    "2021-11-14",
+    65466.839844
+   ],
+   [
+    "2021-11-21",
+    58730.476562
+   ],
+   [
+    "2021-11-28",
+    57248.457031
+   ],
+   [
+    "2021-12-05",
+    49368.847656
+   ],
+   [
+    "2021-12-12",
+    50098.335938
+   ],
+   [
+    "2021-12-19",
+    46707.015625
+   ],
+   [
+    "2021-12-26",
+    50809.515625
+   ],
+   [
+    "2022-01-02",
+    47345.21875
+   ],
+   [
+    "2022-01-09",
+    41911.601562
+   ],
+   [
+    "2022-01-16",
+    43113.878906
+   ],
+   [
+    "2022-01-23",
+    36276.804688
+   ],
+   [
+    "2022-01-30",
+    37917.601562
+   ],
+   [
+    "2022-02-06",
+    42412.433594
+   ],
+   [
+    "2022-02-13",
+    42197.515625
+   ],
+   [
+    "2022-02-20",
+    38431.378906
+   ],
+   [
+    "2022-02-27",
+    37709.785156
+   ],
+   [
+    "2022-03-06",
+    38419.984375
+   ],
+   [
+    "2022-03-13",
+    37849.664062
+   ],
+   [
+    "2022-03-20",
+    41247.824219
+   ],
+   [
+    "2022-03-27",
+    46820.492188
+   ],
+   [
+    "2022-04-03",
+    46453.566406
+   ],
+   [
+    "2022-04-10",
+    42207.671875
+   ],
+   [
+    "2022-04-17",
+    39716.953125
+   ],
+   [
+    "2022-04-24",
+    39469.292969
+   ],
+   [
+    "2022-05-01",
+    38469.09375
+   ],
+   [
+    "2022-05-08",
+    34059.265625
+   ],
+   [
+    "2022-05-15",
+    31305.113281
+   ],
+   [
+    "2022-05-22",
+    30323.722656
+   ],
+   [
+    "2022-05-29",
+    29445.957031
+   ],
+   [
+    "2022-06-05",
+    29906.662109
+   ],
+   [
+    "2022-06-12",
+    26762.648438
+   ],
+   [
+    "2022-06-19",
+    20553.271484
+   ],
+   [
+    "2022-06-26",
+    21027.294922
+   ],
+   [
+    "2022-07-03",
+    19297.076172
+   ],
+   [
+    "2022-07-10",
+    20860.449219
+   ],
+   [
+    "2022-07-17",
+    20779.34375
+   ],
+   [
+    "2022-07-24",
+    22609.164062
+   ],
+   [
+    "2022-07-31",
+    23336.896484
+   ],
+   [
+    "2022-08-07",
+    23175.890625
+   ],
+   [
+    "2022-08-14",
+    24319.333984
+   ],
+   [
+    "2022-08-21",
+    21534.121094
+   ],
+   [
+    "2022-08-28",
+    19616.814453
+   ],
+   [
+    "2022-09-04",
+    19986.712891
+   ],
+   [
+    "2022-09-11",
+    21769.255859
+   ],
+   [
+    "2022-09-18",
+    19419.505859
+   ],
+   [
+    "2022-09-25",
+    18802.097656
+   ],
+   [
+    "2022-10-02",
+    19044.107422
+   ],
+   [
+    "2022-10-09",
+    19446.425781
+   ],
+   [
+    "2022-10-16",
+    19268.09375
+   ],
+   [
+    "2022-10-23",
+    19567.007812
+   ],
+   [
+    "2022-10-30",
+    20635.603516
+   ],
+   [
+    "2022-11-06",
+    20926.486328
+   ],
+   [
+    "2022-11-13",
+    16353.365234
+   ],
+   [
+    "2022-11-20",
+    16291.832031
+   ],
+   [
+    "2022-11-21",
+    15787.28418
+   ],
+   [
+    "2022-11-27",
+    16444.626953
+   ],
+   [
+    "2022-12-04",
+    17130.486328
+   ],
+   [
+    "2022-12-11",
+    17104.193359
+   ],
+   [
+    "2022-12-18",
+    16757.976562
+   ],
+   [
+    "2022-12-25",
+    16841.986328
+   ],
+   [
+    "2023-01-01",
+    16625.080078
+   ],
+   [
+    "2023-01-08",
+    17091.144531
+   ],
+   [
+    "2023-01-15",
+    20880.798828
+   ],
+   [
+    "2023-01-22",
+    22720.416016
+   ],
+   [
+    "2023-01-29",
+    23774.566406
+   ],
+   [
+    "2023-02-05",
+    22955.666016
+   ],
+   [
+    "2023-02-12",
+    21788.203125
+   ],
+   [
+    "2023-02-19",
+    24327.642578
+   ],
+   [
+    "2023-02-26",
+    23561.212891
+   ],
+   [
+    "2023-03-05",
+    22435.513672
+   ],
+   [
+    "2023-03-12",
+    22163.949219
+   ],
+   [
+    "2023-03-19",
+    28038.675781
+   ],
+   [
+    "2023-03-26",
+    27994.330078
+   ],
+   [
+    "2023-04-02",
+    28199.308594
+   ],
+   [
+    "2023-04-09",
+    28333.050781
+   ],
+   [
+    "2023-04-16",
+    30315.355469
+   ],
+   [
+    "2023-04-23",
+    27591.384766
+   ],
+   [
+    "2023-04-30",
+    29268.806641
+   ],
+   [
+    "2023-05-07",
+    28454.978516
+   ],
+   [
+    "2023-05-14",
+    26930.638672
+   ],
+   [
+    "2023-05-21",
+    26753.826172
+   ],
+   [
+    "2023-05-28",
+    28085.646484
+   ],
+   [
+    "2023-06-04",
+    27119.066406
+   ],
+   [
+    "2023-06-11",
+    25940.167969
+   ],
+   [
+    "2023-06-18",
+    26336.212891
+   ],
+   [
+    "2023-06-25",
+    30480.261719
+   ],
+   [
+    "2023-07-02",
+    30620.769531
+   ],
+   [
+    "2023-07-09",
+    30171.234375
+   ],
+   [
+    "2023-07-16",
+    30249.132812
+   ],
+   [
+    "2023-07-23",
+    30084.539062
+   ],
+   [
+    "2023-07-30",
+    29275.308594
+   ],
+   [
+    "2023-08-06",
+    29041.855469
+   ],
+   [
+    "2023-08-13",
+    29282.914062
+   ],
+   [
+    "2023-08-20",
+    26189.583984
+   ],
+   [
+    "2023-08-27",
+    26089.693359
+   ],
+   [
+    "2023-09-03",
+    25969.566406
+   ],
+   [
+    "2023-09-10",
+    25832.226562
+   ],
+   [
+    "2023-09-17",
+    26534.1875
+   ],
+   [
+    "2023-09-24",
+    26256.826172
+   ],
+   [
+    "2023-10-01",
+    27983.75
+   ],
+   [
+    "2023-10-08",
+    27935.089844
+   ],
+   [
+    "2023-10-15",
+    27159.652344
+   ],
+   [
+    "2023-10-22",
+    29993.896484
+   ],
+   [
+    "2023-10-29",
+    34538.480469
+   ],
+   [
+    "2023-11-05",
+    35049.355469
+   ],
+   [
+    "2023-11-12",
+    37054.519531
+   ],
+   [
+    "2023-11-19",
+    37386.546875
+   ],
+   [
+    "2023-11-26",
+    37479.121094
+   ],
+   [
+    "2023-12-03",
+    39978.390625
+   ],
+   [
+    "2023-12-10",
+    43779.699219
+   ],
+   [
+    "2023-12-17",
+    41364.664062
+   ],
+   [
+    "2023-12-24",
+    43016.117188
+   ],
+   [
+    "2023-12-31",
+    42265.1875
+   ],
+   [
+    "2024-01-07",
+    43943.097656
+   ],
+   [
+    "2024-01-14",
+    41796.269531
+   ],
+   [
+    "2024-01-21",
+    41545.785156
+   ],
+   [
+    "2024-01-28",
+    42035.59375
+   ],
+   [
+    "2024-02-04",
+    42583.582031
+   ],
+   [
+    "2024-02-11",
+    48293.917969
+   ],
+   [
+    "2024-02-18",
+    52122.546875
+   ],
+   [
+    "2024-02-25",
+    51733.238281
+   ],
+   [
+    "2024-03-03",
+    63167.371094
+   ],
+   [
+    "2024-03-10",
+    69019.789062
+   ],
+   [
+    "2024-03-17",
+    68390.625
+   ],
+   [
+    "2024-03-24",
+    67234.171875
+   ],
+   [
+    "2024-03-31",
+    71333.648438
+   ],
+   [
+    "2024-04-07",
+    69362.554688
+   ],
+   [
+    "2024-04-14",
+    65738.726562
+   ],
+   [
+    "2024-04-21",
+    64926.644531
+   ],
+   [
+    "2024-04-28",
+    63113.230469
+   ],
+   [
+    "2024-05-05",
+    64031.132812
+   ],
+   [
+    "2024-05-12",
+    61448.394531
+   ],
+   [
+    "2024-05-19",
+    66278.367188
+   ],
+   [
+    "2024-05-26",
+    68518.09375
+   ],
+   [
+    "2024-06-02",
+    67751.601562
+   ],
+   [
+    "2024-06-09",
+    69647.992188
+   ],
+   [
+    "2024-06-16",
+    66639.046875
+   ],
+   [
+    "2024-06-23",
+    63180.796875
+   ],
+   [
+    "2024-06-30",
+    62678.292969
+   ],
+   [
+    "2024-07-07",
+    55849.109375
+   ],
+   [
+    "2024-07-14",
+    60787.792969
+   ],
+   [
+    "2024-07-21",
+    68154.523438
+   ],
+   [
+    "2024-07-28",
+    68255.867188
+   ],
+   [
+    "2024-08-04",
+    58116.976562
+   ],
+   [
+    "2024-08-11",
+    58719.484375
+   ],
+   [
+    "2024-08-18",
+    58483.964844
+   ],
+   [
+    "2024-08-25",
+    64333.542969
+   ],
+   [
+    "2024-09-01",
+    57325.488281
+   ],
+   [
+    "2024-09-08",
+    54841.566406
+   ],
+   [
+    "2024-09-15",
+    59182.835938
+   ],
+   [
+    "2024-09-22",
+    63648.710938
+   ],
+   [
+    "2024-09-29",
+    65635.304688
+   ],
+   [
+    "2024-10-06",
+    62818.953125
+   ],
+   [
+    "2024-10-13",
+    62851.375
+   ],
+   [
+    "2024-10-20",
+    69001.703125
+   ],
+   [
+    "2024-10-27",
+    67929.296875
+   ],
+   [
+    "2024-11-03",
+    68741.117188
+   ],
+   [
+    "2024-11-10",
+    80474.1875
+   ],
+   [
+    "2024-11-17",
+    89845.851562
+   ],
+   [
+    "2024-11-24",
+    98013.820312
+   ],
+   [
+    "2024-12-01",
+    97279.789062
+   ],
+   [
+    "2024-12-08",
+    101236.015625
+   ],
+   [
+    "2024-12-15",
+    104298.695312
+   ],
+   [
+    "2024-12-22",
+    95104.9375
+   ],
+   [
+    "2024-12-29",
+    93530.226562
+   ],
+   [
+    "2025-01-05",
+    98314.960938
+   ],
+   [
+    "2025-01-12",
+    94488.4375
+   ],
+   [
+    "2025-01-19",
+    101089.609375
+   ],
+   [
+    "2025-01-26",
+    102682.5
+   ],
+   [
+    "2025-02-02",
+    97688.976562
+   ],
+   [
+    "2025-02-09",
+    96500.09375
+   ],
+   [
+    "2025-02-16",
+    96175.03125
+   ],
+   [
+    "2025-02-23",
+    96273.921875
+   ],
+   [
+    "2025-03-02",
+    94248.351562
+   ],
+   [
+    "2025-03-09",
+    80601.039062
+   ],
+   [
+    "2025-03-16",
+    82579.6875
+   ],
+   [
+    "2025-03-23",
+    86054.375
+   ],
+   [
+    "2025-03-30",
+    82334.523438
+   ],
+   [
+    "2025-04-06",
+    78214.484375
+   ],
+   [
+    "2025-04-13",
+    83684.976562
+   ],
+   [
+    "2025-04-20",
+    85174.304688
+   ],
+   [
+    "2025-04-27",
+    93754.84375
+   ],
+   [
+    "2025-05-04",
+    94315.976562
+   ],
+   [
+    "2025-05-11",
+    104106.359375
+   ],
+   [
+    "2025-05-18",
+    106446.007812
+   ],
+   [
+    "2025-05-25",
+    109035.390625
+   ],
+   [
+    "2025-06-01",
+    105652.101562
+   ],
+   [
+    "2025-06-08",
+    105793.648438
+   ],
+   [
+    "2025-06-15",
+    105552.023438
+   ],
+   [
+    "2025-06-22",
+    100987.140625
+   ],
+   [
+    "2025-06-29",
+    108385.570312
+   ],
+   [
+    "2025-07-06",
+    109232.070312
+   ],
+   [
+    "2025-07-13",
+    119116.117188
+   ],
+   [
+    "2025-07-20",
+    117300.789062
+   ],
+   [
+    "2025-07-27",
+    119448.492188
+   ],
+   [
+    "2025-08-03",
+    114217.671875
+   ],
+   [
+    "2025-08-10",
+    119306.757812
+   ],
+   [
+    "2025-08-17",
+    117453.0625
+   ],
+   [
+    "2025-08-24",
+    113458.429688
+   ],
+   [
+    "2025-08-31",
+    108236.710938
+   ],
+   [
+    "2025-09-07",
+    111167.617188
+   ],
+   [
+    "2025-09-14",
+    115407.65625
+   ],
+   [
+    "2025-09-21",
+    115306.09375
+   ],
+   [
+    "2025-09-28",
+    112122.640625
+   ],
+   [
+    "2025-10-05",
+    123513.476562
+   ],
+   [
+    "2025-10-12",
+    115169.765625
+   ],
+   [
+    "2025-10-19",
+    108666.710938
+   ],
+   [
+    "2025-10-26",
+    114472.445312
+   ],
+   [
+    "2025-11-02",
+    110639.625
+   ],
+   [
+    "2025-11-09",
+    104719.640625
+   ],
+   [
+    "2025-11-16",
+    94177.078125
+   ],
+   [
+    "2025-11-23",
+    86805.007812
+   ],
+   [
+    "2025-11-30",
+    90394.3125
+   ],
+   [
+    "2025-12-07",
+    90405.640625
+   ],
+   [
+    "2025-12-14",
+    88175.179688
+   ],
+   [
+    "2025-12-21",
+    88621.75
+   ],
+   [
+    "2025-12-28",
+    87835.835938
+   ],
+   [
+    "2026-01-04",
+    91413.492188
+   ],
+   [
+    "2026-01-11",
+    90827.460938
+   ],
+   [
+    "2026-01-18",
+    93634.429688
+   ],
+   [
+    "2026-01-25",
+    86572.21875
+   ],
+   [
+    "2026-02-01",
+    76974.445312
+   ],
+   [
+    "2026-02-08",
+    70264.726562
+   ],
+   [
+    "2026-02-15",
+    68788.1875
+   ],
+   [
+    "2026-02-22",
+    67659.390625
+   ],
+   [
+    "2026-03-01",
+    65738.101562
+   ],
+   [
+    "2026-03-08",
+    65969.78125
+   ],
+   [
+    "2026-03-15",
+    72789.914062
+   ],
+   [
+    "2026-03-22",
+    67845.210938
+   ],
+   [
+    "2026-03-29",
+    65954.921875
+   ],
+   [
+    "2026-04-05",
+    68981.898438
+   ],
+   [
+    "2026-04-12",
+    70753.40625
+   ],
+   [
+    "2026-04-19",
+    73856.351562
+   ],
+   [
+    "2026-04-26",
+    78657.539062
+   ],
+   [
+    "2026-05-03",
+    78538.226562
+   ],
+   [
+    "2026-05-10",
+    82138.929688
+   ],
+   [
+    "2026-05-17",
+    77429.351562
+   ],
+   [
+    "2026-05-24",
+    76981.125
+   ],
+   [
+    "2026-05-31",
+    73579.6875
+   ],
+   [
+    "2026-06-07",
+    63239.519531
+   ],
+   [
+    "2026-06-14",
+    65710.398438
+   ],
+   [
+    "2026-06-21",
+    63237.539062
+   ],
+   [
+    "2026-06-28",
+    59532.339844
+   ],
+   [
+    "2026-07-05",
+    63547.882812
+   ],
+   [
+    "2026-07-12",
+    63758.21875
+   ],
+   [
+    "2026-07-19",
+    64690.804688
+   ],
+   [
+    "2026-07-26",
+    65340.300781
+   ],
+   [
+    "2026-08-02",
+    63482.0
+   ],
+   [
+    "2026-08-09",
+    64844.886719
+   ],
+   [
+    "2026-08-16",
+    62818.652344
+   ],
+   [
+    "2026-08-23",
+    77755.265625
+   ],
+   [
+    "2026-08-30",
+    77667.570312
+   ],
+   [
+    "2026-09-06",
+    80350.046875
+   ],
+   [
+    "2026-09-13",
+    76838.15625
+   ],
+   [
+    "2026-09-20",
+    81142.609375
+   ],
+   [
+    "2026-09-27",
+    84458.085938
+   ],
+   [
+    "2026-10-04",
+    86480.304688
+   ],
+   [
+    "2026-10-11",
+    83679.46875
+   ],
+   [
+    "2026-10-18",
+    82017.601562
+   ],
+   [
+    "2026-10-25",
+    80024.007812
+   ],
+   [
+    "2026-11-01",
+    78248.453125
+   ],
+   [
+    "2026-11-08",
+    74584.648438
+   ],
+   [
+    "2026-11-12",
+    71342.96875
+   ]
+  ],
+  "date_pic": "2021-11-14",
+  "date_creux": "2022-11-21",
+  "reference": "pb_btc_usd",
+  "sources": [
+   "data/prices_daily.csv (adj_close, dernier cours de chaque semaine)"
+  ],
+  "devise": "USD",
+  "nom": "Bitcoin"
+ },
+ "chiffres": {
+  "rep_a_actif_qqq": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "QQQ",
+    "poids": {
+     "QQQ": 0.25
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.25,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_spy": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "SPY",
+    "poids": {
+     "SPY": 0.2
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.2,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "SPY"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_xbb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "XBB.TO",
+    "poids": {
+     "XBB.TO": 0.15
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XBB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_xiu_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "XIU.TO",
+    "poids": {
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_msft": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "MSFT",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_btc_usd": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "BTC-USD",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_ry_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "RY.TO",
+    "poids": {
+     "RY.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "RY.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_actif_enb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "ENB.TO",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "QQQ": 0.25,
+     "SPY": 0.2,
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.55,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "XBB.TO": 0.15
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XBB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_technologies_de_linformation": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Technologies de l'information",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_crypto": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Crypto",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_finance": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Finance",
+    "poids": {
+     "RY.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "RY.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_secteur_energie": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Énergie",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_a_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "QQQ": 0.25,
+     "SPY": 0.2,
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.55,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_a_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XBB.TO": 0.15,
+     "XIU.TO": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XBB.TO",
+     "XIU.TO",
+     "RY.TO",
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_a_zone_crypto_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "Crypto, à part",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_b_actif_qqq": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "QQQ",
+    "poids": {
+     "QQQ": 0.22
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.22,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_spy": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "SPY",
+    "poids": {
+     "SPY": 0.15
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "SPY"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_xiu_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "XIU.TO",
+    "poids": {
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_msft": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "MSFT",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_btc_usd": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "BTC-USD",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_cnr_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "CNR.TO",
+    "poids": {
+     "CNR.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "CNR.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_agg": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "AGG",
+    "poids": {
+     "AGG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "AGG"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_xef_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "XEF.TO",
+    "poids": {
+     "XEF.TO": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_actif_enb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "ENB.TO",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "QQQ": 0.22,
+     "SPY": 0.15,
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.47,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_technologies_de_linformation": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Technologies de l'information",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_crypto": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Crypto",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_industrie": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Industrie",
+    "poids": {
+     "CNR.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "CNR.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "AGG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "AGG"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_actions_internationales_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Actions internationales (FNB)",
+    "poids": {
+     "XEF.TO": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_secteur_energie": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Énergie",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_b_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "QQQ": 0.22,
+     "SPY": 0.15,
+     "MSFT": 0.1,
+     "AGG": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.57,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "MSFT",
+     "AGG"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_b_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XIU.TO": 0.1,
+     "CNR.TO": 0.1,
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.25,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XIU.TO",
+     "CNR.TO",
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_b_zone_crypto_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "Crypto, à part",
+    "poids": {
+     "BTC-USD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "BTC-USD"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_b_zone_international_developpe_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "International développé, à part",
+    "poids": {
+     "XEF.TO": 0.08
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.08,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_c_actif_qqq": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "QQQ",
+    "poids": {
+     "QQQ": 0.3
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.3,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_spy": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "SPY",
+    "poids": {
+     "SPY": 0.15
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.15,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "SPY"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_xiu_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "XIU.TO",
+    "poids": {
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_msft": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "MSFT",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_xef_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "XEF.TO",
+    "poids": {
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_ry_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "RY.TO",
+    "poids": {
+     "RY.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "RY.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_zst_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "ZST.TO",
+    "poids": {
+     "ZST.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ZST.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_actif_enb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "ENB.TO",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_actions_marche_large_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Actions, marché large (FNB)",
+    "poids": {
+     "QQQ": 0.3,
+     "SPY": 0.15,
+     "XIU.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.55,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "XIU.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_technologies_de_linformation": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Technologies de l'information",
+    "poids": {
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_actions_internationales_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Actions internationales (FNB)",
+    "poids": {
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_finance": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Finance",
+    "poids": {
+     "RY.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "RY.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_obligations_fnb": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Obligations (FNB)",
+    "poids": {
+     "ZST.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ZST.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_secteur_energie": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Énergie",
+    "poids": {
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group"
+  },
+  "rep_c_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "QQQ": 0.3,
+     "SPY": 0.15,
+     "MSFT": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.55,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "QQQ",
+     "SPY",
+     "MSFT"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_c_zone_canada": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "Canada",
+    "poids": {
+     "XIU.TO": 0.1,
+     "RY.TO": 0.1,
+     "ZST.TO": 0.1,
+     "ENB.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.35,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XIU.TO",
+     "RY.TO",
+     "ZST.TO",
+     "ENB.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  },
+  "rep_c_zone_international_developpe_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "International développé, à part",
+    "poids": {
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/amira.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "notional capital allocation, not a market measure",
+    "symboles": [
+     "XEF.TO"
+    ]
+   },
+   "unite_en": "fraction of capital",
+   "formule_en": "sum of the weights of the holdings in the group (market TSX = Canada, other markets = United States ; an ETF whose index (sector column) is European, international, emerging, or global takes the zone of that index ; crypto and gold aside)"
+  }
+ },
+ "scenarios": {
+  "outil": "eventail_scenarios",
+  "parametres": {
+   "poids": {
+    "QQQ": 0.25,
+    "SPY": 0.2,
+    "XBB.TO": 0.15,
+    "XIU.TO": 0.1,
+    "MSFT": 0.1,
+    "BTC-USD": 0.1,
+    "RY.TO": 0.05,
+    "ENB.TO": 0.05
+   },
+   "horizon_annees": 15,
+   "capital": 10000.0,
+   "devise": "CAD",
+   "tirages": 2000,
+   "graine": 2026
+  },
+  "periode": {
+   "debut": "2021-11-12",
+   "fin": "2026-11-12",
+   "observations": 1228
+  },
+  "valeur": {
+   "annees": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "p10": [
+    10000.0,
+    9369.424719364548,
+    9957.244483062794,
+    10583.612032242172,
+    11467.26582823702,
+    12672.239443052995,
+    13651.200679927064,
+    14695.12180489021,
+    16109.785659910061,
+    17706.31433502169,
+    19479.838326798108,
+    21367.08728479649,
+    23841.175345319793,
+    26606.994350832014,
+    29320.318168225578,
+    32115.663444136604
+   ],
+   "p25": [
+    10000.0,
+    10247.216847360716,
+    11139.77790818461,
+    12175.454433513565,
+    13573.827877213696,
+    14953.765716376685,
+    16691.731523365106,
+    18723.441975653124,
+    20455.655926421303,
+    22660.499017642607,
+    25697.974527700477,
+    28741.516910968345,
+    32096.263638399574,
+    35834.60662142784,
+    39498.283337729474,
+    44163.9084747291
+   ],
+   "p50": [
+    10000.0,
+    11353.561180535678,
+    12809.877148395157,
+    14360.855946858395,
+    16230.013918723134,
+    18476.015974623297,
+    21043.87691687906,
+    23938.290309362244,
+    27034.900707712084,
+    30642.308046369013,
+    34947.966651109484,
+    39017.69995294,
+    44498.76556292389,
+    50568.82810075476,
+    57178.64865140495,
+    64317.050908808786
+   ],
+   "p75": [
+    10000.0,
+    12360.45782395831,
+    14442.067524776327,
+    17078.67593733185,
+    19797.133921930526,
+    22857.78846713377,
+    26038.454694205193,
+    30288.0627513395,
+    34958.859716277046,
+    40699.84683123873,
+    46938.71441990044,
+    53669.95614189771,
+    61367.65683295537,
+    69896.26601960043,
+    79672.72364646615,
+    90885.52517321361
+   ],
+   "p90": [
+    10000.0,
+    13501.321980272514,
+    16390.33183715584,
+    19814.214020814714,
+    23402.417315057337,
+    27353.90862134168,
+    32391.540480796433,
+    38348.26825975471,
+    45491.789809453294,
+    52554.77675249369,
+    61384.977056147196,
+    72030.92740567014,
+    81631.11131774205,
+    96261.37469209678,
+    110740.79082313356,
+    126687.39179547236
+   ]
+  },
+  "unite": "valeur du portefeuille simulé (en CAD), capital de départ 10000",
+  "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+  "sources": [
+   "prices_daily.csv (adj_close)",
+   "fx_usdcad_daily.csv"
+  ],
+  "details": {
+   "mois_observes": 61,
+   "tirages": 2000,
+   "graine": 2026,
+   "part_des_scenarios_sous_le_capital": 0.0,
+   "pire_mois_observe": -0.09185319015716276,
+   "meilleur_mois_observe": 0.09017473272260701,
+   "hypotheses": [
+    "Constant weights, no fees, no taxes, no inflation.",
+    "Future months resemble the observed months and are independent of one another.",
+    "The range inherits the average return of the observed window, which may not repeat."
+   ],
+   "avertissement": "This is not a forecast. The range is based on only 61 observed months: future outcomes may fall outside it, higher or lower."
+  },
+  "unite_en": "simulated portfolio value (in CAD), starting capital 10000",
+  "formule_en": "observed monthly returns of the portfolio, drawn at random with replacement ; value = capital × ∏(1 + drawn monthly return) ; percentiles 10, 25, 50, 75, 90 per year"
+ },
+ "scenarios_par_portefeuille": {
+  "A": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "QQQ": 0.25,
+     "SPY": 0.2,
+     "XBB.TO": 0.15,
+     "XIU.TO": 0.1,
+     "MSFT": 0.1,
+     "BTC-USD": 0.1,
+     "RY.TO": 0.05,
+     "ENB.TO": 0.05
+    },
+    "horizon_annees": 15,
+    "capital": 10000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "p10": [
+     10000.0,
+     9369.424719364548,
+     9957.244483062794,
+     10583.612032242172,
+     11467.26582823702,
+     12672.239443052995,
+     13651.200679927064,
+     14695.12180489021,
+     16109.785659910061,
+     17706.31433502169,
+     19479.838326798108,
+     21367.08728479649,
+     23841.175345319793,
+     26606.994350832014,
+     29320.318168225578,
+     32115.663444136604
+    ],
+    "p25": [
+     10000.0,
+     10247.216847360716,
+     11139.77790818461,
+     12175.454433513565,
+     13573.827877213696,
+     14953.765716376685,
+     16691.731523365106,
+     18723.441975653124,
+     20455.655926421303,
+     22660.499017642607,
+     25697.974527700477,
+     28741.516910968345,
+     32096.263638399574,
+     35834.60662142784,
+     39498.283337729474,
+     44163.9084747291
+    ],
+    "p50": [
+     10000.0,
+     11353.561180535678,
+     12809.877148395157,
+     14360.855946858395,
+     16230.013918723134,
+     18476.015974623297,
+     21043.87691687906,
+     23938.290309362244,
+     27034.900707712084,
+     30642.308046369013,
+     34947.966651109484,
+     39017.69995294,
+     44498.76556292389,
+     50568.82810075476,
+     57178.64865140495,
+     64317.050908808786
+    ],
+    "p75": [
+     10000.0,
+     12360.45782395831,
+     14442.067524776327,
+     17078.67593733185,
+     19797.133921930526,
+     22857.78846713377,
+     26038.454694205193,
+     30288.0627513395,
+     34958.859716277046,
+     40699.84683123873,
+     46938.71441990044,
+     53669.95614189771,
+     61367.65683295537,
+     69896.26601960043,
+     79672.72364646615,
+     90885.52517321361
+    ],
+    "p90": [
+     10000.0,
+     13501.321980272514,
+     16390.33183715584,
+     19814.214020814714,
+     23402.417315057337,
+     27353.90862134168,
+     32391.540480796433,
+     38348.26825975471,
+     45491.789809453294,
+     52554.77675249369,
+     61384.977056147196,
+     72030.92740567014,
+     81631.11131774205,
+     96261.37469209678,
+     110740.79082313356,
+     126687.39179547236
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 10000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.0,
+    "pire_mois_observe": -0.09185319015716276,
+    "meilleur_mois_observe": 0.09017473272260701,
+    "hypotheses": [
+     "Constant weights, no fees, no taxes, no inflation.",
+     "Future months resemble the observed months and are independent of one another.",
+     "The range inherits the average return of the observed window, which may not repeat."
+    ],
+    "avertissement": "This is not a forecast. The range is based on only 61 observed months: future outcomes may fall outside it, higher or lower."
+   },
+   "unite_en": "simulated portfolio value (in CAD), starting capital 10000",
+   "formule_en": "observed monthly returns of the portfolio, drawn at random with replacement ; value = capital × ∏(1 + drawn monthly return) ; percentiles 10, 25, 50, 75, 90 per year"
+  },
+  "B": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "QQQ": 0.22,
+     "SPY": 0.15,
+     "XIU.TO": 0.1,
+     "MSFT": 0.1,
+     "BTC-USD": 0.1,
+     "CNR.TO": 0.1,
+     "AGG": 0.1,
+     "XEF.TO": 0.08,
+     "ENB.TO": 0.05
+    },
+    "horizon_annees": 15,
+    "capital": 10000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "p10": [
+     10000.0,
+     9318.466481265958,
+     9832.044300861116,
+     10410.217598132842,
+     11256.073976891612,
+     12403.02574735678,
+     13250.277550826504,
+     14318.812177194639,
+     15587.962232451733,
+     17090.003161064596,
+     18737.746350907077,
+     20489.340601599233,
+     22161.613999916994,
+     24739.496971592584,
+     27382.079017565447,
+     29986.758872777937
+    ],
+    "p25": [
+     10000.0,
+     10209.54752746551,
+     11048.758094834877,
+     11994.686414710937,
+     13330.749128222787,
+     14587.212134063513,
+     16195.77193950643,
+     18087.33571383821,
+     19567.147203119646,
+     21547.066907812794,
+     24220.55880084215,
+     27326.433675789645,
+     29919.0875208595,
+     33225.41258791865,
+     36420.82612603889,
+     40562.00844282766
+    ],
+    "p50": [
+     10000.0,
+     11273.051077434036,
+     12597.636661548484,
+     14106.353574712135,
+     15931.87563254216,
+     17867.108407880733,
+     20212.12053058514,
+     22695.352928193606,
+     25638.889308838166,
+     28902.67518233149,
+     32722.843400169313,
+     36402.82425819257,
+     41368.6663803516,
+     46710.337437830414,
+     52322.71278045226,
+     58180.11349450324
+    ],
+    "p75": [
+     10000.0,
+     12265.081814181158,
+     14243.937054866055,
+     16639.298037787576,
+     19248.321940545007,
+     22001.698352285257,
+     25155.494249481035,
+     28797.575093698168,
+     33110.17700949651,
+     37827.27018346856,
+     43830.56330728854,
+     49638.3191451,
+     56556.52031345465,
+     64706.31522032601,
+     73022.45470835114,
+     82478.29142471956
+    ],
+    "p90": [
+     10000.0,
+     13408.090391185498,
+     16157.96063812522,
+     19335.83897173948,
+     22641.4678437614,
+     26515.793139602883,
+     30848.61149438427,
+     36225.73463468815,
+     43291.7789921826,
+     49762.97547554045,
+     57477.66029913628,
+     66652.39018310081,
+     75494.00475865701,
+     87869.79882911497,
+     100860.94712857134,
+     115548.96885807795
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 10000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "base/prix_etendus.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.0,
+    "pire_mois_observe": -0.08515792665561073,
+    "meilleur_mois_observe": 0.09347690903726469,
+    "hypotheses": [
+     "Constant weights, no fees, no taxes, no inflation.",
+     "Future months resemble the observed months and are independent of one another.",
+     "The range inherits the average return of the observed window, which may not repeat."
+    ],
+    "avertissement": "This is not a forecast. The range is based on only 61 observed months: future outcomes may fall outside it, higher or lower."
+   },
+   "unite_en": "simulated portfolio value (in CAD), starting capital 10000",
+   "formule_en": "observed monthly returns of the portfolio, drawn at random with replacement ; value = capital × ∏(1 + drawn monthly return) ; percentiles 10, 25, 50, 75, 90 per year"
+  },
+  "C": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "QQQ": 0.3,
+     "SPY": 0.15,
+     "XIU.TO": 0.1,
+     "MSFT": 0.1,
+     "XEF.TO": 0.1,
+     "RY.TO": 0.1,
+     "ZST.TO": 0.1,
+     "ENB.TO": 0.05
+    },
+    "horizon_annees": 15,
+    "capital": 10000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "p10": [
+     10000.0,
+     9693.704323432643,
+     10559.397527019344,
+     11416.490514512529,
+     12575.967739020754,
+     13909.610186805334,
+     15359.913041208729,
+     17006.55827794308,
+     18473.534457339312,
+     21182.486385089178,
+     23542.06134109685,
+     26411.044736754386,
+     29279.551984826758,
+     32606.85320074023,
+     36982.02800934386,
+     40501.717637015834
+    ],
+    "p25": [
+     10000.0,
+     10539.733824741134,
+     11560.549600720378,
+     12745.755829848411,
+     14449.877309738316,
+     16142.2506525203,
+     18225.63037487433,
+     20724.883107507732,
+     23091.84919676999,
+     25878.211835439037,
+     29510.805196155718,
+     33001.73988381571,
+     37836.66317768078,
+     42535.31721689374,
+     47586.02901066399,
+     53593.63539953691
+    ],
+    "p50": [
+     10000.0,
+     11375.779207488551,
+     13026.985489044127,
+     14787.00071659683,
+     16878.951882024594,
+     19251.245713682183,
+     22042.246633104023,
+     25295.325934221197,
+     28832.755977957153,
+     32742.121488634846,
+     37474.596048841566,
+     43325.91492045611,
+     48444.13469641171,
+     55622.5229334033,
+     63990.48025182736,
+     72199.86199750807
+    ],
+    "p75": [
+     10000.0,
+     12364.022738663845,
+     14528.616690694962,
+     16984.522337048555,
+     19718.29987402579,
+     22913.150564831514,
+     26605.51291517885,
+     30543.594119977326,
+     35889.30879812282,
+     41557.28845033487,
+     47834.47452380651,
+     55595.229742744545,
+     64222.024448898446,
+     74205.76654557632,
+     84587.96259593486,
+     97550.7472916035
+    ],
+    "p90": [
+     10000.0,
+     13152.032067393202,
+     15847.961906701832,
+     19124.083907524295,
+     22763.644262771544,
+     26846.67964970336,
+     31730.577428271616,
+     37010.46799511554,
+     43946.268661734844,
+     51409.755870067274,
+     60456.00420048441,
+     70731.69227824012,
+     81852.61298604113,
+     94017.60980055235,
+     111619.61830292613,
+     126244.06976203191
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 10000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "base/prix_etendus.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.0,
+    "pire_mois_observe": -0.06770182113063627,
+    "meilleur_mois_observe": 0.07577686245022797,
+    "hypotheses": [
+     "Constant weights, no fees, no taxes, no inflation.",
+     "Future months resemble the observed months and are independent of one another.",
+     "The range inherits the average return of the observed window, which may not repeat."
+    ],
+    "avertissement": "This is not a forecast. The range is based on only 61 observed months: future outcomes may fall outside it, higher or lower."
+   },
+   "unite_en": "simulated portfolio value (in CAD), starting capital 10000",
+   "formule_en": "observed monthly returns of the portfolio, drawn at random with replacement ; value = capital × ∏(1 + drawn monthly return) ; percentiles 10, 25, 50, 75, 90 per year"
+  }
+ },
+ "langue": "en"
+}

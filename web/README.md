@@ -35,6 +35,17 @@ Le dossier imprimable (bouton « Exporter le dossier ») : `/rapport/?persona=�
 
 ElevenLabs Agents (`components/Voix.tsx`, `@elevenlabs/react`), identifiant dans `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` (`web/.env.local`). Trois outils côté client : `noter_profil(champ, valeur)`, `lancer_analyse()`, `afficher_diapositive(id)`. Configuration exacte de l'agent : `docs/agent-elevenlabs.md`. Sans identifiant, tout marche par écrit. Une seule analyse à la fois : un second `lancer_analyse` rejoint celle en cours. La liaison audio part en WebRTC ; si le réseau la bloque (UDP fermé), elle reprend une fois par WebSocket. Le déploiement (`deploiement/deployer.py`) fournit l'identifiant à l'export.
 
+## Anglais
+
+Le bouton « Français / English » (`components/Langue.tsx`) est sur chaque écran. Le site reste écrit en français ; en anglais :
+
+- **Interface** : `lib/langue.ts` traduit chaque texte au moment où il arrive dans la page, avec le dictionnaire `lib/en.ts` (`EXACT` pour une phrase entière, `MOTIFS` pour une phrase à trous, `PARTIELS` pour une date au milieu d'un texte). Le français d'origine est gardé : on change de langue sans recharger. Un texte absent du dictionnaire reste tel quel, rien n'est inventé. Pour ajouter un texte à l'interface, ajouter sa ligne dans `lib/en.ts`.
+- **Nombres** : mêmes valeurs, écriture anglaise (« 12,5 % » devient « 12.5% », « 50 000 $ » devient « $50,000 »). C'est un changement d'écriture fait par le code (`nombresEnAnglais`), jamais par un modèle.
+- **Résultat de l'analyse** : le site envoie `langue: "en"` à `/analyse`, `/actif` et `/scenarios` ; le service traduit les textes (`agents/traduction.py`, voir `docs/deploiement-aws.md`). Les trois démonstrations sont déjà traduites : `agents/sorties/en/` et `data/graphiques/en/`.
+- **Voix** : un second agent ElevenLabs, en anglais (`NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN`, `docs/agent-elevenlabs-en.md`).
+
+Une démonstration suit le changement de langue tout de suite. Une analyse en direct garde la langue dans laquelle elle a été demandée : il faut la relancer pour l'avoir dans l'autre.
+
 ## Données et chiffres
 
 - Chaque chiffre affiché est un repère `{id}` de la table `chiffres` : le toucher ouvre sa référence (outil, paramètres, période, formule, source).

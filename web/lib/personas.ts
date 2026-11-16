@@ -54,6 +54,20 @@ const GRAPHIQUES: Record<Persona["id"], () => Promise<{ default: unknown }>> = {
   mateo: () => import("../data/graphiques/mateo.json"),
 };
 
+// Versions anglaises : les mêmes sorties, textes traduits par `python -m agents.traduction`
+// (agents/sorties/en/) et par web/scripts/graphiques.py (data/graphiques/en/). Mêmes chiffres.
+const CHARGEURS_EN: typeof CHARGEURS = {
+  robert: () => import("../../agents/sorties/en/robert.json"),
+  amira: () => import("../../agents/sorties/en/amira.json"),
+  mateo: () => import("../../agents/sorties/en/mateo.json"),
+};
+
+const GRAPHIQUES_EN: typeof GRAPHIQUES = {
+  robert: () => import("../data/graphiques/en/robert.json"),
+  amira: () => import("../data/graphiques/en/amira.json"),
+  mateo: () => import("../data/graphiques/en/mateo.json"),
+};
+
 /** Clé du stockage local où l'écran dépose l'analyse en cours pour le dossier imprimable. */
 export const CLE_DOSSIER = "eagle:dossier";
 
@@ -63,8 +77,8 @@ export function estPersona(id: string | null): id is Persona["id"] {
 
 /** Charge la sortie du pipeline d'un persona et les données de ses graphiques.
  *  Les parts des camemberts rejoignent la table « chiffres ». */
-export async function chargerSortie(id: Persona["id"]): Promise<SortiePipeline> {
-  const [m, g] = await Promise.all([CHARGEURS[id](), GRAPHIQUES[id]()]);
+export async function chargerSortie(id: Persona["id"], langue: "fr" | "en" = "fr"): Promise<SortiePipeline> {
+  const [m, g] = await Promise.all(langue === "en" ? [CHARGEURS_EN[id](), GRAPHIQUES_EN[id]()] : [CHARGEURS[id](), GRAPHIQUES[id]()]);
   const sortie = m.default as Omit<SortiePipeline, "graphiques">;
   const { scenarios, scenarios_par_portefeuille, ...graphiques } = g.default as Graphiques
     & { scenarios?: SortiePipeline["scenarios"]; scenarios_par_portefeuille?: SortiePipeline["scenarios_par_portefeuille"] };

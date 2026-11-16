@@ -43,6 +43,8 @@ COMMENTAIRE_SITE = "eagle-site"
 # Agent vocal Eagle (ElevenLabs Agents, docs/agent-elevenlabs.md). Identifiant public, pas une clé :
 # il figure dans le code du site. NEXT_PUBLIC_ELEVENLABS_AGENT_ID le remplace si l'agent est recréé.
 AGENT_VOCAL = "agent_1201m7gj8np7fmnvcgfq6a5gqt68"
+# Le même agent en anglais (option « English » du site) : NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN le remplace.
+AGENT_VOCAL_EN = "agent_7901m7h53m9ze8sv0hv8b3bmy5kn"
 
 # Code et données embarqués dans la fonction.
 A_EMBARQUER = ["agents", "tools", "data", "tests/scenarios"]
@@ -230,7 +232,8 @@ def construire_site(url_api: str) -> Path:
     subprocess.run([sys.executable, str(web / "scripts" / "graphiques.py")], cwd=RACINE, check=True)
     # NEXT_PUBLIC_COMPTES=1 : l'API déployée exige un compte (agents/comptes.py), le site montre la connexion.
     env = {**os.environ, "EAGLE_EXPORT": "1", "NEXT_PUBLIC_API_URL": url_api, "NEXT_PUBLIC_COMPTES": "1",
-           "NEXT_PUBLIC_ELEVENLABS_AGENT_ID": os.environ.get("NEXT_PUBLIC_ELEVENLABS_AGENT_ID") or AGENT_VOCAL}
+           "NEXT_PUBLIC_ELEVENLABS_AGENT_ID": os.environ.get("NEXT_PUBLIC_ELEVENLABS_AGENT_ID") or AGENT_VOCAL,
+           "NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN": os.environ.get("NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN") or AGENT_VOCAL_EN}
     _dire(f"export statique de web/ (API {url_api}, agent vocal {env['NEXT_PUBLIC_ELEVENLABS_AGENT_ID']})")
     subprocess.run(["npx", "next", "build"], cwd=web, env=env, check=True)
     return web / "out"

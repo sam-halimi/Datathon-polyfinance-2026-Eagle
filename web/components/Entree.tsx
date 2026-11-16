@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Eagle } from "./Eagle";
+import { ChoixLangue, useLangue } from "./Langue";
 import { PERSONAS, type Persona } from "@/lib/personas";
 import { ecouterDeconnexion } from "@/lib/api";
 import {
@@ -99,7 +100,10 @@ function Choix({ da, choisir, retour }: { da: DirectionArtistique | null; choisi
     <div className="entree" role="dialog" aria-modal="true" aria-label="Par où commencer">
       <header className="entree__haut">
         {da?.logoHorizontal ? <img className="entree__logo" src={da.logoHorizontal} alt="Eagle" /> : <strong className="entree__nom">Eagle</strong>}
-        <button type="button" className="entree__passer" onClick={cas ? () => setCas(false) : retour}>{cas ? "Retour au choix" : "Revoir la présentation"}</button>
+        <div className="entree__haut-droite">
+          <ChoixLangue />
+          <button type="button" className="entree__passer" onClick={cas ? () => setCas(false) : retour}>{cas ? "Retour au choix" : "Revoir la présentation"}</button>
+        </div>
       </header>
       <main className="entree__choix" key={cas ? "cas" : "choix"}>
         <p className="entree__surtitre">{cas ? "Les trois cas du datathon" : "Par où commencer"}</p>
@@ -109,9 +113,9 @@ function Choix({ da, choisir, retour }: { da: DirectionArtistique | null; choisi
             {PERSONAS.map((p) => (
               <button key={p.id} type="button" className="cas" onClick={() => choisir({ type: "cas", id: p.id })}>
                 <img className="cas__avatar" src={`/da/personas/${p.id}.svg`} alt="" width={96} height={96} />
-                <strong className="cas__nom">{p.nom}, {p.age} ans</strong>
-                <span className="cas__profil">Risque {p.tolerance} · horizon de {p.horizon} ans</span>
-                <span className="cas__demande">« {p.demande} »</span>
+                <strong className="cas__nom">{`${p.nom}, ${p.age} ans`}</strong>
+                <span className="cas__profil">{`Risque ${p.tolerance} · horizon de ${p.horizon} ans`}</span>
+                <span className="cas__demande">{`« ${p.demande} »`}</span>
                 <span className="cas__ouvrir">Voir la réponse d&apos;Eagle</span>
               </button>
             ))}
@@ -154,7 +158,10 @@ function Presentation({ da, terminer, suite }: { da: DirectionArtistique | null;
     <div className="entree" role="dialog" aria-modal="true" aria-label="Présentation d'Eagle">
       <header className="entree__haut">
         {da?.logoHorizontal ? <img className="entree__logo" src={da.logoHorizontal} alt="Eagle" /> : <strong className="entree__nom">Eagle</strong>}
-        <button type="button" className="entree__passer" onClick={terminer}>Passer la présentation</button>
+        <div className="entree__haut-droite">
+          <ChoixLangue />
+          <button type="button" className="entree__passer" onClick={terminer}>Passer la présentation</button>
+        </div>
       </header>
       <main className="entree__carte" key={i}>
         <section className="entree__texte" aria-live="polite">
@@ -272,6 +279,7 @@ function Compte({ da, ouvert, raison }: { da: DirectionArtistique | null; ouvert
 }
 
 export function Entree({ da }: { da: DirectionArtistique | null }) {
+  useLangue(); // installe la traduction de l'interface dès l'entrée
   // « attente » : le temps de lire le stockage du navigateur (présentation déjà vue ? session ouverte ?).
   const [ecran, setEcran] = useState<"attente" | "intro" | "choix" | "compte" | null>("attente");
   // Ce que la personne a choisi à la fin de la présentation ; `n` change à chaque choix pour le rejouer.

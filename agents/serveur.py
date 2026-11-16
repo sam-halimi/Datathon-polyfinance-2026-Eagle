@@ -6,6 +6,9 @@
     POST /analyse    {"profil": {...}, "demande": "...", "prenom": "..."}   pipeline complet sur Bedrock
     GET  /demonstration/robert                              sortie enregistrée d'un persona
 
+Option anglaise : `langue=en` (paramètre d'adresse en GET, champ du corps en POST) renvoie les
+mêmes données avec leurs textes traduits par agents/traduction.py. Sans ce paramètre : français.
+
 /analyse lance le vrai pipeline (environ une minute) pour n'importe quel profil au format de
 `python -m agents.profil`. Il lui faut les clés (`.env`, voir `python -m tools.verifier_cles`).
 Les autres routes ne demandent aucune clé. Simulation uniquement.
@@ -24,6 +27,7 @@ from urllib.parse import parse_qs, urlparse
 
 from agents import comptes
 from agents.resistance import est_passagere
+from agents.traduction import langue_demandee, traduire_sortie
 from tools.scenarios import eventail_scenarios, fiche_actif
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -76,17 +80,20 @@ def analyser(corps: dict[str, Any]) -> dict[str, Any]:
     sortie = Session(profil, demande, corps.get("prenom") or None).executer()
     sortie["scenarios"] = scenarios_du_portefeuille(sortie)
     sortie["scenarios_par_portefeuille"] = scenarios_par_portefeuille(sortie)
-    return sortie
+    # Option anglaise : les textes sont traduits après coup, les chiffres ne passent pas par le modèle.
+    return traduire_sortie(sortie, langue_demandee(corps.get("langue")))
 
 
-def demonstration(nom: str) -> dict[str, Any]:
+def demonstration(nom: str, langue: str = "fr") -> dict[str, Any]:
     chemin = SORTIES / f"{nom}.json"
     if nom not in ("robert", "amira", "mateo") or not chemin.exists():
         raise Refus("Persona inconnu. Choix : robert, amira, mateo.")
-    sortie = json.loads(chemin.read_text(encoding="utf-8"))
+    # En anglais : la version déjà traduite (python -m agents.traduction), sinon traduction à la volée.
+    deja = SORTIES / "en" / f"{nom}.json"
+    sortie = json.loads((deja if langue == "en" and deja.exists() else chemin).read_text(encoding="utf-8"))
     sortie.setdefault("scenarios", scenarios_du_portefeuille(sortie))
     sortie.setdefault("scenarios_par_portefeuille", scenarios_par_portefeuille(sortie))
-    return sortie
+    return traduire_sortie(sortie, langue) if sortie.get("langue") != langue else sortie
 
 
 PANNE_PASSAGERE = ("Le modèle de langage est momentanément indisponible (Amazon Bedrock). Plusieurs reprises et un "
@@ -117,21 +124,23 @@ def repondre(methode: str, chemin: str, requete: dict[str, list[str]], corps: di
         if methode == "GET" and chemin == "/compte":
             return {"identifiant": comptes.identifier(entetes)}
     comptes.exiger(methode, chemin, entetes)
+    langue = langue_demandee((requete.get("langue") or [corps.get("langue")])[0])
     if methode == "GET" and chemin == "/actif":
         symbole = (requete.get("symbole") or [""])[0]
         if not symbole:
             raise Refus("Paramètre « symbole » manquant.")
         try:
-            return fiche_actif(symbole, (requete.get("tolerance") or ["modéré"])[0],
-                               int((requete.get("horizon") or ["10"])[0]))
+            return traduire_sortie(fiche_actif(symbole, (requete.get("tolerance") or ["modéré"])[0],
+                                               int((requete.get("horizon") or ["10"])[0])), langue)
         except ValueError as e:
             raise Refus(str(e)) from e
     if methode == "GET" and chemin.startswith("/demonstration/"):
-        return demonstration(chemin.rsplit("/", 1)[1])
+        return demonstration(chemin.rsplit("/", 1)[1], langue)
     if methode == "POST" and chemin == "/scenarios":
         try:
-            return eventail_scenarios(corps["poids"], int(corps["horizon_annees"]),
-                                      float(corps.get("capital", 10_000)), corps.get("devise", "CAD"))
+            eventail = eventail_scenarios(corps["poids"], int(corps["horizon_annees"]),
+                                          float(corps.get("capital", 10_000)), corps.get("devise", "CAD"))
+            return traduire_sortie({"scenarios": eventail}, langue)["scenarios"]
         except (KeyError, ValueError, TypeError) as e:
             raise Refus(f"Requête invalide : {e}") from e
     if methode == "POST" and chemin == "/analyse":

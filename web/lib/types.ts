@@ -9,6 +9,10 @@ export type Reference = {
   valeur: number;
   unite: string;
   formule: string;
+  /** Option anglaise : traductions posées à côté par agents/traduction.py. `unite` et `formule`
+   *  restent en français, car le site les lit aussi comme des codes (format, choix de la formule). */
+  unite_en?: string;
+  formule_en?: string;
   sources: string[];
   details: Record<string, unknown>;
   champ?: string;

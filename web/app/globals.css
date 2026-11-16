@@ -1670,3 +1670,9 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .dossier__courbe, .dossier__cle, .dossier__total td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .dossier__camembert svg, .dossier__barre span, .dossier__pastille, .dossier__cles-graphique i, .statut { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Bascule de langue. */
+.langue { display: inline-flex; gap: 2px; background: var(--surface-2); border-radius: var(--rayon-pilule); padding: 3px; }
+.langue__choix { border: 0; background: none; color: var(--encre-douce); font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: var(--rayon-pilule); }
+.langue__choix--actif { background: var(--accent); color: var(--on-accent); }
+.entree__haut-droite { display: flex; align-items: center; gap: 10px; }

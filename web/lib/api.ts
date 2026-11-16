@@ -1,4 +1,5 @@
 import { enteteCompte, fermerSession } from "./compte";
+import { langueCourante } from "./langue";
 import { profilPourAnalyse } from "./questions";
 import type { Profil, SortiePipeline } from "./types";
 
@@ -53,7 +54,8 @@ export async function analyser(profil: Profil, demande: string, prenom: string):
   const r = await appeler("/analyse", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profil: profilPourAnalyse(profil), demande, prenom: prenom || undefined }),
+    // `langue` : en anglais, le service traduit les textes de la réponse (agents/traduction.py).
+    body: JSON.stringify({ profil: profilPourAnalyse(profil), demande, prenom: prenom || undefined, langue: langueCourante() }),
   });
   return r.json();
 }
@@ -75,7 +77,7 @@ export type VerdictActif = {
 };
 
 export async function verifierActif(symbole: string, tolerance: string, horizon: number): Promise<VerdictActif> {
-  const q = new URLSearchParams({ symbole, tolerance, horizon: String(horizon) });
+  const q = new URLSearchParams({ symbole, tolerance, horizon: String(horizon), langue: langueCourante() });
   const v = (await (await appeler(`/actif?${q}`)).json()) as VerdictActif;
   return { ...v, compatible: v.compatible ?? v.statut === "compatible" };
 }

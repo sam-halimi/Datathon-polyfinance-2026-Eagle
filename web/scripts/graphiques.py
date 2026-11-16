@@ -33,6 +33,7 @@ RACINE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(RACINE))
 
 from agents.serveur import scenarios_du_portefeuille, scenarios_par_portefeuille  # noqa: E402
+from agents.traduction import enregistrer_memoire, traduire_sortie  # noqa: E402
 from tools.donnees import charger_prix, fichier_prix, univers as table_univers  # noqa: E402
 
 SORTIES = RACINE / "agents" / "sorties"
@@ -237,8 +238,19 @@ def main():
         }
         chemin = DESTINATION / f"{persona}.json"
         chemin.write_text(json.dumps(donnees, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        # Option anglaise du site : les mêmes données, textes traduits (agents/traduction.py). Les textes
+        # connus viennent de la mémoire agents/traductions/en.json ; un texte nouveau appelle le modèle,
+        # et reste en français si le modèle ne répond pas. Aucun chiffre ne change.
+        anglais = traduire_sortie(donnees | {"meta": {}}, "en")
+        restes = anglais.pop("meta")["traduction"]["restes_en_francais"]
+        (DESTINATION / "en").mkdir(exist_ok=True)
+        (DESTINATION / "en" / f"{persona}.json").write_text(
+            json.dumps(anglais, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        if restes:
+            print(f"  anglais : {restes} texte(s) resté(s) en français")
         print(chemin.relative_to(RACINE), len(chiffres), "parts,", len(donnees["cours"]["points"]), "points,",
               "scénarios" if donnees["scenarios"] else "sans scénarios")
+    enregistrer_memoire()  # les traductions nouvelles servent aux prochaines fois, sans rappeler le modèle
 
 
 if __name__ == "__main__":

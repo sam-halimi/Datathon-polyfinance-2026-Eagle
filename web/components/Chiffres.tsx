@@ -139,11 +139,14 @@ function sansAccent(t: string): string {
 /** Un outil qui renvoie plusieurs valeurs (stats_portefeuille) a une formule
  *  par valeur : on montre celle du champ extrait, telle quelle. */
 function formule(ref: Reference): string {
-  if (!ref.champ) return ref.formule;
+  // En anglais : mêmes parties, choisies sur le français (le champ est un mot français), affichées traduites.
   const parts = ref.formule.split(" ; ");
+  const en = ref.formule_en?.split(" ; ");
+  const affiche = en && en.length === parts.length ? en : parts;
+  if (!ref.champ) return affiche.join(" ; ");
   const champ = sansAccent(ref.champ);
-  const trouve = parts.filter((f) => sansAccent(f).startsWith(champ));
-  return trouve.length ? trouve.join(" ; ") : ref.formule;
+  const trouve = affiche.filter((_, i) => sansAccent(parts[i]).startsWith(champ));
+  return trouve.length ? trouve.join(" ; ") : affiche.join(" ; ");
 }
 
 export function FicheReference({ id, fermer }: { id: string; fermer: () => void }) {
@@ -167,7 +170,7 @@ export function FicheReference({ id, fermer }: { id: string; fermer: () => void 
         <p className="fiche__surtitre">D&apos;où vient ce chiffre ? <code>{id}</code></p>
         <p id="fiche-titre" className="fiche__valeur">
           {formaterChiffre(ref)}
-          <span className="fiche__decrit">{ref.unite}</span>
+          <span className="fiche__decrit">{ref.unite_en ?? ref.unite}</span>
         </p>
         <dl className="fiche__liste">
           <dt>Outil</dt>

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Chiffre, FicheReference, FournisseurChiffres, Texte, typo } from "./Chiffres";
+import { useLangue } from "./Langue";
 import { BarrePoids, CamembertPlein, COULEURS, CourbeCours, EventailFixe, Source, sourceCourte } from "./DossierGraphiques";
 import { formaterDate, formaterHorizon, formaterMontant, formaterPoids, majuscule, secteurEnFrancais } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, estPersona, PERSONAS } from "@/lib/personas";
@@ -33,6 +34,7 @@ export function Rapport() {
   // /rapport?source=analyse : le dossier de l'analyse affichée, déposée par l'écran principal
   // dans le stockage local du navigateur (rien n'est envoyé ailleurs). Sinon, un persona.
   const enDirect = params.get("source") === "analyse";
+  const langue = useLangue(); // installe aussi la traduction de l'interface sur cette page
   useEffect(() => {
     if (enDirect) {
       try {
@@ -48,8 +50,8 @@ export function Rapport() {
       setErreur("Persona inconnu : choisissez robert, amira ou mateo.");
       return;
     }
-    chargerSortie(id).then(completerGraphiques).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
-  }, [id, enDirect]);
+    chargerSortie(id, langue).then(completerGraphiques).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
+  }, [id, enDirect, langue]);
 
   useEffect(() => {
     if (!sortie || !imprimer) return;
@@ -90,7 +92,7 @@ export function Rapport() {
               <p className="dossier__surtitre">Eagle · dossier de portefeuille simulé</p>
               <h1>{profil.prenom || "Votre profil"}{persona ? `, ${persona.age} ans` : ""}</h1>
               <p className="dossier__chapeau">
-                Portefeuille simulé {ptf.id} : « {typo(ptf.nom)} ».{" "}
+                {typo(`Portefeuille simulé ${ptf.id} : « ${ptf.nom} ».`)}{" "}
                 {sortie.vue ? `Autre proposition consultée ; la gouvernance a retenu la proposition ${sortie.vue.retenu}. ` : ""}
                 Analyse du {formaterDate(sortie.meta?.date ?? null)}<Source>{origine}</Source>.
               </p>
@@ -133,7 +135,7 @@ export function Rapport() {
               <div><dt>Thèmes d&apos;intérêt</dt><dd>{profil.centres_interet.join(", ") || "Aucun"}</dd></div>
               <div><dt>Capital fictif</dt><dd>{formaterMontant(profil.capital_fictif, profil.devise)}</dd></div>
             </dl>
-            {profil.demande ? <p className="dossier__demande">Votre demande : {typo(`« ${profil.demande} »`)}</p> : null}
+            {profil.demande ? <p className="dossier__demande">{typo(`Votre demande : « ${profil.demande} »`)}</p> : null}
             {persona?.choix.length ? <ul className="dossier__liste dossier__liste--discrete">{persona.choix.map((x) => <li key={x}>{typo(x)}</li>)}</ul> : null}
           </section>
 

@@ -4,12 +4,16 @@ import { ConversationProvider, useConversation } from "@elevenlabs/react";
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
 import { Mic, MicOff } from "lucide-react";
 import type { EagleApi } from "./Eagle";
+import { useLangue } from "./Langue";
+import { tr } from "@/lib/langue";
 
 // La voix d'Eagle : un agent ElevenLabs (configuration dans
 // docs/agent-elevenlabs.md). La voix ne fait qu'appeler trois outils ; le
 // contenu vient toujours du pipeline. Sans identifiant d'agent, le texte reste.
 
 const AGENT = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
+// Option anglaise : un second agent, même outils, consigne et voix en anglais. Sans lui, l'agent français répond.
+const AGENT_EN = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN;
 
 type Props = {
   api: MutableRefObject<EagleApi | null>;
@@ -28,12 +32,15 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
   // passe par HTTPS. `liaison` retient le mode en cours et si la connexion a déjà abouti.
   const liaison = useRef<{ mode: "webrtc" | "websocket"; etablie: boolean; repli: boolean }>({ mode: "webrtc", etablie: false, repli: false });
   const reprendre = useRef<() => void>(() => {});
+  const langue = useLangue();
+  // Ce que les outils renvoient à la voix passe par tr() : en anglais, les nombres sont écrits à l'anglaise
+  // (« 12.5% ») pour être bien prononcés. Les textes du pipeline arrivent déjà traduits.
   const conversation = useConversation({
     clientTools: {
-      noter_profil: ({ champ, valeur }: Record<string, unknown>) => api.current?.noterProfil(String(champ), valeur) ?? "Indisponible.",
-      lancer_analyse: async () => (await api.current?.lancerAnalyse()) ?? "Indisponible.",
+      noter_profil: ({ champ, valeur }: Record<string, unknown>) => tr(api.current?.noterProfil(String(champ), valeur) ?? "Indisponible."),
+      lancer_analyse: async () => tr((await api.current?.lancerAnalyse()) ?? "Indisponible."),
       afficher_diapositive: ({ id, element }: Record<string, unknown>) =>
-        api.current?.afficherDiapositive(String(id), element ? String(element) : undefined) ?? "Indisponible.",
+        tr(api.current?.afficherDiapositive(String(id), element ? String(element) : undefined) ?? "Indisponible."),
     },
     onConnect: () => { liaison.current.etablie = true; },
     onMessage: (m) => dire(m.message, m.role === "user" ? "vous" : "eagle"),
@@ -63,10 +70,13 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
     try {
       conversation.setMuted(p);
       conversation.setVolume({ volume: p ? 0 : 1 });
+      const en = langue === "en";
       conversation.sendContextualUpdate(p
-        ? "La personne a mis l'appel en pause pour réfléchir : son micro est coupé. Ne dites rien et n'appelez aucun outil jusqu'à la reprise."
-        : "La personne a repris l'appel : son micro est rouvert. Reprenez là où vous en étiez, par une phrase courte.");
-      if (!p) conversation.sendUserMessage("Je suis de retour, reprenons là où nous en étions.");
+        ? (en ? "The person has paused the call to think: their microphone is off. Say nothing and call no tool until the call resumes."
+          : "La personne a mis l'appel en pause pour réfléchir : son micro est coupé. Ne dites rien et n'appelez aucun outil jusqu'à la reprise.")
+        : (en ? "The person has resumed the call: their microphone is on again. Resume where you were, with one short sentence."
+          : "La personne a repris l'appel : son micro est rouvert. Reprenez là où vous en étiez, par une phrase courte."));
+      if (!p) conversation.sendUserMessage(en ? "I am back, let us resume where we were." : "Je suis de retour, reprenons là où nous en étions.");
     } catch { /* appel fermé entre-temps */ }
     dire(p ? "Appel en pause : votre micro est coupé et je me tais. Reprenez quand vous voulez." : "Reprise de l'appel.");
   };
@@ -75,7 +85,7 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
   useEffect(() => { surLigne?.(enLigne); }, [enLigne, surLigne]);
   const ouvrir = (mode: "webrtc" | "websocket") => {
     liaison.current = { ...liaison.current, mode, etablie: false };
-    conversation.startSession({ agentId: AGENT!, connectionType: mode });
+    conversation.startSession({ agentId: (langue === "en" && AGENT_EN) || AGENT!, connectionType: mode });
   };
   reprendre.current = () => {
     // Laisse la tentative WebRTC se refermer avant d'ouvrir la liaison WebSocket.
