@@ -32,16 +32,23 @@ Avant l'export, le script relance `python web/scripts/graphiques.py` : les table
 - **L'adresse à donner au jury est celle de CloudFront.** Le projet Vercel `alphaforge-polyfinances` date du début du dimanche (dernier envoi à 19 h 37 UTC le 15 novembre) : plus rien n'y est déployé, il montre une ancienne version et n'appelle pas l'API AWS. Ne pas le partager.
 - **On déploie depuis une branche qui contient `main`.** Le premier déploiement était parti de `agents-eagle`, qui n'avait pas encore la direction artistique fusionnée dans `main` : le site en ligne et le site local ne se ressemblaient pas. Avant de déployer : `git fetch origin && git merge origin/main`, puis les tests.
 
-## Vérifié le 16 novembre 2026
+## Vérifié le 16 novembre 2026 (version déployée depuis `claude/festive-euler-nsxfvo`, à jour de `main` et de `donnees`)
 
-- `GET /sante`, `GET /actif`, `GET /demonstration/robert` : 200.
-- `POST /analyse` sur un profil libre (énergie propre) : 200 en 82 s, format v2, thème tiré de `data/themes.csv`.
-- Le site appelle l'API depuis l'adresse CloudFront : CORS en place.
-- Site à 1440 px : parcours de démonstration complet, sans erreur dans la console.
+- `GET /sante`, `GET /demonstration/robert` (7 étapes, éventail de scénarios), `GET /actif` sur un actif de thème (ARTY) : 200.
+- Analyse complète d'un profil saisi à l'écran du site CloudFront (revenu, dividendes, Canada, sans tabac, immobilier et santé) : 200 en 119 s, sept agents, deux thèmes, neuf diapositives sans chiffre absent ni erreur dans la console.
+- Site servi : direction artistique Graphite, identifiant de l'agent vocal et adresse de l'API AWS présents ; aucune trace de `localhost`.
+- Voix, sur le site CloudFront : appel réel avec un micro simulé qui lit deux réponses parlées en français. L'agent transcrit, appelle `noter_profil` et le profil se remplit à l'écran (horizon, objectif). Dans ce test la liaison WebRTC était bloquée : la reprise par WebSocket a pris le relais.
+- Questions sur un actif : SPY pour Amira (compatible), Tesla (à plafonner) et bitcoin (hors profil) pour Robert.
+- Démonstrations Robert, Amira et Mateo à 1440 × 900, Mateo à 1280 × 720, Robert à 390 × 844 : aucun contenu hors écran, aucun défilement horizontal.
+- « Exporter le dossier » pour une analyse en direct : `/rapport/?source=analyse` s'ouvre avec le bon profil.
+
+Non vérifié : un appel vocal complet par une personne (huit questions, analyse, neuf diapositives lues) et un vrai téléphone ; les essais sont faits dans un navigateur piloté.
 
 ## Limites
 
 - L'API `/analyse` est publique et appelle Bedrock : la concurrence plafonnée borne le coût, pas l'accès.
 - La voix (ElevenLabs) demande un micro et un geste (« Démarrer l'appel »). La liaison part en WebRTC et reprend par WebSocket si le réseau bloque l'UDP. Sans micro, l'échange se fait par écrit.
 - Un appel vocal est limité à 30 minutes par l'agent ElevenLabs (réglage `max_duration_seconds`, relevé de 600 à 1800 s).
+- Sur Lambda, il n'y a ni clé ni cache Finnhub : le critère « sociétés établies » (ancienneté de cotation) répond « information manquante » pour les actions, avec sa raison. Les autres critères ne dépendent que de `data/`.
+- Si Bedrock répond « service indisponible », l'analyse échoue en une phrase et le bouton « Relancer » la reprend : le pipeline ne réessaie pas seul.
 - Le compte de l'atelier et tout ce qui y est déployé sont supprimés à l'expiration du compte. Le code reste sur GitHub et se redéploie par la commande ci-dessus.
