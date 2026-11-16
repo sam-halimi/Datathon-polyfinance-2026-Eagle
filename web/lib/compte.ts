@@ -9,6 +9,16 @@ const CLE = "eagle:session";
 
 export type Session = { identifiant: string; jeton: string; expire: number };
 
+// « Continuer sans compte » : Eagle est un outil de démonstration, le compte est facultatif.
+// Le choix est retenu sur ce navigateur pour ne pas reposer la question à chaque visite.
+const CLE_INVITE = "eagle:sans-compte";
+export function estInvite(): boolean {
+  try { return window.localStorage.getItem(CLE_INVITE) === "1"; } catch { return false; }
+}
+export function choisirInvite(oui: boolean): void {
+  try { if (oui) window.localStorage.setItem(CLE_INVITE, "1"); else window.localStorage.removeItem(CLE_INVITE); } catch { /* le choix vaut pour cette visite */ }
+}
+
 export const REGLE_IDENTIFIANT = "3 à 32 caractères : lettres sans accent, chiffres, point, tiret ou tiret bas.";
 export const REGLE_MOT_DE_PASSE = "Au moins 8 caractères, dont une minuscule et un chiffre.";
 

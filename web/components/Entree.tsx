@@ -6,7 +6,7 @@ import { ChoixLangue, useLangue } from "./Langue";
 import { PERSONAS, type Persona } from "@/lib/personas";
 import { ecouterDeconnexion } from "@/lib/api";
 import {
-  COMPTES_ACTIFS, fermerSession, lireSession, ouvrirSession, REGLE_IDENTIFIANT, REGLE_MOT_DE_PASSE, type Session,
+  COMPTES_ACTIFS, fermerSession, lireSession, ouvrirSession, REGLE_IDENTIFIANT, REGLE_MOT_DE_PASSE, type Session, choisirInvite, estInvite,
 } from "@/lib/compte";
 import type { DirectionArtistique } from "@/lib/da";
 
@@ -207,7 +207,7 @@ function Presentation({ da, terminer, suite }: { da: DirectionArtistique | null;
   );
 }
 
-function Compte({ da, ouvert, raison }: { da: DirectionArtistique | null; ouvert: (s: Session) => void; raison: string | null }) {
+function Compte({ da, ouvert, passer, raison }: { da: DirectionArtistique | null; ouvert: (s: Session) => void; passer: () => void; raison: string | null }) {
   // Première visite sur ce navigateur : on propose de créer un compte ; sinon, de se connecter.
   const [mode, setMode] = useState<"connexion" | "creer">(() => {
     try { return window.localStorage.getItem(CLE_COMPTE_CONNU) === "1" ? "connexion" : "creer"; } catch { return "creer"; }
@@ -269,9 +269,11 @@ function Compte({ da, ouvert, raison }: { da: DirectionArtistique | null; ouvert
         <button type="submit" className="bouton bouton--principal" disabled={envoi}>
           {envoi ? "Un instant…" : creer ? "Créer le compte et entrer" : "Se connecter"}
         </button>
+        <div className="compte__ou" aria-hidden="true"><span>ou</span></div>
+        <button type="button" className="bouton bouton--secondaire compte__passer" onClick={passer}>Continuer sans compte</button>
         <p className="compte__note">
-          Aucune adresse courriel n&apos;est demandée. Le mot de passe est conservé par Amazon Cognito, sous forme hachée ; Eagle ne le stocke pas.
-          Le compte protège l&apos;accès à l&apos;analyse. Simulation seulement : aucune transaction réelle.
+          Le compte est facultatif : Eagle s&apos;essaie sans inscription. Aucune adresse courriel n&apos;est demandée. Le mot de passe est conservé
+          par Amazon Cognito, sous forme hachée ; Eagle ne le stocke pas. Simulation seulement : aucune transaction réelle.
         </p>
       </form>
     </div>
@@ -289,7 +291,7 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
   const [raison, setRaison] = useState<string | null>(null);
 
   const entrer = useCallback((s: Session | null) => {
-    if (COMPTES_ACTIFS && !s) { setEcran("compte"); return; }
+    if (COMPTES_ACTIFS && !s && !estInvite()) { setEcran("compte"); return; }
     setTableau(true);
     setEcran(null);
   }, []);
@@ -301,7 +303,7 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
     setSession(s);
     if (vue) entrer(s); else setEcran("intro");
     // Jeton refusé par le service en cours de route : on redemande la connexion par-dessus le tableau de bord.
-    ecouterDeconnexion(() => { setSession(null); setRaison("Votre session a expiré. Reconnectez-vous : votre profil est conservé à l'écran."); setEcran("compte"); });
+    ecouterDeconnexion(() => { setSession(null); setRaison("Votre session a expiré. Reconnectez-vous ou continuez sans compte : votre profil est conservé à l'écran."); setEcran("compte"); });
   }, [entrer]);
 
   const finIntro = () => {
@@ -312,7 +314,9 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
     setDepart((avant) => ({ ...d, n: (avant?.n ?? 0) + 1 }));
     entrer(session);
   };
-  const deconnecter = () => { fermerSession(); setSession(null); setRaison(null); setEcran("compte"); };
+  const deconnecter = () => { fermerSession(); choisirInvite(false); setSession(null); setRaison(null); setEcran("compte"); };
+  // « Continuer sans compte » : on entre en invité, sans jeton ; le service l'accepte (agents/comptes.py).
+  const passerLeCompte = () => { fermerSession(); choisirInvite(true); setSession(null); setRaison(null); setTableau(true); setEcran(null); };
 
   return (
     <>
@@ -320,12 +324,13 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
         <div aria-hidden={ecran ? true : undefined} inert={ecran ? true : undefined}>
           {/* window.eagle : les trois outils de la voix, pour les essais automatiques du site (ils ne font que ce que l'écran permet déjà). */}
           <Eagle da={da} compte={session ? { identifiant: session.identifiant, deconnecter } : null} ouvrirModeEmploi={() => setEcran("intro")} depart={depart}
+            connecter={COMPTES_ACTIFS && !session ? () => { setRaison(null); setEcran("compte"); } : undefined}
             onApi={(api) => { (window as unknown as { eagle?: unknown }).eagle = api; }} />
         </div>
       ) : null}
       {ecran === "intro" ? <Presentation da={da} terminer={finIntro} suite="Commencer" /> : null}
       {ecran === "choix" ? <Choix da={da} choisir={choisir} retour={() => setEcran("intro")} /> : null}
-      {ecran === "compte" ? <Compte da={da} raison={raison} ouvert={(s) => { setSession(s); setRaison(null); setTableau(true); setEcran(null); }} /> : null}
+      {ecran === "compte" ? <Compte da={da} raison={raison} passer={passerLeCompte} ouvert={(s) => { choisirInvite(false); setSession(s); setRaison(null); setTableau(true); setEcran(null); }} /> : null}
       {ecran === "attente" ? <div className="entree entree--attente" aria-busy="true" /> : null}
     </>
   );

@@ -117,8 +117,21 @@ def identifier(entetes: dict[str, str] | None, client: Any = None) -> str:
         raise
 
 
+def obligatoire() -> bool:
+    """Le compte est-il exigé ? Non par défaut : le site propose « Continuer sans compte ».
+
+    Eagle est un outil de démonstration pour le datathon : on peut l'essayer sans s'inscrire.
+    `EAGLE_COMPTE_OBLIGATOIRE=1` rétablit l'accès réservé aux personnes connectées."""
+    return os.environ.get("EAGLE_COMPTE_OBLIGATOIRE", "").strip() == "1"
+
+
 def exiger(methode: str, chemin: str, entetes: dict[str, str] | None) -> str | None:
-    """Sur une route protégée, quand les comptes sont actifs : vérifie le jeton. Sinon, rien."""
+    """Sur une route protégée, quand les comptes sont actifs : vérifie le jeton présenté.
+
+    Sans jeton, la requête passe en invité (None), sauf si le compte est obligatoire. Un jeton
+    présenté est toujours vérifié : expiré ou faux, il est refusé (401)."""
     if actifs() and (methode, chemin) in ROUTES_PROTEGEES:
-        return identifier(entetes)
+        porte_un_jeton = any(k.lower() == "authorization" and str(v).strip() for k, v in (entetes or {}).items())
+        if porte_un_jeton or obligatoire():
+            return identifier(entetes)
     return None

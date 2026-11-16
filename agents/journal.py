@@ -67,7 +67,26 @@ class Journal:
         self.chiffres: dict[str, dict[str, Any]] = {}
         self.appels: list[dict[str, Any]] = []  # chaque appel d'outil, dans l'ordre, avec l'agent
         self.etapes: list[dict[str, str]] = []  # ce que chaque agent a fait, pour la barre d'étapes
+        # Observateur facultatif (agents/progression.py) : prévenu quand un agent prend la main et quand
+        # il a fini. Il ne change rien au pipeline, et une erreur de sa part est ignorée.
+        self.suivi: Callable[..., None] | None = None
         self.agent_courant = "pipeline"
+
+    @property
+    def agent_courant(self) -> str:
+        return self._agent_courant
+
+    @agent_courant.setter
+    def agent_courant(self, nom: str) -> None:
+        self._agent_courant = nom
+        self._signaler("agent", nom)
+
+    def _signaler(self, *signal: str) -> None:
+        if self.suivi is not None:
+            try:
+                self.suivi(*signal)
+            except Exception:  # noqa: BLE001 - le suivi ne doit jamais faire échouer une analyse
+                pass
 
     # --- enregistrement ---------------------------------------------------
 
@@ -98,6 +117,7 @@ class Journal:
 
     def etape(self, agent: str, fait: str) -> None:
         self.etapes.append({"agent": agent, "fait": fait})
+        self._signaler("etape", agent, fait)
 
     # --- lecture pour les agents ------------------------------------------
 

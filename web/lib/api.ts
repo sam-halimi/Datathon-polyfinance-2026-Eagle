@@ -50,12 +50,38 @@ async function appeler(chemin: string, init?: RequestInit): Promise<Response> {
   return r;
 }
 
-export async function analyser(profil: Profil, demande: string, prenom: string): Promise<SortiePipeline> {
+/** Où en est une analyse (agents/progression.py) : l'agent qui travaille, ce que les précédents ont constaté. */
+export type Progression = {
+  connu: boolean;
+  phase?: "analyse" | "traduction" | "terminee" | "echec";
+  agent?: string | null;
+  essai?: number;
+  agents?: string[];
+  faits?: { agent: string; fait: string }[];
+};
+
+/** Identifiant de suivi d'une analyse, choisi par le site. */
+export function nouveauSuivi(): string {
+  try { return crypto.randomUUID(); } catch { return `suivi-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`; }
+}
+
+/** Avancement d'une analyse. Jamais d'erreur : sans réponse, l'écran d'attente se passe du détail. */
+export async function lireProgression(suivi: string): Promise<Progression | null> {
+  try {
+    const r = await fetch(`${API}/progression?id=${encodeURIComponent(suivi)}`);
+    return r.ok ? ((await r.json()) as Progression) : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function analyser(profil: Profil, demande: string, prenom: string, suivi?: string): Promise<SortiePipeline> {
   const r = await appeler("/analyse", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     // `langue` : en anglais, le service traduit les textes de la réponse (agents/traduction.py).
-    body: JSON.stringify({ profil: profilPourAnalyse(profil), demande, prenom: prenom || undefined, langue: langueCourante() }),
+    // `suivi` : identifiant sous lequel le service publie l'avancement, lu par l'écran d'attente.
+    body: JSON.stringify({ profil: profilPourAnalyse(profil), demande, prenom: prenom || undefined, langue: langueCourante(), suivi }),
   });
   return r.json();
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { CarteVerifications } from "./Cartes";
 import { FichesLignes, LimitesPortefeuille, MANQUE, retenu, TableauAdequation } from "./Adequation";
 import { Chiffre, Texte, texteBrut, typo } from "./Chiffres";
@@ -173,45 +172,6 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
         : [s.messages.limites, `${MANQUE} : pas de limites propres au portefeuille dans la réponse.`, ...s.limites.limites.map((t) => brut(t, c))].join(" "),
     },
   ];
-}
-
-// Les agents du pipeline, dans l'ordre d'exécution (agents/pipeline.py).
-// Le serveur ne transmet pas l'avancement en direct : l'écran d'attente montre
-// le déroulé prévu sans prétendre savoir quelle étape est en cours ; les étapes
-// réellement suivies s'affichent ensuite dans la diapositive « Démarche ».
-const AGENTS = [
-  ["Orchestrateur", "lit votre profil et votre demande, fixe les plafonds"],
-  ["ESG et qualité", "écarte ou signale les titres selon vos critères, avec leurs sources"],
-  ["Marché et risque", "mesure volatilité et pires baisses des actifs candidats"],
-  ["Macro et taux", "mesure la sensibilité aux taux et la pente des courbes"],
-  ["Constructeur", "propose deux ou trois portefeuilles simulés"],
-  ["Gouvernance", "vérifie chaque proposition au regard de votre profil, deux essais au plus"],
-  ["Explication", "rédige l'explication, chaque chiffre renvoyant à son calcul"],
-] as const;
-
-export function DiapositiveAttente({ debut }: { debut: number }) {
-  const [maintenant, setMaintenant] = useState(() => Date.now());
-  useEffect(() => {
-    const t = window.setInterval(() => setMaintenant(Date.now()), 1000);
-    return () => window.clearInterval(t);
-  }, []);
-  const ecoule = Math.max(0, Math.floor((maintenant - debut) / 1000));
-  return (
-    <div className="attente">
-      <ol className="attente__liste">
-        {AGENTS.map(([nom, fait], i) => (
-          <li key={nom} className="attente__agent" style={{ "--rang": i } as React.CSSProperties}>
-            <span className="attente__puce" aria-hidden="true">{i + 1}</span>
-            <span><strong>{nom}</strong> {fait}</span>
-          </li>
-        ))}
-      </ol>
-      <p className="attente__temps" aria-live="off">
-        <span className="attente__indicateur" aria-hidden="true" />
-        Analyse en cours depuis {ecoule} s. Comptez de une à trois minutes selon le profil. Le détail de chaque étape s&apos;affiche avec le résultat.
-      </p>
-    </div>
-  );
 }
 
 export function DiapositiveActif({ symbole, verdict, erreur }: { symbole: string; verdict?: VerdictActif; erreur?: string }) {

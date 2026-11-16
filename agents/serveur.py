@@ -4,6 +4,7 @@
     GET  /actif?symbole=tesla&tolerance=faible&horizon=3   fiche d'un actif face à un profil
     POST /scenarios  {"poids": {...}, "horizon_annees": 8, "capital": 50000}
     POST /analyse    {"profil": {...}, "demande": "...", "prenom": "..."}   pipeline complet sur Bedrock
+    GET  /progression?id=...                                où en est l'analyse lancée avec "suivi": "<id>"
     GET  /demonstration/robert                              sortie enregistrée d'un persona
 
 Option anglaise : `langue=en` (paramètre d'adresse en GET, champ du corps en POST) renvoie les
@@ -25,7 +26,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from agents import comptes
+from agents import comptes, progression
 from agents.resistance import est_passagere
 from agents.traduction import langue_demandee, traduire_sortie
 from tools.scenarios import eventail_scenarios, fiche_actif
@@ -77,11 +78,28 @@ def analyser(corps: dict[str, Any]) -> dict[str, Any]:
         raise Refus(f"Profil invalide : {e.errors(include_url=False)}") from e
     from agents.pipeline import Session  # importé ici : il lui faut strands-agents et les clés
 
-    sortie = Session(profil, demande, corps.get("prenom") or None).executer()
-    sortie["scenarios"] = scenarios_du_portefeuille(sortie)
-    sortie["scenarios_par_portefeuille"] = scenarios_par_portefeuille(sortie)
-    # Option anglaise : les textes sont traduits après coup, les chiffres ne passent pas par le modèle.
-    return traduire_sortie(sortie, langue_demandee(corps.get("langue")))
+    session = Session(profil, demande, corps.get("prenom") or None)
+    # Écran d'attente du site : si la requête porte un identifiant de suivi, le journal du pipeline
+    # signale chaque agent qui prend la main et chaque étape finie (agents/progression.py).
+    suivi = progression.ouvrir(corps.get("suivi"))
+    if suivi:
+        session.journal.suivi = suivi.recevoir
+    try:
+        sortie = session.executer()
+        sortie["scenarios"] = scenarios_du_portefeuille(sortie)
+        sortie["scenarios_par_portefeuille"] = scenarios_par_portefeuille(sortie)
+        # Option anglaise : les textes sont traduits après coup, les chiffres ne passent pas par le modèle.
+        langue = langue_demandee(corps.get("langue"))
+        if suivi and langue == "en":
+            suivi.phase("traduction")
+        sortie = traduire_sortie(sortie, langue)
+    except Exception:
+        if suivi:
+            suivi.phase("echec")
+        raise
+    if suivi:
+        suivi.phase("terminee")
+    return sortie
 
 
 def demonstration(nom: str, langue: str = "fr") -> dict[str, Any]:
@@ -114,6 +132,8 @@ def repondre(methode: str, chemin: str, requete: dict[str, list[str]], corps: di
     `entetes` : en-têtes de la requête, lus pour le jeton de compte (agents/comptes.py)."""
     if methode == "GET" and chemin == "/sante":
         return {"ok": True, "service": "Eagle", "simulation": True, "comptes": comptes.actifs()}
+    if methode == "GET" and chemin == "/progression":
+        return progression.lire((requete.get("id") or [""])[0])
     if chemin.startswith("/compte"):
         if not comptes.actifs():
             raise Refus("Les comptes ne sont pas activés sur ce serveur : aucune connexion n'est nécessaire.")

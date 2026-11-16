@@ -13,6 +13,9 @@ python -m agents.serveur        # http://localhost:8000
 | `POST /scenarios` avec `{"poids": {...}, "horizon_annees": 8, "capital": 50000}` | Éventail de scénarios d'un portefeuille | Non |
 | `GET /demonstration/robert` (ou `amira`, `mateo`) | Sortie enregistrée d'un persona, avec son éventail | Non |
 | `POST /analyse` avec `{"profil": {...}, "demande": "...", "prenom": "..."}` | Pipeline complet sur Bedrock pour n'importe quel profil, environ une minute | Oui |
+| `GET /progression?id=<suivi>` | Où en est l'analyse lancée avec `"suivi": "<id>"` dans le corps de `POST /analyse` (un identifiant choisi par l'appelant, 8 à 64 lettres, chiffres ou tirets) : `phase` (`analyse`, `traduction`, `terminee`, `echec`), `agent` en cours, `essai`, `faits` (ce que les agents ont fini), `ecoule`. Identifiant inconnu : `{"connu": false}` | Non |
+
+Option anglaise : `langue=en` (paramètre d'adresse en GET, champ `"langue": "en"` du corps en POST) renvoie les mêmes données avec leurs textes traduits (`agents/traduction.py`).
 
 Le profil suit le schéma de `python -m agents.profil`. Le curseur de connaissance d'Eagle s'envoie dans `connaissance_niveau` (1 à 5) ; `connaissance` peut alors être omise, elle en découle (1-2 débutant, 3 intermédiaire, 4-5 avancé). Tout autre champ inconnu est refusé (400). La réponse de `/analyse` suit `docs/sortie-pipeline.md`, avec un champ `scenarios` en plus.
 

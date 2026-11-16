@@ -1553,7 +1553,14 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 
 .demo { display: flex; align-items: center; gap: 10px; text-align: left; }
 .demo__avatar { width: 40px; height: 40px; flex: none; }
-.demo__textes { display: grid; min-width: 0; }
+.demo .demo__textes { display: grid; min-width: 0; }
+/* Écran bas : le nom reste, seule la phrase du cas est masquée (elle l'était avec le nom, par erreur). */
+@media (max-height: 820px) {
+  .demo .demo__textes > span { display: none; }
+  /* Depuis le bouton de langue, l'en-tête de la colonne tient sur deux lignes : les trois cas se resserrent. */
+  .demo { padding: 4px 10px; }
+  .demo .demo__avatar { width: 30px; height: 30px; }
+}
 .demo--actif { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
 @media (max-width: 899px) {
@@ -1688,3 +1695,51 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
   .entree__haut-droite { gap: 4px; margin-left: auto; }
   .entree__haut-droite .entree__passer { white-space: nowrap; font-size: 13.5px; padding: 6px; }
 }
+
+/* ---------- Écran d'attente de l'analyse (components/Attente.tsx) ---------- */
+
+.chargement { display: grid; gap: 16px; max-width: 760px; }
+.chargement__tete { display: grid; gap: 10px; }
+.chargement__barre { height: 4px; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
+.chargement__avance { display: block; height: 100%; border-radius: 2px; background: var(--accent); transition: width 900ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.chargement__barre--libre .chargement__avance { width: 28%; animation: chargement-glisse 1.9s ease-in-out infinite; }
+@keyframes chargement-glisse { from { transform: translateX(-110%); } to { transform: translateX(370%); } }
+.chargement__repere {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 6px 16px; flex-wrap: wrap;
+  font-size: 13.5px; color: var(--encre-douce); font-variant-numeric: tabular-nums;
+}
+.chargement__ou strong { color: var(--encre); font-weight: 600; }
+.chargement__liste { display: grid; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--trait); }
+.chargement__agent {
+  display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 14px; align-items: start; padding: 9px 2px;
+  border-bottom: 1px solid var(--trait); transition: opacity var(--duree-moyenne);
+}
+.chargement__puce {
+  width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--border-strong); font-size: 12px; font-weight: 600; color: var(--encre-douce); font-variant-numeric: tabular-nums;
+}
+.chargement__texte { display: grid; gap: 2px; min-width: 0; }
+.chargement__nom { font-size: 15.5px; font-weight: 600; color: var(--encre); }
+.chargement__fait {
+  font-size: 14px; line-height: 1.45; color: var(--encre-douce);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+/* Écran bas (portable) : un constat par ligne, pour que les sept étapes tiennent sans défiler. */
+@media (min-width: 900px) and (max-height: 800px) { .chargement__fait { -webkit-line-clamp: 1; } .chargement__agent { padding: 7px 2px; } }
+.chargement__essai { font-size: 13px; color: var(--alerte); }
+.chargement__agent--avenir { opacity: 0.5; }
+.chargement__agent--fait .chargement__puce { border-color: transparent; background: var(--ok-fond); color: var(--ok); }
+.chargement__agent--actif .chargement__puce { border-color: var(--accent-fond); border-top-color: var(--accent); animation: tourne 1s linear infinite; }
+.chargement__agent--actif .chargement__nom { color: var(--accent); }
+.chargement__note { font-size: 13px; color: var(--encre-douce); padding-bottom: 4px; }
+@media (min-width: 900px) and (max-height: 800px) { .chargement { gap: 12px; } .chargement__note { display: none; } }
+@media (max-width: 899px) { .chargement { gap: 16px; } .chargement__agent { padding: 9px 0; gap: 12px; } }
+@media (prefers-reduced-motion: reduce) {
+  .chargement__avance { transition: none; }
+  .chargement__barre--libre .chargement__avance { animation: none; width: 100%; opacity: 0.4; }
+  .chargement__agent--actif .chargement__puce { animation: none; }
+}
+
+/* Écran de compte : « Continuer sans compte ». */
+.compte__ou { display: flex; align-items: center; gap: 12px; font-size: 12.5px; color: var(--encre-douce); text-transform: uppercase; letter-spacing: 0.08em; margin: -4px 0; }
+.compte__ou::before, .compte__ou::after { content: ""; flex: 1; height: 1px; background: var(--trait); }

@@ -106,7 +106,7 @@ def _compartiment(nom: str) -> None:
         _dire(f"compartiment S3 créé : {nom}")
 
 
-def _role(arn_comptes: str | None = None) -> str:
+def _role(arn_comptes: str | None = None, seau_progression: str | None = None) -> str:
     iam = boto3.client("iam")
     confiance = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": "sts:AssumeRole",
                                                           "Principal": {"Service": "lambda.amazonaws.com"}}]}
@@ -128,6 +128,12 @@ def _role(arn_comptes: str | None = None) -> str:
             "Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Resource": arn_comptes, "Action": [
                 "cognito-idp:AdminCreateUser", "cognito-idp:AdminSetUserPassword", "cognito-idp:AdminInitiateAuth",
                 "cognito-idp:AdminDeleteUser"]}]}))
+    if seau_progression:
+        # Écran d'attente : la fonction écrit et relit l'avancement d'une analyse (agents/progression.py),
+        # dans le seul préfixe progression/ du compartiment de déploiement.
+        iam.put_role_policy(RoleName=ROLE, PolicyName="eagle-progression", PolicyDocument=json.dumps({
+            "Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["s3:PutObject", "s3:GetObject"],
+                                                    "Resource": f"arn:aws:s3:::{seau_progression}/progression/*"}]}))
     return arn
 
 
@@ -173,12 +179,16 @@ def deployer_api() -> str:
     cle = f"lambda/eagle-api-{hashlib.sha256(archive.read_bytes()).hexdigest()[:12]}.zip"
     _client("s3").upload_file(str(archive), compartiment, cle)
     groupe, arn_comptes, client_comptes = _comptes()
-    arn_role = _role(arn_comptes)
+    arn_role = _role(arn_comptes, compartiment)
+    # Les états d'avancement sont de petits fichiers sans valeur après l'analyse : effacés au bout d'un jour.
+    _client("s3").put_bucket_lifecycle_configuration(Bucket=compartiment, LifecycleConfiguration={"Rules": [{
+        "ID": "eagle-progression", "Status": "Enabled", "Filter": {"Prefix": "progression/"}, "Expiration": {"Days": 1}}]})
     lam = _client("lambda")
     reglages = dict(Runtime="python3.13", Handler="agents.lambda_eagle.gestionnaire", Role=arn_role,
                     Timeout=900, MemorySize=2048,
                     Environment={"Variables": {"BEDROCK_AUTH": "identifiants", "PYTHONUTF8": "1",
-                                               "EAGLE_COGNITO_GROUPE": groupe, "EAGLE_COGNITO_CLIENT": client_comptes}},
+                                               "EAGLE_COGNITO_GROUPE": groupe, "EAGLE_COGNITO_CLIENT": client_comptes,
+                                               "EAGLE_PROGRESSION_SEAU": compartiment}},
                     Description="Eagle : pipeline d'agents (portefeuilles simulés) et routes de agents/serveur.py")
     try:
         lam.get_function(FunctionName=FONCTION)

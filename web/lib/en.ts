@@ -550,7 +550,21 @@ export const EXACT: Record<string, string> = {
  "Les textes de l'analyse restent dans la langue où elle a été demandée. Relancez l'analyse pour les obtenir dans l'autre langue.": "The analysis texts stay in the language in which it was requested. Run the analysis again to get them in the other language.",
  "Actions, marché large": "Stocks, broad market",
  "Thème": "Theme",
- "Ce n'est pas une prévision.": "This is not a forecast."
+ "Ce n'est pas une prévision.": "This is not a forecast.",
+ "Votre portefeuille simulé est en préparation": "Your simulated portfolio is being prepared",
+ "Sept agents se relaient sur votre profil, chacun dans son domaine. La gouvernance vérifie chaque proposition avant de vous la présenter.": "Seven agents take turns on your profile, each in its own field. Governance checks every proposal before it is presented to you.",
+ "Avancement de l'analyse": "Analysis progress",
+ "Démarrage de l'analyse": "Starting the analysis",
+ "Durée habituelle : 1 à 3 minutes": "Usual duration: 1 to 3 minutes",
+ "Traduction": "Translation",
+ "met les textes du résultat en anglais, sans toucher aux chiffres": "puts the texts of the result into English, without touching the figures",
+ "La présentation s'affiche dès que l'analyse est prête.": "The presentation appears as soon as the analysis is ready.",
+ "ou": "or",
+ "Continuer sans compte": "Continue without an account",
+ "Sans compte": "No account",
+ "Vous utilisez Eagle sans compte": "You are using Eagle without an account",
+ "Le compte est facultatif : Eagle s'essaie sans inscription. Aucune adresse courriel n'est demandée. Le mot de passe est conservé par Amazon Cognito, sous forme hachée ; Eagle ne le stocke pas. Simulation seulement : aucune transaction réelle.": "The account is optional: you can try Eagle without signing up. No email address is requested. The password is kept by Amazon Cognito, in hashed form; Eagle does not store it. Simulation only: no real transaction.",
+ "Votre session a expiré. Reconnectez-vous ou continuez sans compte : votre profil est conservé à l'écran.": "Your session has expired. Sign in again or continue without an account: your profile is kept on screen."
 };
 
 const MOIS: Record<string, string> = {"janvier": "January", "février": "February", "mars": "March", "avril": "April", "mai": "May", "juin": "June", "juillet": "July", "août": "August", "septembre": "September", "octobre": "October", "novembre": "November", "décembre": "December"};
@@ -567,6 +581,9 @@ function libelle(t: string): string {
 }
 
 export const MOTIFS: [RegExp, Remplacement][] = [
+  // Écran d'attente de l'analyse.
+  [/^Étape (\d+) sur (\d+)$/, "Step $1 of $2"],
+  [/^Essai (\d+) : la gouvernance a renvoyé les propositions au constructeur\.$/, "Attempt $1: governance sent the proposals back to the builder."],
   // Cartes des cas et boutons de démonstration.
   [/^Risque (.+) · horizon de (\d+) ans?$/, (_, t, n) => `${(EXACT[t] ?? t).replace(/^./, (c) => c.toUpperCase())} risk · ${n}-year horizon`],
   [/^([A-ZÀ-Ý][\wÀ-ÿ-]*), (\d+) ans$/, "$1, $2 years old"],

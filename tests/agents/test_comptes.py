@@ -108,7 +108,27 @@ def test_mauvais_mot_de_passe_et_compte_inconnu_donnent_la_meme_phrase(cognito):
 
 
 @pytest.mark.parametrize("methode,chemin", sorted(comptes.ROUTES_PROTEGEES))
-def test_routes_protegees_exigent_un_jeton_valide(cognito, methode, chemin):
+def test_sans_jeton_la_requete_passe_en_invite(cognito, monkeypatch, methode, chemin):
+    """« Continuer sans compte » : pas de jeton, pas de refus de compte (la requête échoue ensuite sur son corps vide)."""
+    monkeypatch.delenv("EAGLE_COMPTE_OBLIGATOIRE", raising=False)
+    assert comptes.exiger(methode, chemin, {}) is None
+    with pytest.raises(serveur.Refus):
+        serveur.repondre(methode, chemin, {}, {}, {})
+
+
+@pytest.mark.parametrize("methode,chemin", sorted(comptes.ROUTES_PROTEGEES))
+def test_un_jeton_presente_est_toujours_verifie(cognito, monkeypatch, methode, chemin):
+    monkeypatch.delenv("EAGLE_COMPTE_OBLIGATOIRE", raising=False)
+    comptes.creer({"identifiant": "camille", "mot_de_passe": "eagle2026x"})
+    for entetes in ({"Authorization": "Bearer faux"}, {"Authorization": "jeton-camille"}):
+        with pytest.raises(comptes.RefusCompte) as e:
+            serveur.repondre(methode, chemin, {}, {}, entetes)
+        assert e.value.code == 401
+
+
+@pytest.mark.parametrize("methode,chemin", sorted(comptes.ROUTES_PROTEGEES))
+def test_compte_obligatoire_si_on_le_regle(cognito, monkeypatch, methode, chemin):
+    monkeypatch.setenv("EAGLE_COMPTE_OBLIGATOIRE", "1")
     comptes.creer({"identifiant": "camille", "mot_de_passe": "eagle2026x"})
     for entetes in ({}, {"Authorization": "Bearer faux"}, {"Authorization": "jeton-camille"}):
         with pytest.raises(comptes.RefusCompte) as e:

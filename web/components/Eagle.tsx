@@ -10,8 +10,9 @@ import { langueCourante, tr, type Langue } from "@/lib/langue";
 import { FocusCtx, type Focus } from "./Focus";
 import { propositions, vueSur } from "@/lib/portefeuilles";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
-import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
-import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
+import { EcranAttente } from "./Attente";
+import { construireDiapositives, DiapositiveActif, type Diapositive } from "./Diapositives";
+import { analyser, nouveauSuivi, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, listeDite, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
@@ -54,13 +55,15 @@ type Props = {
   da?: DirectionArtistique | null;
   /** Compte connecté (site déployé) : identifiant affiché et déconnexion. */
   compte?: { identifiant: string; deconnecter: () => void } | null;
+  /** Site avec comptes, personne entrée sans compte : ouvre l'écran de connexion. */
+  connecter?: () => void;
   /** Rouvre la présentation du début (components/Entree.tsx). */
   ouvrirModeEmploi?: () => void;
   /** Choix fait à la fin de la présentation : son propre profil, ou l'un des trois cas du datathon. */
   depart?: ({ type: "profil" } | { type: "cas"; id: Persona["id"] }) & { n: number } | null;
 };
 
-export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depart = null }: Props) {
+export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEmploi, depart = null }: Props) {
   const [voixParle, setVoixParle] = useState(false);
   // Appel vocal en cours : l'agent dit lui-même chaque question, l'écran ne la répète pas dans la transcription.
   const voixEnLigne = useRef(false);
@@ -96,6 +99,8 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
   // il tourne déjà, on renvoie à son terminal et à la vérification des clés.
   const [injoignable, setInjoignable] = useState(false);
   const [debutAnalyse, setDebutAnalyse] = useState(0);
+  // Identifiant sous lequel le service publie l'avancement de l'analyse en cours (écran d'attente).
+  const [suivi, setSuivi] = useState<string | null>(null);
   const [univers, setUnivers] = useState<Record<string, { nom: string }>>({});
 
   useEffect(() => { chargerUnivers().then((u) => setUnivers(u.actifs)); }, []);
@@ -175,9 +180,11 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
     setPhase("analyse");
     setErreur(null);
     setDebutAnalyse(Date.now());
+    const idSuivi = nouveauSuivi();
+    setSuivi(idSuivi);
     dire("Je transmets votre profil aux spécialistes. L'analyse prend de une à trois minutes.");
     try {
-      const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom);
+      const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom, idSuivi);
       setDemo(null);
       await presenter(s, "L'analyse de votre profil est prête.");
       return "Analyse terminée.";
@@ -485,9 +492,9 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
       </>
     );
   } else if (phase === "analyse") {
-    titre = "Les spécialistes travaillent";
-    justification = "Chaque agent traite son domaine. La gouvernance vérifie chaque proposition au regard de votre profil avant la présentation.";
-    contenu = <DiapositiveAttente debut={debutAnalyse} />;
+    titre = "Votre portefeuille simulé est en préparation";
+    justification = "Sept agents se relaient sur votre profil, chacun dans son domaine. La gouvernance vérifie chaque proposition avant de vous la présenter.";
+    contenu = <EcranAttente debut={debutAnalyse} suivi={suivi} />;
   } else if (phase === "erreur") {
     titre = "Analyse indisponible";
     justification = "Aucun portefeuille n'est affiché à la place du vôtre.";
@@ -612,6 +619,11 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
                 <>
                   <span className="eagle__identifiant" title="Compte connecté">{compte.identifiant}</span>
                   <button type="button" className="eagle__lien" onClick={compte.deconnecter}>Se déconnecter</button>
+                </>
+              ) : connecter ? (
+                <>
+                  <span className="eagle__identifiant" title="Vous utilisez Eagle sans compte">Sans compte</span>
+                  <button type="button" className="eagle__lien" onClick={connecter}>Se connecter</button>
                 </>
               ) : null}
             </div>

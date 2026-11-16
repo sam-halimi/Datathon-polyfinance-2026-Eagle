@@ -32,9 +32,13 @@ Avant l'export, le script relance `python web/scripts/graphiques.py` : les table
 
 - Le script crée (ou retrouve) le groupe Cognito `eagle-comptes` et son client `eagle-site`, les donne à la fonction (`EAGLE_COGNITO_GROUPE`, `EAGLE_COGNITO_CLIENT`) et limite le rôle `eagle-lambda` à quatre actions sur ce groupe : créer un compte, fixer son mot de passe, connecter, retirer un compte à moitié créé.
 - Règle du mot de passe : au moins 8 caractères, dont une minuscule et un chiffre. Jeton d'accès valable 8 heures.
-- `/analyse`, `/scenarios` et `/actif` exigent le jeton : l'analyse, qui appelle Bedrock, n'est plus ouverte à tous. `/sante` et `/demonstration/<persona>` restent ouvertes.
+- Le compte est **facultatif** depuis le 16 novembre : l'écran de connexion propose « Continuer sans compte », et `/analyse`, `/scenarios` et `/actif` acceptent une requête sans jeton. Eagle est un outil de démonstration pour le datathon ; l'analyse, qui appelle Bedrock, est donc ouverte à qui a l'adresse, dans la limite de cinq analyses à la fois (concurrence plafonnée de la fonction). Un jeton présenté reste vérifié : expiré ou faux, il est refusé (401). Pour réserver de nouveau l'analyse aux personnes connectées : variable `EAGLE_COMPTE_OBLIGATOIRE=1` sur la fonction. `/sante`, `/progression` et `/demonstration/<persona>` sont ouvertes.
 - Aucune donnée personnelle n'est demandée : un pseudonyme suffit comme identifiant. Eagle ne stocke ni le mot de passe ni le profil ; le profil vit dans le navigateur le temps de la séance.
 - Supprimer un compte : console Cognito, ou `aws cognito-idp admin-delete-user --user-pool-id <groupe> --username <identifiant>`.
+
+## Avancement d'une analyse
+
+Une analyse dure de une à trois minutes et l'adresse de fonction ne renvoie sa réponse qu'à la fin. Pour que l'écran d'attente montre ce qui se passe vraiment, le site joint un identifiant de suivi (`suivi`, un UUID) à `POST /analyse`. Le journal du pipeline (`agents/journal.py`) signale chaque agent qui prend la main et chaque étape finie ; `agents/progression.py` écrit cet état dans `s3://eagle-deploiement-<compte>/progression/<id>.json`, et le site le relit par `GET /progression?id=…` toutes les deux secondes et demie. S3 est nécessaire parce que l'analyse et les lectures ne tombent pas sur la même instance de la fonction. Le rôle `eagle-lambda` n'a le droit d'écrire et de lire que ce préfixe ; les fichiers sont effacés au bout d'un jour. L'état ne contient que des noms d'agents et leurs constats. Si l'écriture échoue, l'analyse continue et l'écran d'attente montre seulement le déroulé prévu et le temps écoulé.
 
 ## Pannes passagères de Bedrock
 
@@ -87,7 +91,7 @@ Non vérifié : un appel vocal complet par une personne (huit questions, analyse
 
 ## Limites
 
-- La création de compte est ouverte à tous (aucune validation par courriel) : le compte limite l'accès à l'analyse, il ne prouve pas l'identité de la personne. La concurrence plafonnée borne le coût.
+- Le compte est facultatif et sa création est ouverte à tous (aucune validation par courriel) : il ne protège pas l'analyse et ne prouve pas l'identité de la personne. Seule la concurrence plafonnée (cinq analyses à la fois) borne le coût.
 - La voix (ElevenLabs) demande un micro et un geste (« Démarrer l'appel »). La liaison part en WebRTC et reprend par WebSocket si le réseau bloque l'UDP. Sans micro, l'échange se fait par écrit.
 - Un appel vocal est limité à 30 minutes par l'agent ElevenLabs (réglage `max_duration_seconds`, relevé de 600 à 1800 s).
 - Sur Lambda, il n'y a ni clé ni cache Finnhub : le critère « sociétés établies » (ancienneté de cotation) répond « information manquante » pour les actions, avec sa raison. Les autres critères ne dépendent que de `data/`.

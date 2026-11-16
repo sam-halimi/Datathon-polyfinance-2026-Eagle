@@ -20,12 +20,12 @@ Le pipeline doit répondre sur http://localhost:8000 (autre adresse : `NEXT_PUBL
 
 `components/Entree.tsx` : une présentation en cinq diapositives (ce qu'est Eagle, comment s'en servir), montrée à la première visite et rouverte par « Mode d'emploi » ; puis, sur le site déployé seulement (`NEXT_PUBLIC_COMPTES=1`), la connexion à un compte ; puis le tableau de bord, qui reste monté (rouvrir le mode d'emploi ou se reconnecter ne fait pas perdre le profil).
 
-Comptes (`lib/compte.ts`, `agents/comptes.py`) : un identifiant et un mot de passe, gardés par Amazon Cognito. Aucune adresse courriel. Le site ne conserve que le jeton d'accès (8 heures) dans le stockage local du navigateur et le joint aux appels `/analyse`, `/scenarios` et `/actif`. En local, le serveur n'exige rien et aucun écran de connexion n'apparaît.
+Comptes (`lib/compte.ts`, `agents/comptes.py`) : un identifiant et un mot de passe, gardés par Amazon Cognito. Aucune adresse courriel. Le site ne conserve que le jeton d'accès (8 heures) dans le stockage local du navigateur et le joint aux appels `/analyse`, `/scenarios` et `/actif`. En local, le serveur n'exige rien et aucun écran de connexion n'apparaît. Le compte est facultatif : « Continuer sans compte » entre sans jeton (choix retenu sur le navigateur), et le tableau de bord propose alors « Se connecter ».
 
 ## Parcours
 
 1. **Questions** une par une (`lib/questions.ts`, valeurs du schéma `python -m agents.profil`). Chaque réponse remplit le profil à droite. Le montant se règle au curseur ou se saisit au dollar près.
-2. **Récapitulatif**, prénom et demande, puis `POST /analyse` avec `{profil, demande, prenom}` (`lib/api.ts`). Pendant l'attente, les agents au travail.
+2. **Récapitulatif**, prénom et demande, puis `POST /analyse` avec `{profil, demande, prenom}` (`lib/api.ts`). Pendant l'attente (`components/Attente.tsx`), l'avancement réel : une barre, l'agent qui travaille, ce que les précédents ont constaté, lus toutes les 2,5 s sur `GET /progression?id=…` ; en anglais, une huitième étape, la traduction.
 3. **Présentation** (`components/Diapositives.tsx`) : la démarche (les étapes des agents et le diagnostic de chaque spécialiste, champ `specialistes`), la demande face au profil, répartition (camemberts actif, secteur, zone), cours commenté de l'actif demandé, « Scénarios, pas une prévision » (champ `scenarios`), vérifications, limites. Chaque diapositive a sa justification et le texte que la voix lit.
 4. **Question sur un actif** à tout moment (« et Tesla ? ») : `GET /actif?symbole=…&tolerance=…&horizon=…`, diapositive « compatible » ou « pourquoi cet actif ne convient pas à ton profil ».
 
