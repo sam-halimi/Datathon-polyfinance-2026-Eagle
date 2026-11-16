@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { Chiffre, Texte, useChiffres } from "./Chiffres";
 import { CarteMonde } from "./Da";
+import { rapproche, useFocus } from "./Focus";
 import { formaterChiffre, formaterDate, formaterMontant } from "@/lib/format";
 import { chargerUnivers } from "@/lib/repartition";
 import type { Eventail } from "@/lib/scenarios";
@@ -37,37 +38,46 @@ function cle(t: string): string {
   return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ']/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 }
 
-// ---------- Anneaux de répartition ----------
+// ---------- Camemberts de répartition ----------
 
 type Tranche = Part & { valeur: number; couleur: string };
 
 const RADIAN = Math.PI / 180;
-/** Étiquette directe, dans l'anneau, pour les parts d'au moins 12 % (la légende porte les autres). */
-function etiquette(props: { cx?: number; cy?: number; midAngle?: number; innerRadius?: number; outerRadius?: number; percent?: number; value?: number; fill?: string }) {
-  const { cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, value = 0, fill } = props;
-  if (value < 0.12) return null;
-  const r = (innerRadius + outerRadius) / 2;
+/** Étiquette directe, dans la part, pour les parts d'au moins 8 % (la légende porte les autres). */
+function etiquette(props: { cx?: number; cy?: number; midAngle?: number; outerRadius?: number; value?: number; fill?: string }) {
+  const { cx = 0, cy = 0, midAngle = 0, outerRadius = 0, value = 0, fill } = props;
+  if (value < 0.08) return null;
+  const r = outerRadius * 0.62;
+  const clair = fill === "var(--chart-5)" || fill === "var(--chart-6)" || fill === "var(--chart-8)" || fill === "var(--chart-2)";
   return (
-    <text x={cx + r * Math.cos(-midAngle * RADIAN)} y={cy + r * Math.sin(-midAngle * RADIAN)} className="anneau__etiquette"
-      textAnchor="middle" dominantBaseline="central" pointerEvents="none"
-      style={fill === "var(--serie-4)" ? { fill: "var(--texte-sur-serie-claire)" } : undefined}>{pct.format(value)}</text>
+    <text x={cx + r * Math.cos(-midAngle * RADIAN)} y={cy + r * Math.sin(-midAngle * RADIAN)}
+      className={clair ? "anneau__etiquette anneau__etiquette--sombre" : "anneau__etiquette"}
+      textAnchor="middle" dominantBaseline="central" pointerEvents="none">{pct.format(value)}</text>
   );
 }
 
+/** Camembert plein et interactif : survoler ou toucher une part (ou sa ligne de légende) affiche
+ *  sa valeur et les lignes qui la composent, tirées de la référence du chiffre. */
 export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
   const { chiffres } = useChiffres();
   const duree = useDuree();
+  const focus = useFocus();
   const [actif, setActif] = useState<string | null>(null);
-  // Charte : couleur fixe pour une classe d'actif ou une région, sinon chart-1, 2, 3…
-  // par poids décroissant. La légende suit le même ordre.
-  // la légende est triée par valeur décroissante.
+  // Charte : couleur fixe pour une classe d'actif ou une région, sinon chart-1, 2, 3… par poids décroissant.
   const tranches: Tranche[] = parts
     .map((p) => ({ ...p, valeur: chiffres[p.id]?.valeur ?? 0 }))
     .filter((t) => t.valeur > 0)
     .sort((a, b) => b.valeur - a.valeur)
     .map((t, i) => ({ ...t, couleur: t.couleur ?? SERIES[i % SERIES.length] }));
-  const legende = [...tranches].sort((a, b) => b.valeur - a.valeur);
+  // La présentation vocale met une part en avant : elle s'allume comme au survol.
+  useEffect(() => {
+    if (!focus) return;
+    const t = tranches.find((x) => rapproche(x.libelle, focus.element) || x.symboles.some((y) => rapproche(y, focus.element)));
+    if (t) setActif(t.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus?.n]);
   const survol = tranches.find((t) => t.id === actif);
+  const poids = (survol ? chiffres[survol.id]?.parametres?.poids : null) as Record<string, number> | null | undefined;
   if (!tranches.length) return <figure className="anneau"><figcaption>{titre}</figcaption><p className="manque">Information manquante</p></figure>;
   return (
     <figure className="anneau" onMouseLeave={() => setActif(null)}>
@@ -75,37 +85,31 @@ export function Anneau({ titre, parts }: { titre: string; parts: Part[] }) {
       <div className="anneau__graphique">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={tranches} dataKey="valeur" nameKey="libelle" innerRadius="66%" outerRadius="88%" startAngle={90} endAngle={-270}
-              paddingAngle={0} stroke="var(--surface)" strokeWidth={tranches.length > 1 ? 4 : 0} isAnimationActive
-              animationDuration={duree} onMouseEnter={(_, i) => setActif(tranches[i]?.id ?? null)}
+            <Pie data={tranches} dataKey="valeur" nameKey="libelle" innerRadius={0} outerRadius="94%" startAngle={90} endAngle={-270}
+              paddingAngle={0} stroke="var(--surface)" strokeWidth={tranches.length > 1 ? 2 : 0} isAnimationActive
+              animationDuration={duree} onMouseEnter={(_, i) => setActif(tranches[i]?.id ?? null)} onClick={(_, i) => setActif(tranches[i]?.id ?? null)}
               labelLine={false} label={etiquette}>
               {tranches.map((t) => (
-                <Cell key={t.id} fill={t.couleur} className="anneau__part"
-                  opacity={actif && actif !== t.id ? 0.28 : 1} />
+                <Cell key={t.id} fill={t.couleur} className="anneau__part" opacity={actif && actif !== t.id ? 0.3 : 1} />
               ))}
             </Pie>
             <Tooltip content={() => null} />
           </PieChart>
         </ResponsiveContainer>
-        <div className="anneau__centre" aria-hidden="true">
-          {survol ? (
-            <>
-              <strong>{formaterChiffre(chiffres[survol.id])}</strong>
-              <span>{survol.libelle}</span>
-            </>
-          ) : (
-            <>
-              <strong>{legende[0] ? pct.format(legende[0].valeur) : ""}</strong>
-              <span>{legende[0]?.libelle}</span>
-            </>
-          )}
-        </div>
+      </div>
+      {/* Détail de la part survolée : toujours au même endroit, sous le camembert, donc lisible aussi au toucher. */}
+      <div className={survol ? "anneau__detail anneau__detail--actif" : "anneau__detail"} aria-live="polite">
+        {survol ? (
+          <>
+            <strong><span className="anneau__pastille" style={{ background: survol.couleur }} aria-hidden="true" /> {survol.libelle} : {formaterChiffre(chiffres[survol.id])}</strong>
+            {poids ? <span>{Object.entries(poids).sort((a, b) => b[1] - a[1]).map(([sym, w]) => `${sym} ${pct.format(w)}`).join(" · ")}</span> : null}
+          </>
+        ) : <span>Survolez ou touchez une part pour son détail.</span>}
       </div>
       <ul className="anneau__legende">
-        {legende.map((t) => (
+        {tranches.map((t) => (
           <li key={t.id} className={actif === t.id ? "anneau__entree anneau__entree--actif" : actif ? "anneau__entree anneau__entree--terne" : "anneau__entree"}
-            onMouseEnter={() => setActif(t.id)} onFocus={() => setActif(t.id)}
-            title={t.symboles.length > 1 || t.symboles[0] !== t.libelle ? t.symboles.join(", ") : undefined}>
+            onMouseEnter={() => setActif(t.id)} onFocus={() => setActif(t.id)}>
             <span className="anneau__pastille" style={{ background: t.couleur }} aria-hidden="true" />
             <span className="anneau__nom">{t.libelle}</span>
             <Chiffre id={t.id} />
@@ -160,12 +164,18 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
   const demande = s.graphiques?.cours?.symbole ?? s.demande_analysee?.symboles?.[0]?.symbole;
   const symboles = useMemo(() => Array.from(new Set([...(demande ? [demande] : []), ...ptf.lignes.map((l) => l.symbole)])), [demande, ptf]);
   const [choix, setChoix] = useState(symboles[0]);
+  const focus = useFocus();
+  useEffect(() => {
+    const vise = focus ? symboles.find((x) => rapproche(x, focus.element) || rapproche(univers?.[x]?.nom ?? "", focus.element)) : null;
+    if (vise) setChoix(vise);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus?.n]);
   const symbole = symboles.includes(choix) ? choix : symboles[0];
   const actif = univers?.[symbole];
   const pb = idPb(s, ptf, symbole);
   const d = dates(s, pb);
   const points = useMemo(() => (actif?.hebdo ?? []).map(([date, prix]) => ({ date, prix })), [actif]);
-  const pic = proche(points, d.pic), creux = proche(points, d.creux);
+  const pic = proche(points, d.pic), creux = proche(points, d.creux), retour = proche(points, d.retour);
   const vol = ptf.volatilites?.[symbole] ?? (s.chiffres[`vol_${cle(symbole)}`] ? `vol_${cle(symbole)}` : null);
   const ratt = s.chiffres[`rattrapage_${cle(symbole)}`] ? `rattrapage_${cle(symbole)}` : null;
   // Une graduation par année : le premier cours de l'année (le point le plus proche du 1er janvier
@@ -195,7 +205,8 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
                   axisLine={{ stroke: "var(--axe)" }} tickLine={false} />
                 <YAxis width={56} tick={{ fill: "var(--encre-discrete)", fontSize: 12 }} axisLine={false} tickLine={false}
                   tickFormatter={(v: number) => compact.format(v)} domain={["auto", "auto"]} />
-                {pic && creux ? <ReferenceArea x1={pic.date} x2={creux.date} fill="var(--echec)" fillOpacity={0.08} stroke="none" /> : null}
+                {pic && creux ? <ReferenceArea x1={pic.date} x2={creux.date} fill="var(--echec)" fillOpacity={0.14} stroke="none"
+                  label={{ value: "Pire baisse", position: "insideTop", fill: "var(--echec)", fontSize: 12, fontWeight: 700 }} /> : null}
                 <Tooltip cursor={{ stroke: "var(--axe)", strokeWidth: 1 }} content={({ active, payload }) => {
                   const p = payload?.[0]?.payload as { date: string; prix: number } | undefined;
                   return active && p ? (
@@ -205,10 +216,12 @@ export function CoursCommentes({ s, ptf }: { s: SortiePipeline; ptf: Portefeuill
                 }} />
                 <Line type="monotone" dataKey="prix" stroke="var(--serie-1)" strokeWidth={2} dot={false} activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
                   isAnimationActive animationDuration={duree} />
-                {pic ? <ReferenceDot x={pic.date} y={pic.prix} r={5} fill="var(--encre)" stroke="var(--surface)" strokeWidth={2}
-                  label={{ value: "Sommet", position: "top", fill: "var(--encre)", fontSize: 12, fontWeight: 700 }} /> : null}
-                {creux ? <ReferenceDot x={creux.date} y={creux.prix} r={5} fill="var(--echec)" stroke="var(--surface)" strokeWidth={2}
-                  label={{ value: "Creux", position: "bottom", fill: "var(--encre)", fontSize: 12, fontWeight: 700 }} /> : null}
+                {pic ? <ReferenceDot x={pic.date} y={pic.prix} r={6} fill="var(--chart-2)" stroke="var(--surface)" strokeWidth={2}
+                  label={{ value: "Sommet", position: "top", fill: "var(--chart-2)", fontSize: 12, fontWeight: 700 }} /> : null}
+                {creux ? <ReferenceDot x={creux.date} y={creux.prix} r={6} fill="var(--echec)" stroke="var(--surface)" strokeWidth={2}
+                  label={{ value: "Creux", position: "bottom", fill: "var(--echec)", fontSize: 12, fontWeight: 700 }} /> : null}
+                {retour ? <ReferenceDot x={retour.date} y={retour.prix} r={6} fill="var(--ok)" stroke="var(--surface)" strokeWidth={2}
+                  label={{ value: "Retour au sommet", position: "top", fill: "var(--ok)", fontSize: 12, fontWeight: 700 }} /> : null}
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -249,8 +262,8 @@ export function EventailGraphique({ ev }: { ev: Eventail }) {
               axisLine={{ stroke: "var(--axe)" }} tickLine={false} />
             <YAxis width={64} tick={{ fill: "var(--encre-discrete)", fontSize: 12 }} axisLine={false} tickLine={false}
               tickFormatter={(v: number) => `${compact.format(v)} $`} domain={["auto", "auto"]} />
-            {ev.capital ? <ReferenceLine y={ev.capital} stroke="var(--axe)" strokeWidth={1}
-              label={{ value: "Capital de départ", position: "insideBottomLeft", fill: "var(--encre-discrete)", fontSize: 12 }} /> : null}
+            {ev.capital ? <ReferenceLine y={ev.capital} stroke="var(--encre-douce)" strokeWidth={1.5} strokeDasharray="6 5"
+              label={{ value: "Capital de départ", position: "insideBottomRight", fill: "var(--encre-discrete)", fontSize: 12 }} /> : null}
             <Tooltip cursor={{ stroke: "var(--axe)", strokeWidth: 1 }} content={({ active, payload }) => {
               const p = payload?.[0]?.payload as (typeof donnees)[number] | undefined;
               return active && p ? (
@@ -263,9 +276,9 @@ export function EventailGraphique({ ev }: { ev: Eventail }) {
                 </div>
               ) : null;
             }} />
-            <Area dataKey="large" stroke="none" fill="var(--serie-1)" fillOpacity={0.12} isAnimationActive animationDuration={duree} activeDot={false} />
-            <Area dataKey="central" stroke="none" fill="var(--serie-1)" fillOpacity={0.26} isAnimationActive animationDuration={duree} activeDot={false} />
-            <Line dataKey="p50" stroke="var(--serie-1)" strokeWidth={2} dot={false} activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
+            <Area dataKey="large" stroke="var(--chart-1)" strokeOpacity={0.5} strokeWidth={1} fill="var(--chart-1)" fillOpacity={0.2} isAnimationActive animationDuration={duree} activeDot={false} />
+            <Area dataKey="central" stroke="var(--chart-3)" strokeOpacity={0.6} strokeWidth={1} fill="var(--chart-3)" fillOpacity={0.34} isAnimationActive animationDuration={duree} activeDot={false} />
+            <Line dataKey="p50" stroke="var(--chart-2)" strokeWidth={3} dot={false} activeDot={{ r: 5, stroke: "var(--surface)", strokeWidth: 2 }}
               isAnimationActive animationDuration={duree} />
           </ComposedChart>
         </ResponsiveContainer>

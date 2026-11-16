@@ -234,7 +234,9 @@ export function Entree({ da }: { da: DirectionArtistique | null }) {
     <>
       {tableau ? (
         <div aria-hidden={ecran ? true : undefined} inert={ecran ? true : undefined}>
-          <Eagle da={da} compte={session ? { identifiant: session.identifiant, deconnecter } : null} ouvrirModeEmploi={() => setEcran("intro")} />
+          {/* window.eagle : les trois outils de la voix, pour les essais automatiques du site (ils ne font que ce que l'écran permet déjà). */}
+          <Eagle da={da} compte={session ? { identifiant: session.identifiant, deconnecter } : null} ouvrirModeEmploi={() => setEcran("intro")}
+            onApi={(api) => { (window as unknown as { eagle?: unknown }).eagle = api; }} />
         </div>
       ) : null}
       {ecran === "intro" ? <Presentation da={da} terminer={finIntro} suite={tableau ? "Revenir au tableau de bord" : COMPTES_ACTIFS && !session ? "Continuer" : "Commencer"} /> : null}

@@ -5,12 +5,14 @@ import { Aigle } from "./Aigle";
 import { Avatar, FournisseurDa } from "./Da";
 import type { DirectionArtistique } from "@/lib/da";
 import { Voix } from "./Voix";
+import { FocusCtx, type Focus } from "./Focus";
+import { propositions, vueSur } from "@/lib/portefeuilles";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
 import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
-import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
+import { complet, estRepondue, listeDite, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
 import { Choix, Curseur } from "./Questions";
 import { chargerUnivers, completerGraphiques } from "@/lib/repartition";
 import { lireEventail } from "@/lib/scenarios";
@@ -41,7 +43,8 @@ function normaliser(t: string) {
 export type EagleApi = {
   noterProfil: (champ: string, valeur: unknown) => string;
   lancerAnalyse: () => Promise<string>;
-  afficherDiapositive: (id: string) => string;
+  /** `element` : ce que la présentation met en avant sur la diapositive (part d'un camembert, ligne, actif). */
+  afficherDiapositive: (id: string, element?: string) => string;
 };
 
 type Props = {
@@ -64,7 +67,11 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
   const [dernierChamp, setDernierChamp] = useState<string | null>(null);
   const [prenom, setPrenom] = useState("");
   const [demande, setDemande] = useState("");
-  const [sortie, setSortie] = useState<SortiePipeline | null>(null);
+  const [brute, setSortie] = useState<SortiePipeline | null>(null);
+  // Proposition affichée quand ce n'est pas celle retenue par la gouvernance ; null = la retenue.
+  const [vueId, setVueId] = useState<string | null>(null);
+  // Ce que la présentation met en avant (voix) : part de camembert, ligne, actif.
+  const [focus, setFocus] = useState<Focus>(null);
   // Persona de démonstration affiché ; null pour une analyse en direct.
   const [demo, setDemo] = useState<Persona["id"] | null>(null);
   const [diapo, setDiapoBrut] = useState(0);
@@ -99,6 +106,8 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
     if (f) f.scrollTop = f.scrollHeight;
   }, [transcription]);
 
+  // `brute` : la réponse du pipeline. `sortie` : la même, vue sur la proposition choisie (lib/portefeuilles.ts).
+  const sortie = useMemo(() => (brute && vueId ? vueSur(brute, vueId) : brute), [brute, vueId]);
   const diapos = useMemo<Diapositive[]>(() => (sortie ? construireDiapositives(sortie) : []), [sortie]);
   const chiffres = useMemo<Record<string, Reference>>(() => ({
     ...(sortie?.chiffres ?? {}),
@@ -115,6 +124,8 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
   // Questions auxquelles la personne a répondu. Une liste vide (« rien de particulier ») est une
   // réponse : sans ce suivi, l'outil vocal croyait les trois questions à liste déjà traitées.
   const repondues = useRef<Set<string>>(new Set());
+  // Minuterie de l'avance automatique après une réponse dictée (le temps de voir la case se cocher).
+  const avance = useRef<number | undefined>(undefined);
 
   const repondre = (champ: string, valeur: unknown, titre?: string) => {
     repondues.current.add(champ);
@@ -144,6 +155,8 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
   const presenter = useCallback(async (s: SortiePipeline, origine: string) => {
     const complete = await completerGraphiques(s);
     setSortie(complete);
+    setVueId(null);
+    setFocus(null);
     setDiapo(0);
     setActif(null);
     setPhase("presentation");
@@ -193,7 +206,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
   // la réponse du pipeline, déposée dans le stockage local du navigateur pour la page /rapport.
   const exporter = () => {
     if (!sortie) return;
-    if (demo) { window.open(`/rapport/?persona=${demo}`, "_blank"); return; }
+    if (demo && !vueId) { window.open(`/rapport/?persona=${demo}`, "_blank"); return; }
     try {
       window.localStorage.setItem(CLE_DOSSIER, JSON.stringify(sortie));
       window.open("/rapport/?source=analyse", "_blank");
@@ -281,13 +294,45 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
 
   // ---------- Outils de la voix ----------
 
-  const afficher = useCallback((id: string): string => {
+  /** Passe à la proposition suivante (retenue -> autres -> retenue). Renvoie le texte que la voix lit. */
+  const autreProposition = useCallback((): string => {
+    if (!brute) return "Aucune analyse à l'écran : il n'y a pas encore de proposition.";
+    const ids = propositions(brute);
+    if (ids.length < 2) return "Le pipeline n'a retenu qu'une proposition pour ce profil : il n'y en a pas d'autre à montrer. Pour un résultat différent, il faut modifier une réponse du profil.";
+    const suivant = ids[(ids.indexOf(vueId ?? ids[0]) + 1) % ids.length];
+    setActif(null);
+    setFocus(null);
+    setDiapo(0);
+    if (suivant === ids[0]) {
+      setVueId(null);
+      dire(`Retour à la proposition ${ids[0]}, celle que la gouvernance a retenue.`);
+      return `Retour à la proposition ${ids[0]}, celle que la gouvernance a retenue. Toutes les propositions ont été montrées.`;
+    }
+    setVueId(suivant);
+    dire(`Voici la proposition ${suivant}. La gouvernance avait retenu la proposition ${ids[0]}.`);
+    return construireDiapositives(vueSur(brute, suivant)).find((d) => d.id === "alternative")?.texte ?? `Proposition ${suivant} affichée.`;
+  }, [brute, vueId, dire]);
+
+  const afficher = useCallback((id: string, element?: string): string => {
+    if (id === "alternative") return autreProposition();
     const k = diapos.findIndex((d) => d.id === id);
     if (k < 0) return `Diapositive inconnue. Disponibles : ${diapos.map((d) => d.id).join(", ") || "aucune (analyse pas encore faite)"}.`;
     setActif(null);
     setDiapo(k);
-    return diapos[k].texte;
-  }, [diapos]);
+    // La voix montre ce dont elle parle : la part, la ligne ou l'actif s'allume à l'écran.
+    const e = (element ?? "").trim();
+    setFocus((f) => (e ? { element: e, n: (f?.n ?? 0) + 1 } : null));
+    return e ? `« ${e} » est mis en avant sur la diapositive ${id}. ${diapos[k].texte}` : diapos[k].texte;
+  }, [diapos, autreProposition]);
+
+  /** Rouvre les questions avec les réponses déjà données : on corrige, puis on relance l'analyse. */
+  const modifierProfil = () => {
+    setActif(null);
+    setPhase("accueil");
+    setSens("arriere");
+    setQuestion(0);
+    dire("Reprenons votre profil : vos réponses sont conservées. Modifiez celles que vous souhaitez, puis relancez l'analyse.");
+  };
 
   const api = useRef<EagleApi | null>(null);
   api.current = {
@@ -296,10 +341,24 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
       if (champ === "prenom") setPrenom(String(valeur));
       else if (champ === "demande") setDemande(String(valeur));
       else {
-        repondre(champ, valeur);
-        // Curseur ou liste : l'écran avance avec la voix (un choix simple avance déjà seul).
-        const q = QUESTIONS[question];
-        if (q && q.champ === champ && (q.type === "curseur" || q.multiple)) suivante();
+        const k = QUESTIONS.findIndex((q) => q.champ === champ);
+        const q = QUESTIONS[k];
+        if (q.type === "choix" && q.multiple) valeur = listeDite(q, profil[q.champ] as string[] | undefined, valeur);
+        repondues.current.add(champ);
+        setProfil((p) => noter(p, champ, valeur));
+        setDernierChamp(champ);
+        if (phase === "accueil") {
+          // L'écran montre la question dont on parle, avec la réponse cochée, puis avance de lui-même.
+          setSens(k < question ? "arriere" : "avant");
+          setQuestion(k);
+          window.clearTimeout(avance.current);
+          avance.current = window.setTimeout(() => {
+            const suivant = QUESTIONS.findIndex((x, i) => i > k && !repondues.current.has(x.champ));
+            setSens("avant");
+            if (suivant >= 0) setQuestion(suivant);
+            else if (QUESTIONS.every((x) => repondues.current.has(x.champ))) setPhase("recap");
+          }, 1800);
+        }
       }
       // La voix apprend ce qui manque encore, dans l'ordre des questions.
       const apres = noter(profil, champ, valeur);
@@ -323,7 +382,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
     onApi?.({
       noterProfil: (c, v) => api.current!.noterProfil(c, v),
       lancerAnalyse: () => api.current!.lancerAnalyse(),
-      afficherDiapositive: (id) => api.current!.afficherDiapositive(id),
+      afficherDiapositive: (id, element) => api.current!.afficherDiapositive(id, element),
     });
   }, [onApi]);
 
@@ -444,6 +503,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
   return (
     <FournisseurDa da={da}>
     <FournisseurChiffres valeur={ctx}>
+    <FocusCtx.Provider value={focus}>
       <div className="eagle">
         <aside className="eagle__gauche">
           {da?.logoHorizontal ? (
@@ -453,7 +513,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
             <Avatar etat={etatAvatar} taille={132} repli={<Aigle taille={120} actif={enCours} />} />
             <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
           </div>
-          <Voix api={api} dire={dire} surParole={setVoixParle} surLigne={surLigne} />
+          <Voix api={api} dire={dire} surParole={setVoixParle} surLigne={surLigne} reflechit={enCours} />
           <div className="transcription" ref={filTranscription} tabIndex={0} aria-live="polite" aria-label="Transcription, défilement vertical">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>
@@ -520,7 +580,18 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
             ))}
           </dl>
           {sortie ? (
-            <button type="button" className="bouton bouton--secondaire" onClick={exporter}>Exporter le dossier</button>
+            <div className="eagle__actions">
+              {phase === "presentation" && brute && propositions(brute).length > 1 ? (
+                <button type="button" className="bouton bouton--secondaire" onClick={() => void autreProposition()}
+                  title="Le pipeline a vérifié plusieurs propositions : voyez les autres, et ce que votre profil impose à toutes.">
+                  {vueId ? `Proposition ${vueId} affichée · suivante` : "Voir une autre proposition"}
+                </button>
+              ) : null}
+              {phase === "presentation" ? (
+                <button type="button" className="bouton bouton--secondaire" onClick={modifierProfil}>Modifier mon profil</button>
+              ) : null}
+              <button type="button" className="bouton bouton--secondaire" onClick={exporter}>Exporter le dossier</button>
+            </div>
           ) : null}
           <div className="demos">
             <p className="demos__titre">Démonstration</p>
@@ -534,6 +605,7 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
         </aside>
         {fiche ? <FicheReference id={fiche} fermer={() => setFiche(null)} /> : null}
       </div>
+    </FocusCtx.Provider>
     </FournisseurChiffres>
     </FournisseurDa>
   );

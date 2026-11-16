@@ -8,6 +8,7 @@ import { CoursCommentes, EventailGraphique, TroisAnneaux } from "./Visualisation
 import { phraseCours } from "./Graphiques";
 import { Pages, type Element } from "./Pages";
 import type { VerdictActif } from "@/lib/api";
+import { contraintesDuProfil, ecarts } from "@/lib/portefeuilles";
 import { lireEventail } from "@/lib/scenarios";
 import type { Reference, SortiePipeline } from "@/lib/types";
 
@@ -16,7 +17,7 @@ import type { Reference, SortiePipeline } from "@/lib/types";
 // les chiffres de ce texte viennent de la table « chiffres », rien d'autre.
 
 export type Diapositive = {
-  id: "demarche" | "demande" | "adequation" | "repartition" | "lignes" | "cours" | "scenarios" | "verifications" | "limites";
+  id: "alternative" | "demarche" | "demande" | "adequation" | "repartition" | "lignes" | "cours" | "scenarios" | "verifications" | "limites";
   court: string;
   titre: string;
   justification: string;
@@ -68,7 +69,32 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
     "ESG et qualité": sp?.esg?.constats ?? [],
   };
   const nbConstats = Object.values(constats).reduce((n, t) => n + t.length, 0);
+
+  // Autre proposition (lib/portefeuilles.ts) : ce qui change, et ce que le profil impose à toutes.
+  const imposes = contraintesDuProfil(s);
+  const changements = s.vue ? ecarts(s, ptf.id) : [];
+  const SUITE = "Pour dépasser ces plafonds, il faut changer une réponse du profil, par exemple l'horizon ou la tolérance au risque : « Modifier mon profil » rouvre les questions et relance l'analyse. Sinon, la proposition reste dans ces limites, quelle que soit la demande.";
+  const alternative: Diapositive[] = s.vue ? [{
+    id: "alternative", court: `Proposition ${ptf.id}`, titre: `Autre proposition : ${ptf.id}, ${ptf.nom}`,
+    justification: `La gouvernance a retenu la proposition ${s.vue.retenu}. Celle-ci a passé les mêmes contrôles. Voici ce qui change, et ce que votre profil impose à toutes les propositions.`,
+    contenu: (
+      <Pages classe="diapo__liste" elements={[
+        { cle: "intention", contenu: <p className="diapo__phrase">{typo(ptf.intention)}</p> },
+        { cle: "t1", contenu: <h3 className="limites__intertitre">Ce qui change par rapport à la proposition {s.vue.retenu}</h3> },
+        ...changements.map((t, i) => ({ cle: `e${i}`, contenu: <p className="puce"><Texte>{t}</Texte></p> })),
+        { cle: "t2", contenu: <h3 className="limites__intertitre">Ce que vos réponses imposent à toute proposition</h3> },
+        ...(imposes.length
+          ? imposes.map((x, i) => ({ cle: `c${i}`, contenu: <p className="puce"><strong>{x.libelle}</strong> : <Texte>{x.texte}</Texte></p> }))
+          : [{ cle: "c-manque", contenu: <p className="diapo__manque">Information manquante : la réponse du pipeline ne contient pas ses contraintes.</p> }]),
+        { cle: "suite", contenu: <p className="diapo__alerte">{typo(SUITE)}</p> },
+      ]} />
+    ),
+    texte: [`Proposition ${ptf.id} : ${ptf.nom}. ${ptf.intention}`, `La gouvernance avait retenu la proposition ${s.vue.retenu}.`,
+      ...changements.map((t) => brut(t, c)), "Ce que vos réponses imposent à toute proposition :",
+      ...imposes.map((x) => `${x.libelle} : ${brut(x.texte, c)}`), SUITE].join(" "),
+  }] : [];
   return [
+    ...alternative,
     {
       id: "demarche", court: "Démarche", titre: "Comment ce portefeuille a été établi",
       justification: nbConstats
@@ -110,13 +136,15 @@ export function construireDiapositives(s: SortiePipeline): Diapositive[] {
     {
       id: "repartition", court: "Répartition", titre: `Répartition du portefeuille simulé ${ptf.id} : ${ptf.nom}`, justification: ptf.intention,
       contenu: <TroisAnneaux s={s} ptf={ptf} />,
-      texte: [ptf.intention, ...(["classe", "secteur", "zone"] as const).map((k) => `${{ classe: "Par classe d'actif", secteur: "Par secteur", zone: "Par zone" }[k]} : ${(reps?.[k] ?? []).map((p) => `${p.libelle} ${brut(`{${p.id}}`, c)}`).join(", ")}.`)].join(" "),
+      texte: [ptf.intention, ...(["classe", "secteur", "zone"] as const).map((k) => `${{ classe: "Par classe d'actif", secteur: "Par secteur", zone: "Par zone" }[k]} : ${(reps?.[k] ?? []).map((p) => `${p.libelle} ${brut(`{${p.id}}`, c)}`).join(", ")}.`),
+        `Éléments que vous pouvez montrer à l'écran (paramètre element) : ${[...(reps?.classe ?? []), ...(reps?.secteur ?? [])].map((p) => p.libelle).join(" ; ")}.`].join(" "),
     },
     {
       id: "lignes", court: "Lignes", titre: `Les lignes du portefeuille simulé ${ptf.id}`,
       justification: "Une fiche par ligne : ce qu'elle est, pourquoi elle est là pour vous, ses chiffres et ses sources.",
       contenu: <FichesLignes s={s} />,
-      texte: ptf.lignes.map((l) => `${l.nom} (${l.symbole}), ${brut(l.poids_id ? `{${l.poids_id}}` : "", c) || `${Math.round(l.poids * 100)} %`} : ${l.pourquoi ? brut(l.pourquoi, c) : `${MANQUE} sur la raison de cette ligne.`}`).join(" "),
+      texte: ptf.lignes.map((l) => `${l.nom} (${l.symbole}), ${brut(l.poids_id ? `{${l.poids_id}}` : "", c) || `${Math.round(l.poids * 100)} %`} : ${l.pourquoi ? brut(l.pourquoi, c) : `${MANQUE} sur la raison de cette ligne.`}`).join(" ")
+        + ` Éléments que vous pouvez montrer à l'écran (paramètre element) : ${ptf.lignes.map((l) => l.symbole).join(" ; ")}.`,
     },
     {
       id: "cours", court: "Cours", titre: "Cours commentés", justification: "Le cours de l'actif demandé et de chaque ligne du portefeuille simulé, avec sa pire baisse sur la fenêtre. Survolez la courbe pour lire une date.",

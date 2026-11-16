@@ -47,6 +47,17 @@ def scenarios_du_portefeuille(sortie: dict[str, Any]) -> dict[str, Any] | None:
                               float(profil.get("capital_fictif", 10_000)), profil.get("devise", "CAD"))
 
 
+def scenarios_par_portefeuille(sortie: dict[str, Any]) -> dict[str, Any]:
+    """Un éventail par portefeuille proposé : la personne peut demander à voir une autre proposition."""
+    profil = sortie.get("profil", {})
+    resultat = {}
+    for p in sortie.get("portefeuilles") or []:
+        poids = {ligne["symbole"]: ligne["poids"] for ligne in p["lignes"]}
+        resultat[p["id"]] = eventail_scenarios(poids, int(profil.get("horizon_annees", 10)),
+                                               float(profil.get("capital_fictif", 10_000)), profil.get("devise", "CAD"))
+    return resultat
+
+
 def analyser(corps: dict[str, Any]) -> dict[str, Any]:
     """Lance le pipeline pour un profil quelconque et ajoute l'éventail de scénarios."""
     from pydantic import ValidationError
@@ -64,6 +75,7 @@ def analyser(corps: dict[str, Any]) -> dict[str, Any]:
 
     sortie = Session(profil, demande, corps.get("prenom") or None).executer()
     sortie["scenarios"] = scenarios_du_portefeuille(sortie)
+    sortie["scenarios_par_portefeuille"] = scenarios_par_portefeuille(sortie)
     return sortie
 
 
@@ -73,6 +85,7 @@ def demonstration(nom: str) -> dict[str, Any]:
         raise Refus("Persona inconnu. Choix : robert, amira, mateo.")
     sortie = json.loads(chemin.read_text(encoding="utf-8"))
     sortie.setdefault("scenarios", scenarios_du_portefeuille(sortie))
+    sortie.setdefault("scenarios_par_portefeuille", scenarios_par_portefeuille(sortie))
     return sortie
 
 

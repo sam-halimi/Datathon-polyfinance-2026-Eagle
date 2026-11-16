@@ -40,6 +40,22 @@ export function formaterHorizon(annees: number): string {
   return `${entier.format(annees)} an${annees > 1 ? "s" : ""}`;
 }
 
+const SECTEURS_FR: Record<string, string> = {
+  Financials: "Finance", Energy: "Énergie", Industrials: "Industrie", Utilities: "Services publics",
+  "Consumer Staples": "Consommation de base", "Consumer Discretionary": "Consommation discrétionnaire",
+  "Information Technology": "Technologies de l'information", "Communication Services": "Communications",
+  "Health Care": "Santé", "Real Estate": "Immobilier", Gold: "Or", "Crypto asset": "Cryptoactif",
+};
+
+/** Secteur tel qu'écrit dans les tables d'actifs (en anglais) -> libellé français. Inconnu : inchangé. */
+export function secteurEnFrancais(s: string): string {
+  if (SECTEURS_FR[s]) return SECTEURS_FR[s];
+  if (s.startsWith("Broad market")) return `Actions, marché large${s.includes("(") ? ` ${s.slice(s.indexOf("("))}` : ""}`;
+  if (s.startsWith("Bonds")) return `Obligations${s.includes("(") ? ` ${s.slice(s.indexOf("("))}` : ""}`;
+  if (s.startsWith("Theme:")) return `Thème : ${s.slice(6).trim()}`;
+  return s;
+}
+
 export function majuscule(t: string): string {
   return t ? t[0].toUpperCase() + t.slice(1) : t;
 }

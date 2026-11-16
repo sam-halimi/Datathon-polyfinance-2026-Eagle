@@ -32,7 +32,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(RACINE))
 
-from agents.serveur import scenarios_du_portefeuille  # noqa: E402
+from agents.serveur import scenarios_du_portefeuille, scenarios_par_portefeuille  # noqa: E402
 from tools.donnees import charger_prix, fichier_prix, univers as table_univers  # noqa: E402
 
 SORTIES = RACINE / "agents" / "sorties"
@@ -233,6 +233,7 @@ def main():
             "cours": cours(symbole, sortie, prix) | {"nom": univers[symbole]["name"]},
             "chiffres": chiffres,
             "scenarios": scenarios_du_portefeuille(sortie),
+            "scenarios_par_portefeuille": scenarios_par_portefeuille(sortie),
         }
         chemin = DESTINATION / f"{persona}.json"
         chemin.write_text(json.dumps(donnees, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

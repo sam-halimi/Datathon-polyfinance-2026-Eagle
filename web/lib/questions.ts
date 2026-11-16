@@ -154,6 +154,53 @@ export function noter(profil: Partial<Profil>, champ: string, valeur: unknown): 
   return { ...profil, [champ]: valeur };
 }
 
+function sansAccent(t: string): string {
+  return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+/** Mots que les gens disent pour une option, quand ils ne reprennent pas son libellé. */
+const AUTREMENT_DIT: Record<string, string[]> = {
+  ESG: ["esg", "investissement responsable", "responsable", "ethique", "durable"],
+  dividendes: ["dividende", "dividendes", "revenus de dividendes"],
+  Canada: ["canada", "canadien", "marche canadien", "toronto"],
+  "États-Unis": ["etats unis", "usa", "americain", "marche americain"],
+  "FNB indiciels": ["fnb", "fonds indiciels", "indiciel", "etf"],
+  "sociétés établies": ["societes etablies", "grandes entreprises", "entreprises solides"],
+  "faible volatilité": ["faible volatilite", "stable", "peu de variations"],
+  "énergies fossiles": ["energies fossiles", "petrole", "gaz", "charbon", "fossile", "fossiles"],
+  controverses: ["controverse", "controverses", "societes controversees"],
+  crypto: ["crypto", "cryptos", "cryptomonnaie", "cryptomonnaies", "cryptoactifs", "bitcoin"],
+  or: ["or", "l or", "metaux precieux"],
+  finance: ["finance", "banques", "banque", "secteur financier", "assureurs"],
+  tabac: ["tabac", "cigarettes"],
+  armement: ["armement", "armes", "defense"],
+  technologie: ["technologie", "techno", "tech"],
+  "intelligence artificielle": ["intelligence artificielle", "ia"],
+  "jeu vidéo": ["jeu video", "jeux video", "gaming"],
+  "santé": ["sante", "medical", "pharmaceutique"],
+  "énergie propre": ["energie propre", "energies propres", "energie verte", "renouvelable", "renouvelables"],
+  immobilier: ["immobilier", "immo"],
+  luxe: ["luxe"], sport: ["sport", "sports"], "aérospatiale": ["aerospatiale", "aerospatial", "aviation", "espace"],
+  alimentation: ["alimentation", "agroalimentaire", "agriculture"],
+};
+
+/** Réponse dictée à une question à plusieurs choix : chaque mot est ramené à la valeur de son option
+ *  (pour que la case se coche à l'écran), un texte inconnu reste une réponse libre.
+ *  Une seule valeur s'ajoute aux choix déjà faits ; plusieurs valeurs, ou « aucun », remplacent la liste. */
+export function listeDite(q: QuestionChoix, actuel: string[] | undefined, valeur: unknown): string[] {
+  const dits = (Array.isArray(valeur) ? valeur.map(String) : String(valeur ?? "").split(/[,;]|\bet\b/)).map((x) => x.trim()).filter(Boolean);
+  const rien = dits.length === 0 || dits.every((x) => /^(aucun|aucune|rien|non|pas de preference|sans)$/.test(sansAccent(x)));
+  if (rien) return [];
+  const versOption = (x: string): string => {
+    const n = sansAccent(x);
+    const o = q.options.find((o) => sansAccent(String(o.valeur)) === n || sansAccent(o.titre) === n
+      || (AUTREMENT_DIT[String(o.valeur)] ?? []).includes(n));
+    return o ? String(o.valeur) : x;
+  };
+  const valeurs = Array.from(new Set(dits.map(versOption)));
+  return valeurs.length > 1 ? valeurs : Array.from(new Set([...(actuel ?? []), ...valeurs]));
+}
+
 /** Le profil envoyé à POST /analyse. Avec le curseur, `connaissance` n'est pas
  *  envoyée : le serveur la déduit de `connaissance_niveau`. */
 export function profilPourAnalyse(p: Profil): Record<string, unknown> {

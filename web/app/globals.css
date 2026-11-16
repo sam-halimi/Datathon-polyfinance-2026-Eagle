@@ -1449,3 +1449,50 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 
 /* Le cadre du champ porte déjà l'état « sélectionné » : pas de second contour sur le champ lui-même. */
 .curseur__champ input:focus-visible { outline: none; }
+
+/* ======================================================================
+   Graphiques : camemberts pleins et interactifs, couleurs de la charte.
+   ====================================================================== */
+
+.anneau { gap: 6px; }
+.anneau__graphique { height: min(210px, 26vh); }
+.anneau__part { cursor: pointer; }
+.anneau__etiquette { fill: #fff; font-size: 13px; font-weight: 700; paint-order: stroke; stroke: rgba(17, 20, 23, 0.35); stroke-width: 2px; }
+.anneau__etiquette--sombre { fill: var(--bg); stroke: none; }
+.anneau__detail {
+  min-height: 46px; display: grid; gap: 2px; align-content: center; padding: 6px 10px; border-radius: var(--rayon-m);
+  font-size: 13px; line-height: 1.3; color: var(--encre-douce); background: var(--surface-2); border: 1px solid transparent;
+}
+.anneau__detail--actif { color: var(--encre); border-color: var(--border-strong); }
+.anneau__detail strong { font-size: 14.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.anneau__detail .anneau__pastille { margin-top: 0; flex: none; }
+.anneau__entree { cursor: default; }
+@media (max-height: 820px) { .anneau__graphique { height: min(170px, 22vh); } .anneau__detail { min-height: 40px; font-size: 12.5px; } }
+
+/* Éventail : la légende reprend les trois couleurs du graphique. */
+.eventail__cle--mediane { background: var(--chart-2); height: 4px; }
+.eventail__cle--central { background: color-mix(in srgb, var(--chart-3) 55%, transparent); }
+.eventail__cle--large { background: color-mix(in srgb, var(--chart-1) 40%, transparent); }
+
+/* Lignes : le capital en une barre de couleurs, une par ligne, reprise sur les onglets. */
+.lignes-barre { display: flex; gap: 2px; height: 30px; border-radius: var(--rayon-m); overflow: hidden; flex: none; }
+.lignes-barre__part {
+  flex-basis: 0; min-width: 4px; border: 0; padding: 0; display: grid; place-items: center; cursor: pointer;
+  opacity: 0.82; transition: opacity var(--duree-courte) ease-out, box-shadow var(--duree-courte) ease-out;
+}
+.lignes-barre__part:hover { opacity: 1; }
+.lignes-barre__part--actif { opacity: 1; box-shadow: inset 0 0 0 2px var(--encre); }
+.lignes-barre__part span { font-size: 11.5px; font-weight: 700; color: var(--bg); white-space: nowrap; }
+.onglet__pastille { width: 10px; height: 10px; border-radius: 3px; flex: none; align-self: center; }
+
+/* Pause de l'appel et actions du tableau de bord. */
+.voix { display: grid; gap: 8px; }
+.voix__pause {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 40px;
+  border: 1px solid var(--border-strong); background: var(--surface-1); color: var(--encre); border-radius: var(--rayon-m);
+  font-size: 14.5px; font-weight: 600;
+}
+.voix__pause:hover { border-color: var(--accent); }
+.voix__pause--actif { background: var(--alerte-fond); border-color: var(--alerte); color: var(--alerte); }
+.eagle__actions { display: grid; gap: 8px; }
+.eagle__actions .bouton { min-height: 42px; font-size: 14.5px; }

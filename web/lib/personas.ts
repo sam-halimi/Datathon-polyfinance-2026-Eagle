@@ -66,9 +66,11 @@ export function estPersona(id: string | null): id is Persona["id"] {
 export async function chargerSortie(id: Persona["id"]): Promise<SortiePipeline> {
   const [m, g] = await Promise.all([CHARGEURS[id](), GRAPHIQUES[id]()]);
   const sortie = m.default as Omit<SortiePipeline, "graphiques">;
-  const { scenarios, ...graphiques } = g.default as Graphiques & { scenarios?: SortiePipeline["scenarios"] };
+  const { scenarios, scenarios_par_portefeuille, ...graphiques } = g.default as Graphiques
+    & { scenarios?: SortiePipeline["scenarios"]; scenarios_par_portefeuille?: SortiePipeline["scenarios_par_portefeuille"] };
   // L'éventail de scénarios du portefeuille retenu est calculé avec les graphiques
   // (tools.scenarios.eventail_scenarios) : la démonstration l'affiche sans serveur.
   return { ...sortie, graphiques: graphiques as Graphiques, scenarios: sortie.scenarios ?? scenarios ?? undefined,
+    scenarios_par_portefeuille: sortie.scenarios_par_portefeuille ?? scenarios_par_portefeuille ?? undefined,
     chiffres: { ...sortie.chiffres, ...graphiques.chiffres } };
 }

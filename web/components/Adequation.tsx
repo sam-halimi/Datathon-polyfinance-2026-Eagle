@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
 import { Chiffre, Texte, typo } from "./Chiffres";
 import { cleIllustration, Illustration } from "./Da";
+import { rapproche, useFocus } from "./Focus";
 import { Pages, type Element } from "./Pages";
-import { formaterDate, formaterPoids } from "@/lib/format";
+import { formaterDate, formaterPoids, secteurEnFrancais } from "@/lib/format";
 import type { Adequation, Ligne, Portefeuille, SortiePipeline } from "@/lib/types";
 
 // Format v2 de la sortie (docs/sortie-pipeline.md, branche agents-eagle) :
@@ -89,9 +90,19 @@ function Sources({ sources }: { sources?: Ligne["sources"] }) {
   );
 }
 
+/** Couleurs de la charte pour les lignes d'un portefeuille (chart-1 à 8, puis on recommence). */
+const COULEURS_LIGNES = Array.from({ length: 8 }, (_, i) => `var(--chart-${i + 1})`);
+
 export function FichesLignes({ s }: { s: SortiePipeline }) {
   const ptf = retenu(s);
   const [choix, setChoix] = useState(ptf.lignes[0]?.symbole);
+  // La présentation vocale ouvre la fiche de la ligne dont elle parle.
+  const focus = useFocus();
+  useEffect(() => {
+    const vise = focus ? ptf.lignes.find((x) => rapproche(x.symbole, focus.element) || rapproche(x.nom, focus.element)) : null;
+    if (vise) setChoix(vise.symbole);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus?.n]);
   const l = ptf.lignes.find((x) => x.symbole === choix) ?? ptf.lignes[0];
   if (!l) return <p className="diapo__manque"><Manque quoi="le portefeuille retenu n'a pas de lignes." /></p>;
   const ch = l.chiffres ?? {};
@@ -100,10 +111,21 @@ export function FichesLignes({ s }: { s: SortiePipeline }) {
   const part = ch.part_du_risque ?? ptf.parts_du_risque?.[l.symbole];
   return (
     <div className="fiches-lignes">
+      {/* Le capital en une barre : une couleur par ligne, la même que sur son onglet. Toucher un segment ouvre la fiche. */}
+      <div className="lignes-barre" role="img" aria-label={`Répartition du capital : ${ptf.lignes.map((x) => `${x.symbole} ${formaterPoids(x.poids)}`).join(", ")}`}>
+        {ptf.lignes.map((x, i) => (
+          <button key={x.symbole} type="button" tabIndex={-1} title={`${x.nom} : ${formaterPoids(x.poids)}`}
+            className={x.symbole === l.symbole ? "lignes-barre__part lignes-barre__part--actif" : "lignes-barre__part"}
+            style={{ flexGrow: x.poids, background: COULEURS_LIGNES[i % COULEURS_LIGNES.length] }} onClick={() => setChoix(x.symbole)}>
+            {x.poids >= 0.09 ? <span>{x.symbole}</span> : null}
+          </button>
+        ))}
+      </div>
       <div className="fiches-lignes__onglets" role="tablist" aria-label="Lignes du portefeuille">
-        {ptf.lignes.map((x) => (
+        {ptf.lignes.map((x, i) => (
           <button key={x.symbole} type="button" role="tab" aria-selected={x.symbole === l.symbole}
             className={x.symbole === l.symbole ? "onglet onglet--actif" : "onglet"} onClick={() => setChoix(x.symbole)}>
+            <span className="onglet__pastille" style={{ background: COULEURS_LIGNES[i % COULEURS_LIGNES.length] }} aria-hidden="true" />
             <span className="onglet__symbole">{x.symbole}</span><span className="onglet__poids">{formaterPoids(x.poids)}</span>
           </button>
         ))}
@@ -121,7 +143,7 @@ export function FichesLignes({ s }: { s: SortiePipeline }) {
         <div className="fiche-ligne__corps">
           <dl className="fiche-ligne__identite">
             <Champ nom="Classe">{l.classe || <Manque />}</Champ>
-            <Champ nom="Secteur">{l.secteur ?? <Manque />}</Champ>
+            <Champ nom="Secteur">{l.secteur ? secteurEnFrancais(l.secteur) : <Manque />}</Champ>
             <Champ nom="Pays">{l.pays ?? <Manque />}</Champ>
             <Champ nom="Devise">{l.devise ?? <Manque />}</Champ>
             <Champ nom="Volatilité">{vol ? <Chiffre id={vol} /> : <Manque />}</Champ>

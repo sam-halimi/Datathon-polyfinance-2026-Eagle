@@ -2841,5 +2841,345 @@
    ],
    "avertissement": "Ce n'est pas une prévision. L'éventail repose sur 61 mois observés seulement : l'avenir peut en sortir, vers le haut comme vers le bas."
   }
+ },
+ "scenarios_par_portefeuille": {
+  "A": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "ESGV": 0.3,
+     "XBB.TO": 0.25,
+     "XEF.TO": 0.15,
+     "ZST.TO": 0.15,
+     "XIU.TO": 0.1,
+     "PG": 0.05
+    },
+    "horizon_annees": 8,
+    "capital": 50000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "p10": [
+     50000.0,
+     48617.0655867636,
+     50652.21309493863,
+     52915.476544942365,
+     55707.302080015754,
+     59101.920122045856,
+     61992.57630291681,
+     65832.02946330619,
+     69923.77771446403
+    ],
+    "p25": [
+     50000.0,
+     51267.24160484263,
+     54376.96057892796,
+     57889.512542163895,
+     61466.848606130116,
+     65528.418152097336,
+     69895.19143731201,
+     75408.87367210249,
+     80492.8505371528
+    ],
+    "p50": [
+     50000.0,
+     54330.98171121511,
+     58591.75401399164,
+     63496.04325570664,
+     68565.33333976941,
+     74264.599800712,
+     80154.43185761181,
+     86881.77004484637,
+     93981.9352277697
+    ],
+    "p75": [
+     50000.0,
+     57281.33507342287,
+     63499.149874366885,
+     69476.1257730297,
+     75990.06965329857,
+     83806.79713851432,
+     91126.46487094543,
+     99742.57015632992,
+     109628.36563413378
+    ],
+    "p90": [
+     50000.0,
+     59855.56294744482,
+     68077.52311706146,
+     75544.14477596662,
+     84063.35124637467,
+     93783.03375772465,
+     102793.35463727941,
+     113889.7952080255,
+     125024.63567150221
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 50000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "base/prix_etendus.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.004,
+    "pire_mois_observe": -0.04349965330611916,
+    "meilleur_mois_observe": 0.05300635674286758,
+    "hypotheses": [
+     "Poids constants, sans frais, sans impôts, sans inflation.",
+     "Les mois futurs ressemblent aux mois observés et sont indépendants entre eux.",
+     "L'éventail hérite du rendement moyen de la fenêtre observée, qui ne se répétera pas forcément."
+    ],
+    "avertissement": "Ce n'est pas une prévision. L'éventail repose sur 61 mois observés seulement : l'avenir peut en sortir, vers le haut comme vers le bas."
+   }
+  },
+  "C": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "ESGV": 0.25,
+     "ZST.TO": 0.2,
+     "XBB.TO": 0.2,
+     "XIU.TO": 0.1,
+     "XEF.TO": 0.1,
+     "VGK": 0.1,
+     "PG": 0.05
+    },
+    "horizon_annees": 8,
+    "capital": 50000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "p10": [
+     50000.0,
+     48841.95482101912,
+     51024.337872790995,
+     53351.3000773709,
+     56206.167656616395,
+     59582.70426496016,
+     62682.13041617889,
+     66903.95643954526,
+     70835.34181050335
+    ],
+    "p25": [
+     50000.0,
+     51472.56721881143,
+     54601.161495460256,
+     58267.58288327227,
+     61942.14146418681,
+     65959.06583822868,
+     70655.74425602253,
+     76132.15624777999,
+     81397.30188156432
+    ],
+    "p50": [
+     50000.0,
+     54326.51206145169,
+     58758.669213586094,
+     63729.285356232685,
+     68660.12477056215,
+     74578.82422324765,
+     80449.53376502666,
+     87495.25944535872,
+     95010.47831906522
+    ],
+    "p75": [
+     50000.0,
+     57291.836675207436,
+     63445.85624781321,
+     69497.77145194632,
+     75987.3242875755,
+     83487.99483621813,
+     91146.6863854115,
+     99843.21740654607,
+     109681.8319588659
+    ],
+    "p90": [
+     50000.0,
+     59650.16949634637,
+     68010.24093954483,
+     75379.36808370735,
+     83817.5395630666,
+     93353.95483331024,
+     103120.39989997027,
+     113837.97042432617,
+     124946.69933446545
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 50000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "base/prix_etendus.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.0035,
+    "pire_mois_observe": -0.04413787535256686,
+    "meilleur_mois_observe": 0.05143916948845484,
+    "hypotheses": [
+     "Poids constants, sans frais, sans impôts, sans inflation.",
+     "Les mois futurs ressemblent aux mois observés et sont indépendants entre eux.",
+     "L'éventail hérite du rendement moyen de la fenêtre observée, qui ne se répétera pas forcément."
+    ],
+    "avertissement": "Ce n'est pas une prévision. L'éventail repose sur 61 mois observés seulement : l'avenir peut en sortir, vers le haut comme vers le bas."
+   }
+  },
+  "B": {
+   "outil": "eventail_scenarios",
+   "parametres": {
+    "poids": {
+     "ESGV": 0.25,
+     "XBB.TO": 0.2,
+     "ZST.TO": 0.15,
+     "XEF.TO": 0.15,
+     "ICLN": 0.1,
+     "VGK": 0.1,
+     "AGG": 0.05
+    },
+    "horizon_annees": 8,
+    "capital": 50000.0,
+    "devise": "CAD",
+    "tirages": 2000,
+    "graine": 2026
+   },
+   "periode": {
+    "debut": "2021-11-12",
+    "fin": "2026-11-12",
+    "observations": 1228
+   },
+   "valeur": {
+    "annees": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "p10": [
+     50000.0,
+     47510.497324064985,
+     48784.70095839543,
+     49992.53861323618,
+     51621.930606600494,
+     53212.916365735866,
+     55994.37988428544,
+     57843.63349103735,
+     60505.38252377264
+    ],
+    "p25": [
+     50000.0,
+     50232.33448749316,
+     52204.08598417716,
+     54766.7423207161,
+     57234.53483376724,
+     59592.84497083584,
+     63051.28730835473,
+     67166.24429137196,
+     70627.76315560169
+    ],
+    "p50": [
+     50000.0,
+     53306.73203264418,
+     56759.050330098384,
+     60477.96664430263,
+     64517.99126897431,
+     68331.09400872354,
+     73190.17132781792,
+     78066.62611076559,
+     83467.06328109352
+    ],
+    "p75": [
+     50000.0,
+     56565.498988661144,
+     62163.17987333005,
+     67508.5947377141,
+     72536.17093020443,
+     78802.4415555652,
+     84534.16090489918,
+     90949.45115805979,
+     98217.74490502394
+    ],
+    "p90": [
+     50000.0,
+     59598.331127077836,
+     67295.01166435283,
+     73571.19815811499,
+     81064.59268793029,
+     89254.67999275397,
+     97357.80337947798,
+     104439.66160308254,
+     114278.8896758254
+    ]
+   },
+   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 50000",
+   "formule": "rendements mensuels observés du portefeuille, tirés au hasard avec remise ; valeur = capital × ∏(1 + rendement mensuel tiré) ; centiles 10, 25, 50, 75, 90 par année",
+   "sources": [
+    "prices_daily.csv (adj_close)",
+    "base/prix_etendus.csv (adj_close)",
+    "fx_usdcad_daily.csv"
+   ],
+   "details": {
+    "mois_observes": 61,
+    "tirages": 2000,
+    "graine": 2026,
+    "part_des_scenarios_sous_le_capital": 0.026,
+    "pire_mois_observe": -0.04834594297328143,
+    "meilleur_mois_observe": 0.059952464467032396,
+    "hypotheses": [
+     "Poids constants, sans frais, sans impôts, sans inflation.",
+     "Les mois futurs ressemblent aux mois observés et sont indépendants entre eux.",
+     "L'éventail hérite du rendement moyen de la fenêtre observée, qui ne se répétera pas forcément."
+    ],
+    "avertissement": "Ce n'est pas une prévision. L'éventail repose sur 61 mois observés seulement : l'avenir peut en sortir, vers le haut comme vers le bas."
+   }
+  }
  }
 }

@@ -144,6 +144,15 @@ export type SortiePipeline = {
   demande_analysee?: { texte: string; resume: string; symboles: { symbole: string; poids: number }[]; classes: string[]; part_risquee: number };
   /** Éventail de scénarios (réponse de POST /analyse). Absent des sorties de démonstration. */
   scenarios?: Scenarios;
+  /** Un éventail par portefeuille proposé (clé = identifiant), pour « autre proposition ». */
+  scenarios_par_portefeuille?: Record<string, Scenarios>;
+  /** Plafonds tirés du profil et la réponse qui les a fixés (hypothèses de conception de l'équipe). */
+  contraintes?: {
+    limites: Record<string, number>; origine: Record<string, string>; exclusions?: string[];
+    seuils_risque?: { volatilite?: number; pire_baisse?: number }; nature?: string;
+  };
+  /** Présent quand l'écran montre une autre proposition que celle retenue par la gouvernance (lib/portefeuilles.ts). */
+  vue?: { retenu: string };
 };
 
 /** Champ « scenarios » de POST /analyse et GET /demonstration : référence
