@@ -127,6 +127,8 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Pro
 
   const suivante = () => {
     setSens("avant");
+    // Quitter une question, c'est y avoir répondu, même par « rien de particulier » (liste vide).
+    if (QUESTIONS[question]) repondues.current.add(QUESTIONS[question].champ);
     const i = question + 1;
     if (i < QUESTIONS.length) {
       setQuestion(i);
