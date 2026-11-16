@@ -1675,4 +1675,16 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 .langue { display: inline-flex; gap: 2px; background: var(--surface-2); border-radius: var(--rayon-pilule); padding: 3px; }
 .langue__choix { border: 0; background: none; color: var(--encre-douce); font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: var(--rayon-pilule); }
 .langue__choix--actif { background: var(--accent); color: var(--on-accent); }
-.entree__haut-droite { display: flex; align-items: center; gap: 10px; }
+.entree__haut-droite { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.langue { flex: none; }
+.langue__court { display: none; }
+@media (max-width: 560px) {
+  /* Téléphone : sigles FR / EN, logo plus petit, et le lien passe à la ligne plutôt que d'élargir la page. */
+  .langue__long { display: none; }
+  .langue__court { display: inline; }
+  .langue__choix { padding: 5px 10px; }
+  .entree__haut { flex-wrap: wrap; row-gap: 8px; }
+  .entree__haut .entree__logo { height: 30px; }
+  .entree__haut-droite { gap: 4px; margin-left: auto; }
+  .entree__haut-droite .entree__passer { white-space: nowrap; font-size: 13.5px; padding: 6px; }
+}

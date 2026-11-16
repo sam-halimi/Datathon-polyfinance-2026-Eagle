@@ -21,7 +21,11 @@ export function ChoixLangue() {
     <div className="langue" role="group" aria-label="Langue / Language" data-sans-traduction>
       {(["fr", "en"] as const).map((x) => (
         <button key={x} type="button" className={l === x ? "langue__choix langue__choix--actif" : "langue__choix"}
-          aria-pressed={l === x} lang={x} onClick={() => choisirLangue(x)}>{x === "fr" ? "Français" : "English"}</button>
+          aria-pressed={l === x} lang={x} onClick={() => choisirLangue(x)} aria-label={x === "fr" ? "Français" : "English"}>
+          {/* Nom entier sur ordinateur, sigle sur téléphone : l'en-tête doit tenir sur 390 px. */}
+          <span className="langue__long">{x === "fr" ? "Français" : "English"}</span>
+          <span className="langue__court" aria-hidden="true">{x === "fr" ? "FR" : "EN"}</span>
+        </button>
       ))}
     </div>
   );

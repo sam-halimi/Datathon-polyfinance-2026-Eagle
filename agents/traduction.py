@@ -89,8 +89,9 @@ CHEMINS_A_COTE = (
 
 CONSIGNE = (
     "You translate short French texts into clear Canadian English for Eagle, an assistant that builds "
-    "SIMULATED investment portfolios and explains them. You receive a JSON array of strings and return "
-    "ONLY a JSON array of the same length, in the same order, with each string translated.\n"
+    "SIMULATED investment portfolios and explains them. You receive numbered items, each written "
+    '<t i="0">French text</t>. Return ONLY the same items, same numbers, each with its text translated: '
+    '<t i="0">English text</t>. One item out for every item in, nothing before or after.\n'
     "Rules:\n"
     "- Tokens such as ⟦0⟧ or ⟦12⟧ stand for numbers, dates, file names or identifiers. Copy every token "
     "exactly once, never change, drop, repeat or invent one, and never write a number yourself.\n"
@@ -169,15 +170,14 @@ def modele_bedrock(textes: list[str]) -> list[str]:
     """Un appel au modèle pour un lot de textes à jetons. Passe par agents.modele (reprises, secours)."""
     from agents.modele import creer_agent
 
+    # Format à balises plutôt que JSON : un guillemet dans une traduction ne casse pas la lecture.
     agent = creer_agent("Traduction", CONSIGNE)
-    reponse = str(agent(json.dumps(textes, ensure_ascii=False)))
-    debut, fin = reponse.find("["), reponse.rfind("]")
-    if debut < 0 or fin < debut:
-        raise ValueError("réponse du modèle sans tableau JSON")
-    resultat = json.loads(reponse[debut:fin + 1])
-    if not isinstance(resultat, list) or len(resultat) != len(textes) or not all(isinstance(x, str) for x in resultat):
-        raise ValueError("réponse du modèle : tableau de la mauvaise longueur")
-    return resultat
+    reponse = str(agent("\n".join(f'<t i="{i}">{t}</t>' for i, t in enumerate(textes))))
+    trouves = {int(i): t.strip() for i, t in re.findall(r'<t i="(\d+)">(.*?)</t>', reponse, flags=re.S)}
+    if not trouves:
+        raise ValueError("réponse du modèle sans aucun texte balisé")
+    # Un texte absent de la réponse est rendu vide : il sera refusé et restera en français.
+    return [trouves.get(i, "") for i in range(len(textes))]
 
 
 def _lots(textes: list[str], taille: int = 2600) -> list[list[str]]:
@@ -209,7 +209,11 @@ def traduire_textes(textes: Iterable[str], modele: Modele | None = None, fils: i
         if isinstance(t, str) and t.strip():
             formes[t] = masquer(t)
     manquants = list(dict.fromkeys(m for m, _ in formes.values() if m not in connu and _a_traduire(m)))
-    if manquants:
+    # Deux passes : la seconde reprend, seuls, les textes dont la première traduction a été refusée.
+    for _ in range(2):
+        manquants = [m for m in manquants if m not in connu]
+        if not manquants:
+            break
         lots = _lots(manquants)
         with ThreadPoolExecutor(max_workers=min(fils, len(lots))) as bassin:
             for trouve in bassin.map(lambda lot: _traduire_lot(lot, modele or modele_bedrock), lots):

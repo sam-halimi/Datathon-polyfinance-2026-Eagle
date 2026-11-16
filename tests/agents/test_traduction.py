@@ -145,6 +145,17 @@ def test_un_texte_dont_le_modele_change_un_chiffre_reste_en_francais():
         assert texte.startswith("EN ") or texte in francais
 
 
+def test_un_texte_refuse_est_repris_une_fois():
+    appels = []
+
+    def capricieux(lot):  # première réponse : jeton perdu ; seconde : correcte
+        appels.append(lot)
+        return ["Total lost" for _ in lot] if len(appels) == 1 else faux_modele(lot)
+
+    resultat = T.traduire_textes(["Le total est 12 %."], capricieux)
+    assert len(appels) == 2 and resultat == {"Le total est 12 %.": "EN Le total est 12 %."}
+
+
 def test_un_texte_deja_traduit_ne_rappelle_pas_le_modele():
     appels: list[list[str]] = []
 

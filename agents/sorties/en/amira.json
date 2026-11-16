@@ -2560,7 +2560,7 @@
    "The figures describe the window from 2021-11-12 to 2026-11-12: volatility {ptf_a_volatilite}, worst drawdown {ptf_a_pire_baisse}. Over the last two years alone, volatility would be {ptf_a_recent_volatilite} and the worst drawdown {ptf_a_recent_pire_baisse}: a different period gives different figures.",
    "The correlations measured over the window are assumed to be stable (for example QQQ and BTC-USD: {corr_qqq_btc_usd}). If all holdings moved together (correlations at one), volatility would go from {ptf_a_volatilite} to {ptf_a_vol_sans_diversification}.",
    "Holdings quoted in US dollars (QQQ, SPY, MSFT, BTC-USD) are converted to Canadian dollars using the Bank of Canada rate, day by day. Without conversion, with each asset in its quoted currency, volatility would be {ptf_a_cotation_volatilite} instead of {ptf_a_volatilite}.",
-   "La part risquée du portefeuille ({risquee_a}) est bornée par le plafond de l'équipe ({lim_max_part_risquee}) : une hypothèse de conception, pas une mesure de marché. Avec d'autres plafonds, le constructeur aurait proposé d'autres poids ; la gouvernance contrôle ceux du profil (tolérance « élevé », horizon 15 an(s)).",
+   "The risky share of the portfolio ({risquee_a}) is bounded by the team's cap ({lim_max_part_risquee}): a design assumption, not a market measure. With different caps, the builder would have proposed different weights; governance controls those of the profile (tolerance \"high\", horizon 15 year(s)).",
    "Past data used describes observed behaviours; it does not predict future returns or drawdowns.",
    "The volatility and worst drawdown of the simulated portfolio are calculated in CAD, which incorporates the effect of the USD/CAD exchange rate on the American holdings.",
    "Correlations are calculated over the available historical window; they can shift, particularly during periods of crisis.",
@@ -17470,7 +17470,7 @@
   "traduction": {
    "langue": "en",
    "textes": 1307,
-   "restes_en_francais": 1
+   "restes_en_francais": 0
   }
  },
  "scenario": "amira",

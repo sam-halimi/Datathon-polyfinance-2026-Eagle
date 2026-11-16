@@ -40,6 +40,16 @@ Avant l'export, le script relance `python web/scripts/graphiques.py` : les table
 
 Le 16 novembre 2026, entre 0 h 27 et 0 h 35 UTC, Bedrock a répondu « serviceUnavailableException » au milieu des réponses : toutes les analyses échouaient en « erreur 500 », y compris après « Relancer ». Depuis (`agents/resistance.py`) : réponses non diffusées, reprises de botocore, puis modèle de secours (`us.anthropic.claude-sonnet-4-6`, puis `global.anthropic.claude-sonnet-4-5-20250929-v1:0`), trois tours. Si tout échoue, l'API répond 503 avec une phrase claire et le site garde le profil. `meta.modele` de la sortie nomme le modèle qui a réellement répondu.
 
+## Option anglaise
+
+Le pipeline écrit en français. Quand le site est en anglais, il ajoute `langue: "en"` à ses appels (`/analyse`, `/actif`, `/scenarios`) et le service traduit les textes de la réponse avec `agents/traduction.py`, sur Bedrock, par le même chemin que les agents (`agents.modele.creer_agent` : reprises et modèle de secours).
+
+- **Aucun chiffre ne passe par le modèle.** Avant l'appel, chaque nombre, marqueur de chiffre (`{vol_tsla}`), date, nom de fichier, adresse et symbole est remplacé par un jeton (`⟦0⟧`), puis remis tel quel. Une traduction qui perd, ajoute ou répète un jeton est refusée, reprise une fois, et sinon le texte reste en français. `meta.traduction` dit combien de textes ont été traités et combien sont restés en français.
+- **Mémoire** : `agents/traductions/en.json` garde les traductions sous leur forme à jetons, donc une phrase d'outil (« Les poids totalisent ⟦0⟧ % du capital fictif. ») n'est traduite qu'une fois pour toutes les valeurs. Elle est embarquée dans la fonction ; sur Lambda, ce qui s'y ajoute ne vit que le temps de l'instance.
+- **Coût en temps** : environ 30 secondes de plus qu'une analyse en français (les textes écrits par les agents sont nouveaux à chaque fois).
+- **Démonstrations** : déjà traduites dans `agents/sorties/en/` et `web/data/graphiques/en/` (`python -m agents.traduction`, puis `python web/scripts/graphiques.py`). `tests/agents/test_traduction.py` vérifie que l'anglais et le français ont exactement les mêmes chiffres, marqueurs, dates et fichiers.
+- Une panne du modèle pendant la traduction ne fait pas échouer l'analyse : elle est rendue en français.
+
 ## Une seule adresse, une seule branche
 
 - **L'adresse à donner au jury est celle de CloudFront.** Le projet Vercel `alphaforge-polyfinances` date du début du dimanche (dernier envoi à 19 h 37 UTC le 15 novembre) : plus rien n'y est déployé, il montre une ancienne version et n'appelle pas l'API AWS. Ne pas le partager.
@@ -63,6 +73,14 @@ Le 16 novembre 2026, entre 0 h 27 et 0 h 35 UTC, Bedrock a répondu « serviceUn
 - Voix, lancement : profil rempli à l'écran, « lancez l'analyse » dit à voix haute, puis deux phrases prononcées pendant que l'outil travaille. Une seule analyse lancée, aucune annulation, présentation affichée après 138 s.
 - Curseur de connaissance : écart de 0 px entre le pouce et chaque chiffre, à 1440 × 900 et 1280 × 720. Douze thèmes sur douze avec une illustration de la charte, aucun libellé qui déborde. Montant saisi au dollar près repris dans le profil.
 - Présentation et compte à 390 × 844 et 1280 × 600 : boutons atteignables, aucun débordement horizontal.
+
+### Option anglaise (16 novembre)
+
+- Relevé automatique de tous les textes affichés, écran par écran (présentation, choix, trois cas, huit questions, récapitulatif, attente, panne, neuf diapositives, fiche d'un chiffre, autre proposition, question sur un actif, dossier, comptes) : 1 018 textes en anglais, aucun resté en français hors de ce que la personne a tapé elle-même. Même relevé en français : inchangé.
+- Bascule Français / English sans rechargement, dans les deux sens, pendant une démonstration ; aucune erreur dans la console.
+- Analyse complète en anglais par l'API AWS (revenu, dividendes, Canada, sans tabac, immobilier et santé) : 200 en 190 s, dont environ 30 s de traduction ; 1 333 textes, 3 restés en français (une même phrase, dont la réponse du modèle était illisible : l'échange avec le modèle a depuis été rendu insensible aux guillemets, et les dix analyses enregistrées se traduisent sans aucun reste). Aucun des mots « advice », « advisor », « recommend ».
+- Voix anglaise, appel réel avec un micro simulé qui lit deux réponses en anglais : l'agent anglais se présente, transcrit « In about 10 years » et « I want long-term growth », appelle `noter_profil` avec les valeurs du profil et l'écran suit (Horizon 8 years, Objective Growth).
+- Téléphone (390 × 844 et 360 × 740) en anglais : en-tête sur une ligne (sigles FR / EN), aucun texte coupé, aucun défilement horizontal.
 
 Non vérifié : un appel vocal complet par une personne (huit questions, analyse, neuf diapositives lues) et un vrai téléphone ; les essais sont faits dans un navigateur piloté.
 
