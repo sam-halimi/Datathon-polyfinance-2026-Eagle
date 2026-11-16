@@ -39,6 +39,7 @@ from agents import limites as lm
 from agents import lignes as lg
 from agents.journal import Journal, cle
 from agents.modele import creer_agent
+from agents.resistance import modeles_utilises, oublier_modeles
 from agents.profil import Profil
 from tools.bedrock import modele_bedrock
 from tools import activites as act_outils
@@ -833,6 +834,7 @@ class Session:
 
     def executer(self) -> dict[str, Any]:
         debut = time.time()
+        oublier_modeles()
         self.orchestrer()
         self.esg_et_qualite()
         self.journal.agent_courant = "Gouvernance"
@@ -890,7 +892,7 @@ class Session:
             "exclus": self.exclus,
             "journal": {"appels": self.journal.appels, "textes_retires": self.textes_retires},
             "adequation": retenu["adequation"],
-            "meta": {"modele": modele_bedrock() or "défaut de Strands", "duree_secondes": round(time.time() - debut, 1),
+            "meta": {"modele": " puis ".join(modeles_utilises()) or modele_bedrock() or "défaut de Strands", "duree_secondes": round(time.time() - debut, 1),
                      "date": date.today().isoformat(), "version_format": 2},
         }
 

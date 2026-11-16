@@ -1,4 +1,4 @@
-import { Eagle } from "@/components/Eagle";
+import { Entree } from "@/components/Entree";
 import { lireDa } from "@/lib/da";
 
 // Eagle, sur ordinateur : questions, analyse par le pipeline (POST /analyse),
@@ -6,5 +6,6 @@ import { lireDa } from "@/lib/da";
 // Direction artistique : web/public/da/ (docs/da-eagle.md).
 
 export default function Page() {
-  return <Eagle da={lireDa()} />;
+  // Présentation, puis compte (site déployé), puis tableau de bord : components/Entree.tsx.
+  return <Entree da={lireDa()} />;
 }

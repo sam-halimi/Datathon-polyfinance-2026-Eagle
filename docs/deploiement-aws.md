@@ -7,6 +7,7 @@ Eagle tourne sur le compte AWS de l'atelier, en `us-east-1` (seule région ouver
 | Site | S3 (compartiment privé) + CloudFront, HTTPS | `https://d1ah12vrfzso9b.cloudfront.net` |
 | API (`agents/serveur.py`) | AWS Lambda `eagle-api`, adresse de fonction HTTPS | `https://mchhm2dabjrbsfncikiw7i4qfa0hopli.lambda-url.us-east-1.on.aws` |
 | Modèle des agents | Amazon Bedrock, appelé avec le rôle IAM `eagle-lambda` (aucune clé) | |
+| Comptes | Amazon Cognito, groupe d'utilisateurs `eagle-comptes`, client `eagle-site` | identifiant et mot de passe, sans adresse courriel |
 
 Pas de nom de domaine acheté : Route 53 est exclu du compte de l'atelier. L'adresse CloudFront est en HTTPS, ce qu'exige le micro du navigateur.
 
@@ -27,6 +28,18 @@ Les sorties de démonstration (`agents/sorties/`) sont intégrées au site et à
 
 Avant l'export, le script relance `python web/scripts/graphiques.py` : les tables du site (secteur, zone, cours de tous les actifs, éventails des démonstrations) suivent toujours `data/` et `agents/sorties/`. Il fournit aussi l'identifiant de l'agent vocal à l'export (`NEXT_PUBLIC_ELEVENLABS_AGENT_ID`, par défaut l'agent Eagle de `docs/agent-elevenlabs.md`) : la voix est active sur le site déployé.
 
+## Comptes
+
+- Le script crée (ou retrouve) le groupe Cognito `eagle-comptes` et son client `eagle-site`, les donne à la fonction (`EAGLE_COGNITO_GROUPE`, `EAGLE_COGNITO_CLIENT`) et limite le rôle `eagle-lambda` à quatre actions sur ce groupe : créer un compte, fixer son mot de passe, connecter, retirer un compte à moitié créé.
+- Règle du mot de passe : au moins 8 caractères, dont une minuscule et un chiffre. Jeton d'accès valable 8 heures.
+- `/analyse`, `/scenarios` et `/actif` exigent le jeton : l'analyse, qui appelle Bedrock, n'est plus ouverte à tous. `/sante` et `/demonstration/<persona>` restent ouvertes.
+- Aucune donnée personnelle n'est demandée : un pseudonyme suffit comme identifiant. Eagle ne stocke ni le mot de passe ni le profil ; le profil vit dans le navigateur le temps de la séance.
+- Supprimer un compte : console Cognito, ou `aws cognito-idp admin-delete-user --user-pool-id <groupe> --username <identifiant>`.
+
+## Pannes passagères de Bedrock
+
+Le 16 novembre 2026, entre 0 h 27 et 0 h 35 UTC, Bedrock a répondu « serviceUnavailableException » au milieu des réponses : toutes les analyses échouaient en « erreur 500 », y compris après « Relancer ». Depuis (`agents/resistance.py`) : réponses non diffusées, reprises de botocore, puis modèle de secours (`us.anthropic.claude-sonnet-4-6`, puis `global.anthropic.claude-sonnet-4-5-20250929-v1:0`), trois tours. Si tout échoue, l'API répond 503 avec une phrase claire et le site garde le profil. `meta.modele` de la sortie nomme le modèle qui a réellement répondu.
+
 ## Une seule adresse, une seule branche
 
 - **L'adresse à donner au jury est celle de CloudFront.** Le projet Vercel `alphaforge-polyfinances` date du début du dimanche (dernier envoi à 19 h 37 UTC le 15 novembre) : plus rien n'y est déployé, il montre une ancienne version et n'appelle pas l'API AWS. Ne pas le partager.
@@ -46,9 +59,8 @@ Non vérifié : un appel vocal complet par une personne (huit questions, analyse
 
 ## Limites
 
-- L'API `/analyse` est publique et appelle Bedrock : la concurrence plafonnée borne le coût, pas l'accès.
+- La création de compte est ouverte à tous (aucune validation par courriel) : le compte limite l'accès à l'analyse, il ne prouve pas l'identité de la personne. La concurrence plafonnée borne le coût.
 - La voix (ElevenLabs) demande un micro et un geste (« Démarrer l'appel »). La liaison part en WebRTC et reprend par WebSocket si le réseau bloque l'UDP. Sans micro, l'échange se fait par écrit.
 - Un appel vocal est limité à 30 minutes par l'agent ElevenLabs (réglage `max_duration_seconds`, relevé de 600 à 1800 s).
 - Sur Lambda, il n'y a ni clé ni cache Finnhub : le critère « sociétés établies » (ancienneté de cotation) répond « information manquante » pour les actions, avec sa raison. Les autres critères ne dépendent que de `data/`.
-- Si Bedrock répond « service indisponible », l'analyse échoue en une phrase et le bouton « Relancer » la reprend : le pipeline ne réessaie pas seul.
 - Le compte de l'atelier et tout ce qui y est déployé sont supprimés à l'expiration du compte. Le code reste sur GitHub et se redéploie par la commande ci-dessus.

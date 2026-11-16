@@ -95,7 +95,9 @@ Tous testés avec pytest sur les vrais CSV.
 
 - Agents : Strands Agents sur Amazon Bedrock, déployés sur AgentCore Runtime.
 - Voix : ElevenLabs Agents, pour la voix seulement. Trois outils : mettre à jour le profil, lancer l'analyse, afficher une carte.
-- Front : Next.js, hébergé sur AWS.
+- Front : Next.js, hébergé sur AWS. À l'entrée, une présentation en diapositives (mode d'emploi), puis la connexion.
+- Comptes : Amazon Cognito (identifiant et mot de passe, aucune adresse courriel), sur le site déployé seulement ; l'analyse exige le jeton. Eagle ne stocke aucun mot de passe.
+- Bedrock peut répondre « indisponible » quelques minutes : les agents passent par `agents/resistance.py` (reprises, modèle de secours). Ne pas créer un agent sans `agents.modele.creer_agent`.
 - Clés : uniquement celles de l'environnement cloud « Sam » de Claude Code, pour toutes les sessions. Variables : `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, `AWS_DEFAULT_REGION` (Bedrock, signature SigV4), `BEDROCK_AUTH=identifiants` (impose ce mode), `FRED_API_KEY`. Finnhub et CoinGecko passent par les secrets réseau de ce même environnement. Rien d'autre : pas de fichier `.env`, pas de jeton `AWS_BEARER_TOKEN_BEDROCK`, pas de secret réseau sur `bedrock-runtime` (il remplacerait la signature). Jamais affichées ni poussées. Vérification : `python -m tools.verifier_cles`.
 
 ## Branches

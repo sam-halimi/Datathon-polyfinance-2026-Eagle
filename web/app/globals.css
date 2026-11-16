@@ -1306,3 +1306,145 @@ html, body { font-family: var(--police); font-size: var(--taille-base); line-hei
 }
 .demarche__constats li { position: relative; padding-left: 14px; }
 .demarche__constats li::before { content: "–"; position: absolute; left: 0; color: var(--encre-discrete); }
+
+/* ======================================================================
+   Corrections du 16 novembre : curseurs, thèmes, montant précis.
+   ====================================================================== */
+
+/* Curseur : chaque chiffre est posé exactement sous la position du pouce pour ce cran
+   (le centre du pouce de 22 px va de 11 px du bord gauche à 11 px du bord droit). La marge
+   intérieure garde les chiffres 1 et 5 entiers, sans qu'ils touchent le bord de la carte. */
+.curseur { padding: 8px 18px 0; }
+.curseur__bulle { left: calc(var(--ratio) * (100% - 22px) + 11px); }
+.curseur__graduations { position: relative; display: block; height: 34px; margin: 0 11px; }
+.curseur__graduation, .curseur__graduation:first-child, .curseur__graduation:last-child {
+  position: absolute; top: 0; left: calc(var(--pos) * 100%); transform: translateX(-50%); text-align: center;
+}
+.curseur__graduation button { display: block; }
+
+/* Montant précis, sous le curseur. */
+.curseur__precis { display: grid; gap: 6px; justify-items: start; margin-top: 6px; font-size: 14.5px; color: var(--encre-douce); }
+.curseur__champ {
+  display: inline-flex; align-items: center; gap: 10px; background: var(--surface-1); border: 1px solid var(--border-strong);
+  border-radius: var(--rayon-m); padding: 0 14px; color: var(--encre-douce); font-variant-numeric: tabular-nums;
+}
+.curseur__champ:focus-within { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.curseur__champ input {
+  width: 9.5em; border: 0; outline: 0; background: transparent; color: var(--encre); font-size: 20px; font-weight: 500;
+  padding: 10px 0; text-align: right; font-variant-numeric: tabular-nums;
+}
+.curseur__precis-aide { font-size: 13.5px; }
+.curseur__precis-aide--erreur { color: var(--alerte); font-weight: 600; }
+
+/* Thèmes : l'illustration au-dessus du libellé, libellé entier sur une ou deux lignes.
+   Le nombre de colonnes suit la largeur de la carte. */
+.eagle .choix--icones { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 10px; }
+.eagle .choix--icones .choix__bouton {
+  flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: 12px 8px; min-width: 0; text-align: center;
+}
+.eagle .choix--icones .choix__textes { justify-items: center; max-width: 100%; }
+.eagle .choix--icones .choix__titre { font-size: 14.5px; line-height: 1.25; overflow-wrap: anywhere; hyphens: auto; }
+.eagle .choix--icones .choix__bouton--aucun { grid-column: 1 / -1; padding: 10px 8px; }
+@media (max-width: 899px) {
+  .eagle .choix--icones { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .curseur { padding: 8px 8px 0; }
+  .curseur__champ input { width: 7.5em; }
+}
+
+/* ======================================================================
+   Entrée du site : présentation en diapositives, puis compte (components/Entree.tsx).
+   Posées par-dessus le tableau de bord, qui reste monté.
+   ====================================================================== */
+
+.entree {
+  position: fixed; inset: 0; z-index: 50; background: var(--fond); color: var(--encre);
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: 18px;
+  padding: 24px clamp(18px, 5vw, 64px) 18px; overflow-y: auto;
+}
+.entree--attente { display: block; }
+.entree__haut { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.entree__logo { height: 38px; width: auto; display: block; }
+.entree__nom { font-family: var(--police-titres); font-size: 28px; }
+.entree__passer, .eagle__lien {
+  border: 0; background: none; color: var(--accent); font-size: 14.5px; font-weight: 600; padding: 6px 8px; border-radius: var(--rayon-m);
+}
+.entree__passer:hover, .eagle__lien:hover { background: var(--surface-2); }
+.entree__carte {
+  align-self: center; width: 100%; max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr); gap: clamp(20px, 4vw, 56px); align-items: center;
+  animation: glisse-avant var(--duree-moyenne) var(--courbe) both;
+}
+.entree__surtitre { font-size: 12.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.entree__titre { font-family: var(--police-titres); font-weight: 500; font-size: clamp(28px, 3.6vw, 44px); line-height: 1.15; letter-spacing: -0.01em; }
+.entree__chapeau { margin-top: 14px; font-size: 18px; line-height: 1.5; color: var(--encre-douce); max-width: 60ch; }
+.entree__points { margin-top: 20px; display: grid; gap: 12px; max-width: 62ch; }
+.entree__points li { position: relative; padding-left: 26px; font-size: 16.5px; line-height: 1.45; }
+.entree__points li::before {
+  content: ""; position: absolute; left: 0; top: 9px; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); border-radius: 2px;
+}
+.entree__visuel {
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--rayon-carte); padding: 22px 24px;
+  display: grid; gap: 12px; justify-items: start;
+}
+.entree__avatar { width: 108px; height: auto; justify-self: center; }
+.entree__visuel-titre { font-size: 12.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--encre-douce); }
+.entree__liste { display: grid; gap: 8px; width: 100%; counter-reset: pas; }
+.entree__liste li {
+  display: flex; align-items: center; gap: 12px; font-size: 15.5px; line-height: 1.3; padding: 8px 12px;
+  background: var(--surface-2); border-radius: var(--rayon-m);
+}
+.entree__liste--numerotee li { counter-increment: pas; }
+.entree__liste--numerotee li::before {
+  content: counter(pas); flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ok-fond); color: var(--ok); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.entree__bas { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; max-width: 1120px; margin: 0 auto; }
+.entree__bas .bouton { min-width: 170px; }
+.entree__pas { display: flex; gap: 8px; align-items: center; margin: 0 auto; }
+.entree__pastille { display: block; width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%; background: var(--border-strong); transition: width var(--duree-courte) ease-out, background var(--duree-courte) ease-out; }
+.entree__pastille--actif { width: 28px; border-radius: var(--rayon-pilule); background: var(--accent); }
+.entree__mention { text-align: center; font-size: 12.5px; color: var(--encre-douce); }
+
+/* Compte */
+.entree--compte { display: grid; grid-template-rows: none; place-items: center; }
+.compte {
+  width: 100%; max-width: 440px; display: grid; gap: 16px; background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: var(--rayon-carte); padding: 30px 30px 24px;
+}
+.compte__titre { font-family: var(--police-titres); font-weight: 500; font-size: 26px; line-height: 1.2; }
+.compte__modes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--surface-2); border-radius: var(--rayon-m); padding: 4px; }
+.compte__mode { border: 0; background: none; color: var(--encre-douce); font-weight: 600; font-size: 15px; padding: 9px 8px; border-radius: 7px; }
+.compte__mode--actif { background: var(--accent); color: var(--on-accent); }
+.compte .champ-texte { display: grid; gap: 6px; font-size: 14.5px; font-weight: 600; }
+.compte .champ-texte input {
+  width: 100%; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--rayon-m);
+  color: var(--encre); font-size: 17px; font-weight: 400; padding: 11px 14px;
+}
+.compte .champ-texte input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.compte__secret { display: flex; gap: 8px; }
+.compte__voir { flex: none; border: 1px solid var(--border-strong); background: none; color: var(--encre-douce); border-radius: var(--rayon-m); padding: 0 12px; font-size: 13.5px; font-weight: 600; }
+.compte__aide { font-size: 13px; font-weight: 400; color: var(--encre-douce); }
+.compte__erreur { background: var(--echec-fond); color: var(--echec); border-radius: var(--rayon-m); padding: 10px 14px; font-size: 14.5px; font-weight: 600; }
+.compte__raison { background: var(--alerte-fond); color: var(--alerte); border-radius: var(--rayon-m); padding: 10px 14px; font-size: 14.5px; }
+.compte__note { font-size: 12.5px; line-height: 1.45; color: var(--encre-douce); }
+.compte .bouton { width: 100%; }
+
+/* Compte et mode d'emploi, en haut de la colonne de droite du tableau de bord. */
+.eagle__compte { display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-wrap: wrap; margin: -6px 0 -8px; }
+.eagle__identifiant { font-size: 13.5px; color: var(--encre-douce); padding: 0 6px; border-left: 1px solid var(--border-strong); margin-left: 4px; }
+
+@media (max-width: 899px) {
+  .entree { padding: 16px 16px 14px; gap: 14px; }
+  .entree__carte { grid-template-columns: minmax(0, 1fr); align-self: start; }
+  .entree__chapeau { font-size: 16.5px; }
+  .entree__points li { font-size: 15.5px; }
+  .entree__bas { gap: 10px; }
+  .entree__bas .bouton { min-width: 0; flex: 1; }
+  .entree__pas { display: none; }
+  .compte { padding: 22px 18px 18px; }
+  .eagle__compte { order: 0; justify-content: space-between; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .entree__carte { animation: none; } }
+
+/* Le cadre du champ porte déjà l'état « sélectionné » : pas de second contour sur le champ lui-même. */
+.curseur__champ input:focus-visible { outline: none; }

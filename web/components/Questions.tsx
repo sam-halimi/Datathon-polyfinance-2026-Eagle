@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import {
   Bitcoin, BrainCircuit, Building2, Cpu, Gamepad2, Gem, HeartPulse, Landmark, Leaf, Plus, Rocket, Trophy, Wheat, X,
   type LucideIcon,
@@ -89,8 +89,19 @@ export function Curseur({ q, valeur, changer, devise = "CAD" }: {
   devise?: string;
 }) {
   const v = valeur ?? q.depart;
-  const ratio = (v - q.min) / (q.max - q.min);
+  const ratio = Math.min(1, Math.max(0, (v - q.min) / (q.max - q.min)));
   const bulle = q.crans ? q.crans[v] : formaterMontant(v, devise);
+  // Montant précis : le champ accepte n'importe quel montant entre les bornes, pas seulement les
+  // crans du curseur. Le texte tapé est gardé tel quel tant qu'il n'est pas un montant valide.
+  const [saisie, setSaisie] = useState<string | null>(null);
+  useEffect(() => { setSaisie(null); }, [q.champ]);
+  const nombre = (t: string) => Number(t.replace(/[^\d]/g, ""));
+  const horsBornes = saisie !== null && (nombre(saisie) < q.min || nombre(saisie) > q.max);
+  const taper = (t: string) => {
+    setSaisie(t);
+    const n = nombre(t);
+    if (n >= q.min && n <= q.max) changer(n);
+  };
   return (
     <div className={`curseur${q.crans ? " curseur--crans" : " curseur--montant"}`}>
       <div className="curseur__piste" style={{ "--ratio": ratio } as CSSProperties}>
@@ -100,20 +111,37 @@ export function Curseur({ q, valeur, changer, devise = "CAD" }: {
         </output>
         <input id={`curseur-${q.champ}`} type="range" min={q.min} max={q.max} step={q.pas} value={v}
           aria-valuetext={q.crans ? `Niveau ${v} : ${bulle}` : bulle}
-          onChange={(e) => changer(Number(e.target.value))} />
+          onChange={(e) => { setSaisie(null); changer(Number(e.target.value)); }} />
       </div>
       {q.crans ? (
         <ol className="curseur__graduations" aria-hidden="true">
           {Object.keys(q.crans).map((k) => (
-            <li key={k} className={Number(k) === v ? "curseur__graduation curseur__graduation--actif" : "curseur__graduation"}>
+            <li key={k} className={Number(k) === v ? "curseur__graduation curseur__graduation--actif" : "curseur__graduation"}
+              style={{ "--pos": (Number(k) - q.min) / (q.max - q.min) } as CSSProperties}>
               <button type="button" tabIndex={-1} onClick={() => changer(Number(k))}>{k}</button>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="curseur__bornes" aria-hidden="true">
-          <span>{formaterMontant(q.min, devise)}</span><span>{formaterMontant(q.max, devise)}</span>
-        </p>
+        <>
+          <p className="curseur__bornes" aria-hidden="true">
+            <span>{formaterMontant(q.min, devise)}</span><span>{formaterMontant(q.max, devise)}</span>
+          </p>
+          <label className="curseur__precis">
+            <span>Ou saisissez un montant précis</span>
+            <span className="curseur__champ">
+              <input type="text" inputMode="numeric" autoComplete="off" aria-invalid={horsBornes}
+                aria-describedby={`precis-aide-${q.champ}`}
+                value={saisie ?? new Intl.NumberFormat("fr-CA").format(v)}
+                onChange={(e) => taper(e.target.value)} onFocus={(e) => e.target.select()}
+                onBlur={() => setSaisie(null)} />
+              <span aria-hidden="true">$ {devise}</span>
+            </span>
+            <span id={`precis-aide-${q.champ}`} className={horsBornes ? "curseur__precis-aide curseur__precis-aide--erreur" : "curseur__precis-aide"}>
+              {horsBornes ? `Indiquez un montant entre ${formaterMontant(q.min, devise)} et ${formaterMontant(q.max, devise)}.` : "Au dollar près, entre les deux bornes."}
+            </span>
+          </label>
+        </>
       )}
       {valeur === undefined ? <p className="curseur__aide">Déplacez le curseur, puis validez.</p> : null}
     </div>

@@ -16,9 +16,15 @@ npm run dev        # http://localhost:3000
 
 Le pipeline doit répondre sur http://localhost:8000 (autre adresse : `NEXT_PUBLIC_API_URL`). Sans lui, l'analyse en direct est signalée indisponible et les démonstrations marchent.
 
+## Entrée
+
+`components/Entree.tsx` : une présentation en cinq diapositives (ce qu'est Eagle, comment s'en servir), montrée à la première visite et rouverte par « Mode d'emploi » ; puis, sur le site déployé seulement (`NEXT_PUBLIC_COMPTES=1`), la connexion à un compte ; puis le tableau de bord, qui reste monté (rouvrir le mode d'emploi ou se reconnecter ne fait pas perdre le profil).
+
+Comptes (`lib/compte.ts`, `agents/comptes.py`) : un identifiant et un mot de passe, gardés par Amazon Cognito. Aucune adresse courriel. Le site ne conserve que le jeton d'accès (8 heures) dans le stockage local du navigateur et le joint aux appels `/analyse`, `/scenarios` et `/actif`. En local, le serveur n'exige rien et aucun écran de connexion n'apparaît.
+
 ## Parcours
 
-1. **Questions** une par une (`lib/questions.ts`, valeurs du schéma `python -m agents.profil`). Chaque réponse remplit le profil à droite.
+1. **Questions** une par une (`lib/questions.ts`, valeurs du schéma `python -m agents.profil`). Chaque réponse remplit le profil à droite. Le montant se règle au curseur ou se saisit au dollar près.
 2. **Récapitulatif**, prénom et demande, puis `POST /analyse` avec `{profil, demande, prenom}` (`lib/api.ts`). Pendant l'attente, les agents au travail.
 3. **Présentation** (`components/Diapositives.tsx`) : la démarche (les étapes des agents et le diagnostic de chaque spécialiste, champ `specialistes`), la demande face au profil, répartition (camemberts actif, secteur, zone), cours commenté de l'actif demandé, « Scénarios, pas une prévision » (champ `scenarios`), vérifications, limites. Chaque diapositive a sa justification et le texte que la voix lit.
 4. **Question sur un actif** à tout moment (« et Tesla ? ») : `GET /actif?symbole=…&tolerance=…&horizon=…`, diapositive « compatible » ou « pourquoi cet actif ne convient pas à ton profil ».
@@ -27,7 +33,7 @@ Le dossier imprimable (bouton « Exporter le dossier ») : `/rapport/?persona=�
 
 ## Voix
 
-ElevenLabs Agents (`components/Voix.tsx`, `@elevenlabs/react`), identifiant dans `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` (`web/.env.local`). Trois outils côté client : `noter_profil(champ, valeur)`, `lancer_analyse()`, `afficher_diapositive(id)`. Configuration exacte de l'agent : `docs/agent-elevenlabs.md`. Sans identifiant, tout marche par écrit. La liaison audio part en WebRTC ; si le réseau la bloque (UDP fermé), elle reprend une fois par WebSocket. Le déploiement (`deploiement/deployer.py`) fournit l'identifiant à l'export.
+ElevenLabs Agents (`components/Voix.tsx`, `@elevenlabs/react`), identifiant dans `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` (`web/.env.local`). Trois outils côté client : `noter_profil(champ, valeur)`, `lancer_analyse()`, `afficher_diapositive(id)`. Configuration exacte de l'agent : `docs/agent-elevenlabs.md`. Sans identifiant, tout marche par écrit. Une seule analyse à la fois : un second `lancer_analyse` rejoint celle en cours. La liaison audio part en WebRTC ; si le réseau la bloque (UDP fermé), elle reprend une fois par WebSocket. Le déploiement (`deploiement/deployer.py`) fournit l'identifiant à l'export.
 
 ## Données et chiffres
 

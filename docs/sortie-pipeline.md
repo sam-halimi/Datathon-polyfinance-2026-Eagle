@@ -43,7 +43,7 @@ Certains textes sont écrits par le code, pas par un modèle : les contrôles de
 | `themes` | objet[] | Tous les thèmes couverts, un par centre d'intérêt : `nom`, `secteur`, `symboles`, `source`, `plafond`. Le plafond global (`contraintes.limites.plafond_theme`) est partagé à parts égales ; le contrôle `plafond_par_theme` le vérifie pour chaque thème |
 | `exclus` | {symbole: raison} | **nouveau** : candidats écartés avant construction |
 | `journal` | objet | **nouveau** : `appels` (chaque appel d'outil : `agent`, `id`, `outil`, `parametres`) et `textes_retires` |
-| `meta` | objet | **nouveau** : `modele`, `duree_secondes`, `date` |
+| `meta` | objet | **nouveau** : `modele` (le ou les modèles Bedrock qui ont réellement répondu, joints par « puis » si un modèle de secours a pris le relais), `duree_secondes`, `date` |
 | `adequation` | Adequation[] | **v2** : chaque critère du profil vérifié contre le portefeuille retenu. Voir plus bas |
 
 ## Profil

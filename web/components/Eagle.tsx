@@ -7,7 +7,7 @@ import type { DirectionArtistique } from "@/lib/da";
 import { Voix } from "./Voix";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { construireDiapositives, DiapositiveActif, DiapositiveAttente, type Diapositive } from "./Diapositives";
-import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, verifierActif, type VerdictActif } from "@/lib/api";
+import { analyser, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
@@ -44,7 +44,16 @@ export type EagleApi = {
   afficherDiapositive: (id: string) => string;
 };
 
-export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; da?: DirectionArtistique | null }) {
+type Props = {
+  onApi?: (api: EagleApi) => void;
+  da?: DirectionArtistique | null;
+  /** Compte connecté (site déployé) : identifiant affiché et déconnexion. */
+  compte?: { identifiant: string; deconnecter: () => void } | null;
+  /** Rouvre la présentation du début (components/Entree.tsx). */
+  ouvrirModeEmploi?: () => void;
+};
+
+export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi }: Props) {
   const [voixParle, setVoixParle] = useState(false);
   // Appel vocal en cours : l'agent dit lui-même chaque question, l'écran ne la répète pas dans la transcription.
   const voixEnLigne = useRef(false);
@@ -103,7 +112,12 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
 
   // ---------- Accueil ----------
 
+  // Questions auxquelles la personne a répondu. Une liste vide (« rien de particulier ») est une
+  // réponse : sans ce suivi, l'outil vocal croyait les trois questions à liste déjà traitées.
+  const repondues = useRef<Set<string>>(new Set());
+
   const repondre = (champ: string, valeur: unknown, titre?: string) => {
+    repondues.current.add(champ);
     setProfil((p) => noter(p, champ, valeur));
     setDernierChamp(champ);
     const q = QUESTIONS[question];
@@ -134,7 +148,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     dire(`${origine} Je vous présente le résultat, une diapositive à la fois.`);
   }, [dire]);
 
-  const lancer = useCallback(async (): Promise<string> => {
+  // Une seule analyse à la fois : un second appel (voix qui relance, double clic) rejoint celle en cours
+  // au lieu d'en démarrer une autre. Le 16 novembre, huit relances vocales en avaient lancé plusieurs de front.
+  const analyseEnCours = useRef<Promise<string> | null>(null);
+  const lancerUneFois = useCallback(async (): Promise<string> => {
     if (!complet(profil)) return "Le profil n'est pas complet : il manque une réponse.";
     setPhase("analyse");
     setErreur(null);
@@ -154,6 +171,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
       return message;
     }
   }, [profil, demande, prenom, dire, presenter]);
+  const lancer = useCallback((): Promise<string> => {
+    if (!analyseEnCours.current) analyseEnCours.current = lancerUneFois().finally(() => { analyseEnCours.current = null; });
+    return analyseEnCours.current;
+  }, [lancerUneFois]);
 
   const demonstration = async (p: Persona) => {
     const s = await chargerSortie(p.id);
@@ -280,7 +301,9 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
       }
       // La voix apprend ce qui manque encore, dans l'ordre des questions.
       const apres = noter(profil, champ, valeur);
-      const manque = QUESTIONS.filter((q) => q.champ !== champ && (apres[q.champ] === undefined || apres[q.champ] === ""));
+      const manque = QUESTIONS.filter((q) => q.champ !== champ && (q.type === "choix" && q.multiple
+        ? !repondues.current.has(q.champ)
+        : apres[q.champ] === undefined || apres[q.champ] === ""));
       const m = manque[0];
       const choix = !m ? "" : m.type === "choix"
         ? `Choix : ${m.options.map((o) => `${o.titre} = ${o.valeur}`).join(" ; ")}${m.multiple ? " (plusieurs réponses possibles, ou une réponse libre)" : ""}.`
@@ -346,7 +369,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
           <textarea value={demande} onChange={(e) => setDemande(e.target.value)} rows={4}
             placeholder={`Facultatif. Par exemple : « Je souhaite placer une part importante sur Tesla. » Sans demande, le service reçoit : « ${DEMANDE_PAR_DEFAUT} »`} />
         </label>
-        <p className="recap__note">Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. Simulation seulement : aucune transaction réelle.</p>
+        <p className="recap__note">{SERVICE_LOCAL ? <>Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. </> : "Le profil sera transmis au service d'analyse d'Eagle. "}Simulation seulement : aucune transaction réelle.</p>
       </div>
     );
     navigation = (
@@ -365,7 +388,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     contenu = (
       <div className="panne">
         <p className="diapo__manque">{erreur ? typo(erreur) : null}</p>
-        {injoignable ? (
+        {!SERVICE_LOCAL ? (
+          // Site en ligne : la personne n'a rien à installer ni à vérifier. Son profil est conservé.
+          <p className="panne__aide">Votre profil est conservé à droite. Le bouton « Relancer » reprend l&apos;analyse avec les mêmes réponses.</p>
+        ) : injoignable ? (
           <>
             <p className="panne__aide">Commande, à lancer à la racine du dépôt :</p>
             <pre className="panne__commande"><code>{COMMANDE_SERVEUR}</code></pre>
@@ -376,7 +402,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             <pre className="panne__commande"><code>python -m tools.verifier_cles</code></pre>
           </>
         )}
-        <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p>
+        {SERVICE_LOCAL ? <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p> : null}
       </div>
     );
     navigation = <button type="button" className="bouton bouton--principal" onClick={() => void lancer()}>Relancer</button>;
@@ -471,6 +497,17 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
         </main>
 
         <aside className="eagle__droite">
+          {compte || ouvrirModeEmploi ? (
+            <div className="eagle__compte">
+              {ouvrirModeEmploi ? <button type="button" className="eagle__lien" onClick={ouvrirModeEmploi}>Mode d&apos;emploi</button> : null}
+              {compte ? (
+                <>
+                  <span className="eagle__identifiant" title="Compte connecté">{compte.identifiant}</span>
+                  <button type="button" className="eagle__lien" onClick={compte.deconnecter}>Se déconnecter</button>
+                </>
+              ) : null}
+            </div>
+          ) : null}
           <h2 className="profil-direct__titre">Votre profil <span>en direct</span></h2>
           <dl className="profil-direct">
             {lignesProfil.map(([cle, nom, valeur]) => (

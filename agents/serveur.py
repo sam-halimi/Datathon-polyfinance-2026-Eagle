@@ -22,6 +22,8 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
+from agents import comptes
+from agents.resistance import est_passagere
 from tools.scenarios import eventail_scenarios, fiche_actif
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -74,10 +76,34 @@ def demonstration(nom: str) -> dict[str, Any]:
     return sortie
 
 
-def repondre(methode: str, chemin: str, requete: dict[str, list[str]], corps: dict[str, Any]) -> dict[str, Any]:
-    """Aiguillage, séparé du serveur pour être testé sans réseau."""
+PANNE_PASSAGERE = ("Le modèle de langage est momentanément indisponible (Amazon Bedrock). Plusieurs reprises et un "
+                   "modèle de secours ont été essayés. Votre profil est conservé : relancez dans un instant.")
+
+
+def phrase_d_echec(erreur: Exception, ou_est_le_detail: str) -> tuple[int, str]:
+    """Code HTTP et phrase pour un échec du pipeline : 503 si la panne est passagère, 500 sinon."""
+    if est_passagere(erreur):
+        return 503, PANNE_PASSAGERE
+    return 500, f"{type(erreur).__name__} : le pipeline a échoué. Détail {ou_est_le_detail}."
+
+
+def repondre(methode: str, chemin: str, requete: dict[str, list[str]], corps: dict[str, Any],
+             entetes: dict[str, str] | None = None) -> dict[str, Any]:
+    """Aiguillage, séparé du serveur pour être testé sans réseau.
+
+    `entetes` : en-têtes de la requête, lus pour le jeton de compte (agents/comptes.py)."""
     if methode == "GET" and chemin == "/sante":
-        return {"ok": True, "service": "Eagle", "simulation": True}
+        return {"ok": True, "service": "Eagle", "simulation": True, "comptes": comptes.actifs()}
+    if chemin.startswith("/compte"):
+        if not comptes.actifs():
+            raise Refus("Les comptes ne sont pas activés sur ce serveur : aucune connexion n'est nécessaire.")
+        if methode == "POST" and chemin == "/compte/creer":
+            return comptes.creer(corps)
+        if methode == "POST" and chemin == "/compte/connexion":
+            return comptes.connecter(corps)
+        if methode == "GET" and chemin == "/compte":
+            return {"identifiant": comptes.identifier(entetes)}
+    comptes.exiger(methode, chemin, entetes)
     if methode == "GET" and chemin == "/actif":
         symbole = (requete.get("symbole") or [""])[0]
         if not symbole:
@@ -107,7 +133,7 @@ class Gestionnaire(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(donnees)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
         self.wfile.write(donnees)
@@ -119,14 +145,18 @@ class Gestionnaire(BaseHTTPRequestHandler):
             if methode == "POST":
                 longueur = int(self.headers.get("Content-Length") or 0)
                 corps = json.loads(self.rfile.read(longueur) or b"{}")
-            self._envoyer(200, repondre(methode, url.path.rstrip("/") or "/", parse_qs(url.query), corps))
+            self._envoyer(200, repondre(methode, url.path.rstrip("/") or "/", parse_qs(url.query), corps,
+                                        dict(self.headers.items())))
+        except comptes.RefusCompte as e:
+            self._envoyer(e.code, {"erreur": str(e)})
         except Refus as e:
             self._envoyer(400, {"erreur": str(e)})
         except json.JSONDecodeError:
             self._envoyer(400, {"erreur": "Le corps de la requête n'est pas du JSON valide."})
         except Exception as e:  # le pipeline a échoué : message court, détail dans le terminal
             traceback.print_exc()
-            self._envoyer(500, {"erreur": f"{type(e).__name__} : le pipeline a échoué. Détail dans le terminal du serveur."})
+            code, phrase = phrase_d_echec(e, "dans le terminal du serveur")
+            self._envoyer(code, {"erreur": phrase})
 
     def do_GET(self) -> None:  # noqa: N802
         self._traiter("GET")

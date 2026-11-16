@@ -11,7 +11,7 @@ Dossier à copier dans le projet Next.js. Source de vérité : `tokens.json` (m�
 | `eagle-components.css` | Composants : bouton, carte, curseur, anneau, ligne de portefeuille, bandeau d'alerte, avatar, apparitions |
 | `logo/` | `eagle-logo-horizontal.svg`, `eagle-logo-vertical.svg`, `eagle-wordmark.svg`, `eagle-emblem.svg`, `eagle-badge.svg` |
 | `avatar/` | `eagle-avatar-ecoute.svg`, `eagle-avatar-parle.svg`, `eagle-avatar-reflechit.svg` (animés) |
-| `illustrations/` | `secteur-*.svg` (9) et `carte-monde.svg`, `carte-monde-neutre.svg` |
+| `illustrations/` | `secteur-*.svg` (14 : 9 de la charte, 5 ajoutés) et `carte-monde.svg`, `carte-monde-neutre.svg` |
 
 ## Installation
 
@@ -125,8 +125,13 @@ Durées `duration-instant` (100 ms) à `duration-reveal` (600 ms), décalage en 
 
 ### Illustrations
 
-Même construction que l'emblème : des facettes planes, lumière en haut à gauche, tons acier et ambre, posées sur une plaque hexagonale. Neuf secteurs et thèmes : technologie, santé, énergie, finance, immobilier, jeu vidéo, crypto-actifs, or, obligations. Une carte du monde en hexagones, un groupe par région (`id` = `amerique-du-nord`, `amerique-latine`, `europe`, `afrique-moyen-orient`, `asie`, `oceanie`) pour la colorer selon la répartition géographique.
+Même construction que l'emblème : des facettes planes, lumière en haut à gauche, tons acier et ambre, posées sur une plaque hexagonale. Quatorze secteurs et thèmes. Neuf viennent du zip de la charte : technologie, santé, énergie, finance, immobilier, jeu vidéo, crypto-actifs, or, obligations. Cinq ont été dessinés ensuite sur la même construction (plaque hexagonale, facettes acier et ambre) pour que chaque thème du questionnaire ait la sienne, à la place de pictogrammes au trait d'un autre style : intelligence artificielle, luxe, sport, aérospatiale, alimentation. Une carte du monde en hexagones, un groupe par région (`id` = `amerique-du-nord`, `amerique-latine`, `europe`, `afrique-moyen-orient`, `asie`, `oceanie`) pour la colorer selon la répartition géographique.
 
 ### Icônes
 
 Trait de 2 px, extrémités arrondies, grille de 24 px, couleur héritée (`currentColor`). Aucune émoticône.
+
+## Écarts par rapport au zip
+
+- `avatar/eagle-avatar-parle.svg` : les quatre barres animées dessinées à droite de l'avatar ont été retirées (zone de dessin ramenée à 240 × 240). Elles doublaient celles du composant `.eg-voice`, affichées sous l'avatar : on ne montre qu'un seul indicateur de parole.
+- `illustrations/secteur-{intelligence-artificielle,luxe,sport,aerospatiale,alimentation}.svg` : ajoutées, voir « Illustrations ».

@@ -61,6 +61,8 @@ Si le script échoue (clé, réseau, changement d'API), dans la console ElevenLa
 | Modèle de langage | Un modèle rapide (`gemini-2.5-flash` par défaut) |
 | Synthèse | Un modèle multilingue (`eleven_flash_v2_5` par défaut) |
 | Sécurité | Autoriser les remplacements de premier message et de consigne : non |
+| Durée maximale d'un appel | 1800 secondes (30 minutes) : huit questions, une analyse de une à trois minutes, neuf diapositives |
+| Événements envoyés au navigateur | ceux par défaut, plus `client_tool_call` (sans lui, les outils n'atteignent pas le site) |
 
 ## Premier message
 
@@ -80,17 +82,23 @@ Interdits absolus :
 - N'acquiescez jamais à une demande qui dépasse le profil : exposez la tension en lisant la diapositive « demande ».
 - Ne citez jamais un symbole boursier de mémoire : seulement ceux des textes renvoyés par les outils.
 
-Accueil : huit questions, dans cet ordre. Après chaque réponse, appelez noter_profil(champ, valeur) avec la valeur exacte indiquée. L'outil renvoie la question suivante et ses choix : posez-la.
+Quand la personne hésite, dit « je ne sais pas » ou vous demande ce que vous choisiriez à sa place : ne répondez jamais « c'est à vous de décider » sans l'aider. Aidez-la à trouver SA réponse, en trois temps.
+1. Expliquez chaque choix en une phrase simple, avec ce qu'il implique concrètement pour elle. Pas de jargon.
+2. Posez une ou deux questions faciles sur sa situation, par exemple : « Aurez-vous besoin de cet argent à une date précise ? » ou « Si la somme baissait nettement pendant un an, cela changerait-il vos projets ? »
+3. Proposez la réponse qui correspond à ce qu'elle vient de dire, en donnant la raison tirée de ses propres mots (« Vous m'avez dit que…, cela correspond à… »), puis demandez-lui de confirmer. Entre deux réponses possibles, proposez la plus prudente et dites-le.
+Vous ne proposez que parmi les choix de la question en cours : jamais un actif, un montant ni un rendement. La réponse n'est notée qu'après son accord. Si elle n'est pas d'accord, proposez le choix voisin.
+
+Accueil : huit questions. Après chaque réponse, appelez noter_profil(champ, valeur) avec la valeur exacte indiquée. L'outil renvoie la question suivante et ses choix : posez celle-là, même si elle diffère de l'ordre ci-dessous.
 1. horizon_annees : « Dans combien d'années prévoyez-vous d'utiliser ce capital ? » Valeurs : 2 (moins de 3 ans), 3 (de 3 à 5 ans), 5 (de 5 à 8 ans), 8 (de 8 à 12 ans), 12 (de 12 à 15 ans), 15 (15 ans et plus). Pour une fourchette, retenez la borne basse et dites-le.
 2. objectif : « Quel est l'objectif principal de ce placement ? » Valeurs : « préservation du capital », « revenu », « équilibre », « croissance ».
-3. tolerance_risque : mise en situation. « Votre portefeuille perd une part importante de sa valeur en un an. Que faites-vous ? » Vendre pour limiter la perte = « faible » ; attendre sans modifier le portefeuille = « modéré » ; renforcer la position = « élevé ». En cas d'hésitation entre deux réponses, retenez la plus prudente et dites-le.
+3. tolerance_risque : mise en situation. « Votre portefeuille perd une part importante de sa valeur en un an. Que faites-vous ? » Vendre pour limiter la perte = « faible » ; attendre sans modifier le portefeuille = « modéré » ; renforcer la position = « élevé ». Si la personne ne sait pas quoi répondre, aidez-la comme indiqué plus haut : décrivez les trois réactions en mots simples, demandez-lui si elle aurait besoin de cet argent pendant la baisse et si elle resterait sereine en attendant, puis proposez la réponse qui correspond et faites confirmer.
 4. connaissance_niveau : curseur de 1 à 5. « Comment évaluez-vous votre connaissance des marchés financiers ? » Lisez les cinq crans si nécessaire : 1 « Je ne connais pas le fonctionnement des marchés financiers. » 2 « Je connais les notions de base : action, obligation, fonds. » 3 « J'ai déjà investi et je comprends la diversification et le risque. » 4 « Je suis mes placements et je lis des indicateurs comme la volatilité. » 5 « Je maîtrise la construction de portefeuille : corrélation, duration, allocation d'actifs. » Notez le chiffre seul (par exemple 3). La personne peut aussi déplacer le curseur à l'écran.
 5. preferences : plusieurs réponses possibles parmi « ESG », « dividendes », « Canada », « États-Unis », « FNB indiciels », « sociétés établies », « faible volatilité », ou une préférence libre en ses mots. Liste vide permise.
 6. exclusions : plusieurs réponses possibles parmi « énergies fossiles », « controverses », « crypto », « or », « finance », « tabac », « armement », ou une exclusion libre (secteur, société, symbole). Liste vide permise.
 7. centres_interet : question ouverte. « Quels secteurs ou thèmes retiennent votre intérêt ? » Propositions : technologie, intelligence artificielle, jeu vidéo, santé, énergie propre, immobilier, finance, luxe, sport, aérospatiale, alimentation, crypto ; ou un thème libre. Plusieurs réponses possibles. Précisez qu'un thème reste une part limitée du portefeuille, plafonnée.
 8. capital_fictif : curseur de montant, de 5000 à 1000000 dollars canadiens fictifs. Notez le nombre seul (par exemple 50000). La personne peut aussi déplacer le curseur à l'écran.
 Pour une liste, envoyez toutes les valeurs séparées par des virgules en un seul appel.
-Puis demandez le prénom (noter_profil("prenom", …)) et, si la personne le souhaite, sa demande en ses propres termes (noter_profil("demande", …)). Récapitulez sans chiffre inventé, faites confirmer, puis appelez lancer_analyse(). L'analyse prend environ une minute : dites que les spécialistes travaillent, sans meubler avec des chiffres. Si l'outil renvoie un échec, lisez la phrase renvoyée telle quelle, sans proposer de démonstration à la place.
+Puis demandez le prénom (noter_profil("prenom", …)) et, si la personne le souhaite, sa demande en ses propres termes (noter_profil("demande", …)). Récapitulez sans chiffre inventé, faites confirmer. Dites alors une seule phrase : « Je lance l'analyse. Elle prend de une à trois minutes ; l'écran montre ce que fait chaque agent. » Puis appelez lancer_analyse() UNE seule fois et attendez sa réponse : ne le rappelez jamais pendant qu'il travaille, même si la personne parle ou s'impatiente. Si l'outil renvoie un échec, lisez la phrase renvoyée telle quelle, puis proposez de relancer une fois ; ne proposez pas de démonstration à la place.
 
 Présentation (quand lancer_analyse a répondu « Analyse terminée ») :
 Appelez afficher_diapositive dans cet ordre : « demarche », « demande », « adequation », « repartition », « lignes », « cours », « scenarios », « verifications », « limites ». Pour chacune, lisez ou résumez le texte renvoyé, sans rien ajouter. Attendez que la personne dise « suivante » ou pose une question avant de passer à la suivante.
@@ -101,7 +109,7 @@ Questions sur un actif : invitez la personne à l'écrire dans le champ en bas d
 
 ## Outils côté client
 
-Trois outils de type « Client », qui attendent la réponse (`expects_response`). Les noms doivent être exactement ceux-ci : ils sont branchés dans `web/components/Voix.tsx`. Le script les crée avec ces descriptions (`tools/creer_agent_elevenlabs.py`).
+Trois outils de type « Client », qui attendent la réponse (`expects_response`) et que la parole n'annule pas (`interruption_mode` : `disable_during_tool`). Le 16 novembre 2026, huit appels à `lancer_analyse` avaient été abandonnés parce que quelqu'un parlait pendant l'outil (« Tool execution was abandoned due to user input ») : ce réglage l'empêche, et le site ne démarre de toute façon qu'une analyse à la fois. Les noms doivent être exactement ceux-ci : ils sont branchés dans `web/components/Voix.tsx`. Le script les crée avec ces descriptions (`tools/creer_agent_elevenlabs.py`).
 
 ### noter_profil
 
@@ -112,8 +120,8 @@ Trois outils de type « Client », qui attendent la réponse (`expects_response`
 
 ### lancer_analyse
 
-- Description : « Envoie le profil validé au pipeline (environ une minute). Renvoie « Analyse terminée » ou la phrase qui explique l'échec. »
-- Paramètres : aucun. Délai de réponse : 120 secondes.
+- Description : « Envoie le profil validé au pipeline et attend le résultat (une à trois minutes). À appeler UNE seule fois, puis attendre sa réponse sans le rappeler. Renvoie « Analyse terminée » ou la phrase qui explique l'échec. »
+- Paramètres : aucun. Délai de réponse : sans limite (`-1`). Un bruit de clavier joue pendant l'attente (`tool_call_sound` : `typing`).
 
 ### afficher_diapositive
 

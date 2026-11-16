@@ -46,6 +46,11 @@ export function Avatar({ etat, taille = 150, repli }: { etat: EtatAvatar; taille
 // ---------- Illustrations par secteur et thème ----------
 
 const MOTS: [RegExp, string][] = [
+  [/intelligence artificielle|\bIA\b/i, "intelligence-artificielle"],
+  [/a[ée]rospat|aerospace/i, "aerospatiale"],
+  [/aliment|agri|agro/i, "alimentation"],
+  [/luxe|luxury/i, "luxe"],
+  [/sport/i, "sport"],
   [/jeu.?vid|gaming/i, "jeu-video"],
   [/crypto|bitcoin|ether/i, "crypto"],
   [/oblig|bond/i, "obligations"],

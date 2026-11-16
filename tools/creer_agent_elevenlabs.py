@@ -60,16 +60,22 @@ OUTILS: list[dict[str, Any]] = [
             },
         },
         "expects_response": True,
+        "interruption_mode": "disable_during_tool",
         "response_timeout_secs": 20,
     },
     {
         "type": "client",
         "name": "lancer_analyse",
-        "description": ("Envoie le profil validé au pipeline (environ une minute). Renvoie « Analyse terminée » "
+        "description": ("Envoie le profil validé au pipeline et attend le résultat (une à trois minutes). À appeler "
+                        "UNE seule fois, puis attendre sa réponse sans le rappeler. Renvoie « Analyse terminée » "
                         "ou la phrase qui explique l'échec."),
         "parameters": {"type": "object", "required": [], "properties": {}},
         "expects_response": True,
-        "response_timeout_secs": 120,
+        "interruption_mode": "disable_during_tool",
+        # -1 : attendre la réponse du site sans limite (une analyse a pris 150 s ; 120 s la coupait).
+        "response_timeout_secs": -1,
+        "tool_call_sound": "typing",
+        "tool_call_sound_behavior": "always",
     },
     {
         "type": "client",
@@ -82,6 +88,7 @@ OUTILS: list[dict[str, Any]] = [
             "properties": {"id": {"type": "string", "description": "Diapositive à afficher.", "enum": DIAPOSITIVES}},
         },
         "expects_response": True,
+        "interruption_mode": "disable_during_tool",
         "response_timeout_secs": 20,
     },
 ]

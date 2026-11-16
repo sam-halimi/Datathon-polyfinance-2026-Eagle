@@ -13,7 +13,8 @@ import traceback
 from typing import Any
 from urllib.parse import parse_qs
 
-from agents.serveur import Refus, repondre
+from agents.comptes import RefusCompte
+from agents.serveur import Refus, phrase_d_echec, repondre
 
 
 def _reponse(code: int, contenu: dict[str, Any]) -> dict[str, Any]:
@@ -36,11 +37,14 @@ def gestionnaire(evenement: dict[str, Any], contexte: Any = None) -> dict[str, A
             if evenement.get("isBase64Encoded"):
                 brut = base64.b64decode(brut).decode("utf-8")
             corps = json.loads(brut or "{}")
-        return _reponse(200, repondre(methode, chemin, requete, corps))
+        return _reponse(200, repondre(methode, chemin, requete, corps, evenement.get("headers") or {}))
+    except RefusCompte as e:
+        return _reponse(e.code, {"erreur": str(e)})
     except Refus as e:
         return _reponse(400, {"erreur": str(e)})
     except json.JSONDecodeError:
         return _reponse(400, {"erreur": "Le corps de la requête n'est pas du JSON valide."})
     except Exception as e:  # le détail va dans CloudWatch, pas dans la réponse
         traceback.print_exc()
-        return _reponse(500, {"erreur": f"{type(e).__name__} : le pipeline a échoué. Détail dans les journaux CloudWatch."})
+        code, phrase = phrase_d_echec(e, "dans les journaux CloudWatch")
+        return _reponse(code, {"erreur": phrase})

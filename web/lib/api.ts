@@ -1,3 +1,4 @@
+import { enteteCompte, fermerSession } from "./compte";
 import { profilPourAnalyse } from "./questions";
 import type { Profil, SortiePipeline } from "./types";
 
@@ -6,28 +7,44 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 export const ADRESSE_API = API;
 export const COMMANDE_SERVEUR = "python -m agents.serveur";
 
+/** Le service tourne-t-il sur la machine de la personne (développement) ou en ligne ? */
+export const SERVICE_LOCAL = /\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(API);
+
 /** Échec d'un appel au service, dit en une phrase. `injoignable` : aucune réponse
- *  (serveur arrêté, mauvaise adresse) ; sinon le serveur a répondu par une erreur. */
+ *  (serveur arrêté, mauvaise adresse) ; sinon le serveur a répondu par une erreur.
+ *  `code` : 401 = connexion requise ou expirée, 503 = panne passagère (relancer suffit). */
 export class ErreurService extends Error {
-  constructor(message: string, readonly injoignable: boolean) {
+  constructor(message: string, readonly injoignable: boolean, readonly code: number = 0) {
     super(message);
   }
 }
 
+/** Prévenu quand le service refuse le jeton (401) : l'écran d'entrée redemande la connexion. */
+let surDeconnexion: () => void = () => {};
+export function ecouterDeconnexion(f: () => void): void { surDeconnexion = f; }
+
 async function appeler(chemin: string, init?: RequestInit): Promise<Response> {
   let r: Response;
   try {
-    r = await fetch(`${API}${chemin}`, init);
+    r = await fetch(`${API}${chemin}`, { ...init, headers: { ...(init?.headers ?? {}), ...enteteCompte() } });
   } catch {
-    throw new ErreurService(
-      `Le service d'analyse ne répond pas à ${API} : lancez-le à la racine du dépôt avec « ${COMMANDE_SERVEUR} ».`, true);
+    throw new ErreurService(SERVICE_LOCAL
+      ? `Le service d'analyse ne répond pas à ${API} : lancez-le à la racine du dépôt avec « ${COMMANDE_SERVEUR} ».`
+      : "Le service d'analyse ne répond pas. Vérifiez votre connexion à Internet, puis relancez.", true);
   }
   if (!r.ok) {
     let detail = "";
     try {
       detail = ((await r.json()) as { erreur?: string }).erreur ?? "";
     } catch { /* corps illisible : on garde le code */ }
-    throw new ErreurService(`Le service d'analyse a répondu par une erreur ${r.status}${detail ? ` : ${detail}` : "."}`, false);
+    if (r.status === 401) {
+      fermerSession();
+      surDeconnexion();
+      throw new ErreurService(detail || "Connexion requise : reconnectez-vous.", false, 401);
+    }
+    // 503 : panne passagère du modèle, la phrase du serveur se suffit (« relancez dans un instant »).
+    if (r.status === 503 && detail) throw new ErreurService(detail, false, 503);
+    throw new ErreurService(`Le service d'analyse a répondu par une erreur ${r.status}${detail ? ` : ${detail}` : "."}`, false, r.status);
   }
   return r;
 }

@@ -104,7 +104,7 @@ def _compartiment(nom: str) -> None:
         _dire(f"compartiment S3 créé : {nom}")
 
 
-def _role() -> str:
+def _role(arn_comptes: str | None = None) -> str:
     iam = boto3.client("iam")
     confiance = {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": "sts:AssumeRole",
                                                           "Principal": {"Service": "lambda.amazonaws.com"}}]}
@@ -120,7 +120,47 @@ def _role() -> str:
         "Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Resource": "*", "Action": [
             "bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream", "bedrock:Converse",
             "bedrock:ConverseStream"]}]}))
+    if arn_comptes:
+        # Comptes : créer, fixer le mot de passe, connecter, retirer un compte à moitié créé. Rien d'autre.
+        iam.put_role_policy(RoleName=ROLE, PolicyName="eagle-comptes", PolicyDocument=json.dumps({
+            "Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Resource": arn_comptes, "Action": [
+                "cognito-idp:AdminCreateUser", "cognito-idp:AdminSetUserPassword", "cognito-idp:AdminInitiateAuth",
+                "cognito-idp:AdminDeleteUser"]}]}))
     return arn
+
+
+GROUPE_COMPTES = "eagle-comptes"
+CLIENT_COMPTES = "eagle-site"
+
+
+def _comptes() -> tuple[str, str, str]:
+    """Groupe d'utilisateurs Cognito des comptes Eagle et son client : (identifiant, ARN, client).
+
+    Identifiant et mot de passe seulement : aucune adresse courriel, aucun message envoyé. Les comptes
+    sont créés par l'API (agents/comptes.py), pas en libre-service auprès de Cognito."""
+    cog = _client("cognito-idp")
+    groupe = next((g["Id"] for page in cog.get_paginator("list_user_pools").paginate(MaxResults=60)
+                   for g in page["UserPools"] if g["Name"] == GROUPE_COMPTES), None)
+    if groupe is None:
+        groupe = cog.create_user_pool(
+            PoolName=GROUPE_COMPTES,
+            Policies={"PasswordPolicy": {"MinimumLength": 8, "RequireLowercase": True, "RequireNumbers": True,
+                                         "RequireUppercase": False, "RequireSymbols": False}},
+            UsernameConfiguration={"CaseSensitive": False},
+            AdminCreateUserConfig={"AllowAdminCreateUserOnly": True},
+        )["UserPool"]["Id"]
+        _dire(f"groupe d'utilisateurs Cognito créé : {GROUPE_COMPTES}")
+    arn = cog.describe_user_pool(UserPoolId=groupe)["UserPool"]["Arn"]
+    client = next((c["ClientId"] for page in cog.get_paginator("list_user_pool_clients").paginate(UserPoolId=groupe, MaxResults=60)
+                   for c in page["UserPoolClients"] if c["ClientName"] == CLIENT_COMPTES), None)
+    if client is None:
+        client = cog.create_user_pool_client(
+            UserPoolId=groupe, ClientName=CLIENT_COMPTES, GenerateSecret=False,
+            ExplicitAuthFlows=["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"],
+            AccessTokenValidity=8, TokenValidityUnits={"AccessToken": "hours"},
+        )["UserPoolClient"]["ClientId"]
+        _dire(f"client Cognito créé : {CLIENT_COMPTES} (jeton d'accès valable 8 heures)")
+    return groupe, arn, client
 
 
 def deployer_api() -> str:
@@ -130,11 +170,13 @@ def deployer_api() -> str:
     _compartiment(compartiment)
     cle = f"lambda/eagle-api-{hashlib.sha256(archive.read_bytes()).hexdigest()[:12]}.zip"
     _client("s3").upload_file(str(archive), compartiment, cle)
-    arn_role = _role()
+    groupe, arn_comptes, client_comptes = _comptes()
+    arn_role = _role(arn_comptes)
     lam = _client("lambda")
     reglages = dict(Runtime="python3.13", Handler="agents.lambda_eagle.gestionnaire", Role=arn_role,
                     Timeout=900, MemorySize=2048,
-                    Environment={"Variables": {"BEDROCK_AUTH": "identifiants", "PYTHONUTF8": "1"}},
+                    Environment={"Variables": {"BEDROCK_AUTH": "identifiants", "PYTHONUTF8": "1",
+                                               "EAGLE_COGNITO_GROUPE": groupe, "EAGLE_COGNITO_CLIENT": client_comptes}},
                     Description="Eagle : pipeline d'agents (portefeuilles simulés) et routes de agents/serveur.py")
     try:
         lam.get_function(FunctionName=FONCTION)
@@ -156,7 +198,7 @@ def deployer_api() -> str:
         lam.put_function_concurrency(FunctionName=FONCTION, ReservedConcurrentExecutions=CONCURRENCE_MAX)
     except botocore.exceptions.ClientError as e:
         _dire(f"concurrence non plafonnée ({e.response['Error']['Code']}) : quota du compte trop bas")
-    cors = {"AllowOrigins": ["*"], "AllowMethods": ["GET", "POST"], "AllowHeaders": ["content-type"], "MaxAge": 3600}
+    cors = {"AllowOrigins": ["*"], "AllowMethods": ["GET", "POST"], "AllowHeaders": ["content-type", "authorization"], "MaxAge": 3600}
     try:
         url = lam.get_function_url_config(FunctionName=FONCTION)["FunctionUrl"]
         lam.update_function_url_config(FunctionName=FONCTION, AuthType="NONE", Cors=cors)
@@ -186,7 +228,8 @@ def construire_site(url_api: str) -> Path:
     # depuis data/ et agents/sorties/ : le site déployé ne peut pas être en retard sur les données.
     _dire("tables du site : python web/scripts/graphiques.py")
     subprocess.run([sys.executable, str(web / "scripts" / "graphiques.py")], cwd=RACINE, check=True)
-    env = {**os.environ, "EAGLE_EXPORT": "1", "NEXT_PUBLIC_API_URL": url_api,
+    # NEXT_PUBLIC_COMPTES=1 : l'API déployée exige un compte (agents/comptes.py), le site montre la connexion.
+    env = {**os.environ, "EAGLE_EXPORT": "1", "NEXT_PUBLIC_API_URL": url_api, "NEXT_PUBLIC_COMPTES": "1",
            "NEXT_PUBLIC_ELEVENLABS_AGENT_ID": os.environ.get("NEXT_PUBLIC_ELEVENLABS_AGENT_ID") or AGENT_VOCAL}
     _dire(f"export statique de web/ (API {url_api}, agent vocal {env['NEXT_PUBLIC_ELEVENLABS_AGENT_ID']})")
     subprocess.run(["npx", "next", "build"], cwd=web, env=env, check=True)
