@@ -199,9 +199,12 @@ export function Eagle({ onApi, da = null, compte = null, ouvrirModeEmploi, depar
   // Langue de la démonstration chargée : lue au moment du choix (langueCourante), pas dans l'état React,
   // qui peut avoir un rendu de retard quand on choisit l'anglais juste avant d'ouvrir un cas.
   const langueChargee = useRef<Langue | null>(null);
+  const chargement = useRef(0);
   const demonstration = async (p: Persona, annoncer = true) => {
     const l = langueCourante();
+    const tour = ++chargement.current;
     const s = await chargerSortie(p.id, l);
+    if (tour !== chargement.current) return; // une demande plus récente (autre cas, autre langue) a pris la suite
     langueChargee.current = l;
     setProfil(s.profil);
     setPrenom(s.profil.prenom ?? p.nom);

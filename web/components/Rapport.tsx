@@ -50,7 +50,11 @@ export function Rapport() {
       setErreur("Persona inconnu : choisissez robert, amira ou mateo.");
       return;
     }
-    chargerSortie(id, langue).then(completerGraphiques).then(setSortie, () => setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`));
+    // Si la langue change pendant le chargement, seule la dernière demande est affichée.
+    let courant = true;
+    chargerSortie(id, langue).then(completerGraphiques).then((s) => { if (courant) setSortie(s); },
+      () => { if (courant) setErreur(`Je n'arrive pas à lire agents/sorties/${id}.json.`); });
+    return () => { courant = false; };
   }, [id, enDirect, langue]);
 
   useEffect(() => {
