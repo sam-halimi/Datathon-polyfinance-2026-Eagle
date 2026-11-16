@@ -98,7 +98,13 @@ Sur le site CloudFront, dans un navigateur piloté :
 - Voix, appel réel avec micro simulé : profil rempli à l'écran reconnu par l'agent, « lancez l'analyse » dit au micro, une seule analyse, écran d'attente réel, puis présentation menée par la voix. Avec la relance automatique, les neuf diapositives s'enchaînent sans intervention (160 s) et l'agent termine par sa question. Pause : aucune parole pendant 20 s, reprise correcte.
 - Écran en avance sur la voix : corrigé par `execution_mode: post_tool_speech` sur `afficher_diapositive`. Vérifié sur trois diapositives seulement : l'appel suivant a été coupé par ElevenLabs, **crédits du compte épuisés**.
 
-Limite constatée : le compte ElevenLabs (forfait Starter, 40 000 crédits par mois) est à zéro depuis le 16 novembre vers 4 h 45 UTC ; remise à zéro le 17 novembre à 0 h 27 UTC. Un appel complet (questions, analyse, neuf diapositives) coûte de 3 000 à 4 000 crédits, soit une dizaine d'appels par mois avec ce forfait. Sans crédits, « Démarrer l'appel » affiche « La voix n'est pas disponible pour le moment » et tout le parcours reste possible à l'écran.
+Après le passage du compte ElevenLabs au forfait Creator (121 000 crédits par mois), le même jour :
+
+- Appel complet sur le site CloudFront : profil rempli à l'écran reconnu, analyse lancée une seule fois par la voix (200 en 91 s), écran d'attente réel, puis les neuf diapositives dans l'ordre, une toutes les 25 à 30 secondes, chacune affichée quand la voix a fini la précédente ; éléments mis en avant à l'écran (Actions, Obligations, SPY, JNJ) ; question finale de l'agent ; aucune erreur.
+- Appel sur un cas déjà affiché (Robert) : l'agent propose de présenter le résultat au lieu de reposer les questions. Pause au milieu d'une diapositive, puis reprise : l'agent reprend la diapositive affichée (« Je reprends l'adéquation »), puis continue.
+- Les marques de ton de la synthèse vocale (« [calme] ») ne s'affichent plus dans la transcription.
+
+Historique : avant ce changement de forfait, le compte ElevenLabs (forfait Starter, 40 000 crédits par mois) depuis le 16 novembre vers 4 h 45 UTC. Un appel complet (questions, analyse, neuf diapositives) coûte de 3 000 à 4 000 crédits, soit une dizaine d'appels par mois avec le forfait Starter et une trentaine avec Creator. Sans crédits, « Démarrer l'appel » affiche « La voix n'est pas disponible pour le moment » et tout le parcours reste possible à l'écran.
 
 Non vérifié : un appel vocal complet par une personne (huit questions, analyse, neuf diapositives lues) et un vrai téléphone ; les essais sont faits dans un navigateur piloté.
 

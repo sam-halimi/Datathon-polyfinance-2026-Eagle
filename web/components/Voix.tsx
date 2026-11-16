@@ -19,6 +19,11 @@ const AGENT_EN = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN;
 // qu'on lui réponde : sans rien dire, il fallait une trentaine de secondes de silence avant la suivante.
 // Le site dit donc « continuez » à sa place, deux secondes et demie après la fin de chaque diapositive,
 // jusqu'à la dernière. La personne peut couper la parole à tout moment : Eagle répond, puis reprend.
+/** Retire les marques de ton entre crochets que le modèle de voix place dans son texte (« [calme] », « [pause] »). */
+export function sansMarquesDeTon(texte: string): string {
+  return texte.replace(/\[[\p{L}' -]{2,24}\]\s*/gu, "").replace(/\s{2,}/g, " ").trim();
+}
+
 const DERNIERE_DIAPOSITIVE = "limites";
 const SILENCE_AVANT_SUITE = 2500;
 const SUITE = { fr: "Continuez la présentation.", en: "Please continue the presentation." };
@@ -67,7 +72,12 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
       liaison.current.etablie = false;
     },
     // La relance automatique « continuez » n'est pas une parole de la personne : elle n'entre pas dans la transcription.
-    onMessage: (m) => { if (!(m.role === "user" && Object.values(SUITE).includes(m.message.trim()))) dire(m.message, m.role === "user" ? "vous" : "eagle"); },
+    onMessage: (m) => {
+      if (m.role === "user" && Object.values(SUITE).includes(m.message.trim())) return;
+      // Les marques de ton de la synthèse vocale (« [calme] ») guident la voix : elles ne s'affichent pas.
+      const texte = m.role === "user" ? m.message : sansMarquesDeTon(m.message);
+      if (texte) dire(texte, m.role === "user" ? "vous" : "eagle");
+    },
     onError: (message) => {
       const l = liaison.current;
       if (!l.etablie && l.mode === "webrtc" && !l.repli) {
@@ -103,7 +113,13 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
           : "La personne a mis l'appel en pause pour réfléchir : son micro est coupé. Ne dites rien et n'appelez aucun outil jusqu'à la reprise.")
         : (en ? "The person has resumed the call: their microphone is on again. Resume where you were, with one short sentence."
           : "La personne a repris l'appel : son micro est rouvert. Reprenez là où vous en étiez, par une phrase courte."));
-      if (!p) conversation.sendUserMessage(en ? "I am back, let us resume where we were." : "Je suis de retour, reprenons là où nous en étions.");
+      // Pendant une présentation, ce qui a été dit pendant la pause n'a pas été entendu (son coupé) :
+      // Eagle reprend la diapositive affichée, au lieu de passer à la suivante.
+      const enPresentation = Boolean(guidage.current);
+      if (!p) conversation.sendUserMessage(enPresentation
+        ? (en ? "I am back. I did not hear what you said during the pause: please present the slide currently on screen again, then continue."
+          : "Je suis de retour. Je n'ai pas entendu ce que vous avez dit pendant la pause : reprenez la diapositive affichée à l'écran, puis continuez.")
+        : (en ? "I am back, let us resume where we were." : "Je suis de retour, reprenons là où nous en étions."));
     } catch { /* appel fermé entre-temps */ }
     dire(p ? "Appel en pause : votre micro est coupé et je me tais. Reprenez quand vous voulez." : "Reprise de l'appel.");
   };
