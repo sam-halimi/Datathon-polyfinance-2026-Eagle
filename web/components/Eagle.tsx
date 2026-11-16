@@ -46,6 +46,9 @@ export type EagleApi = {
 
 export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; da?: DirectionArtistique | null }) {
   const [voixParle, setVoixParle] = useState(false);
+  // Appel vocal en cours : l'agent dit lui-même chaque question, l'écran ne la répète pas dans la transcription.
+  const voixEnLigne = useRef(false);
+  const surLigne = useCallback((enLigne: boolean) => { voixEnLigne.current = enLigne; }, []);
   const [phase, setPhase] = useState<Phase>("accueil");
   const [question, setQuestion] = useState(0);
   const [profil, setProfil] = useState<Partial<Profil>>(PROFIL_VIDE);
@@ -113,10 +116,10 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     const i = question + 1;
     if (i < QUESTIONS.length) {
       setQuestion(i);
-      dire(QUESTIONS[i].texte);
+      if (!voixEnLigne.current) dire(QUESTIONS[i].texte);
     } else {
       setPhase("recap");
-      dire("Voici le profil que j'ai retenu. Indiquez votre prénom et, si vous le souhaitez, votre demande en vos propres termes, puis lancez l'analyse.");
+      if (!voixEnLigne.current) dire("Voici le profil que j'ai retenu. Indiquez votre prénom et, si vous le souhaitez, votre demande en vos propres termes, puis lancez l'analyse.");
     }
   };
 
@@ -136,7 +139,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
     setPhase("analyse");
     setErreur(null);
     setDebutAnalyse(Date.now());
-    dire("Je transmets votre profil aux spécialistes. L'analyse prend environ une minute.");
+    dire("Je transmets votre profil aux spécialistes. L'analyse prend de une à trois minutes.");
     try {
       const s = await analyser(profil, demande.trim() || DEMANDE_PAR_DEFAUT, prenom);
       setDemo(null);
@@ -419,7 +422,7 @@ export function Eagle({ onApi, da = null }: { onApi?: (api: EagleApi) => void; d
             <Avatar etat={etatAvatar} taille={132} repli={<Aigle taille={120} actif={enCours} />} />
             <p className={`eagle__etat eagle__etat--${phase}`}><span aria-hidden="true" />{actif ? `Question sur ${actif.symbole}` : ETAT[phase]}</p>
           </div>
-          <Voix api={api} dire={dire} surParole={setVoixParle} />
+          <Voix api={api} dire={dire} surParole={setVoixParle} surLigne={surLigne} />
           <div className="transcription" ref={filTranscription} tabIndex={0} aria-live="polite" aria-label="Transcription, défilement vertical">
             {transcription.map((r, i) => (
               <p key={i} className={`replique replique--${r.qui}`}>

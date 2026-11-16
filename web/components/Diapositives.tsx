@@ -180,7 +180,7 @@ export function DiapositiveAttente({ debut }: { debut: number }) {
       </ol>
       <p className="attente__temps" aria-live="off">
         <span className="attente__indicateur" aria-hidden="true" />
-        Analyse en cours depuis {ecoule} s, environ une minute au total. Le détail de chaque étape s&apos;affiche avec le résultat.
+        Analyse en cours depuis {ecoule} s. Comptez de une à trois minutes selon le profil. Le détail de chaque étape s&apos;affiche avec le résultat.
       </p>
     </div>
   );

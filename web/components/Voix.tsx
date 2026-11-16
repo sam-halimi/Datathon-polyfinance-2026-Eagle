@@ -15,9 +15,11 @@ type Props = {
   dire: (texte: string, qui?: "eagle" | "vous") => void;
   /** Remonte « la voix émet » pour l'état « parle » de l'avatar. */
   surParole?: (parle: boolean) => void;
+  /** Remonte « l'appel est en cours » : l'agent dit alors lui-même les questions. */
+  surLigne?: (enLigne: boolean) => void;
 };
 
-function Controle({ api, dire, surParole }: Props) {
+function Controle({ api, dire, surParole, surLigne }: Props) {
   // Liaison audio : WebRTC d'abord (meilleure qualité). Un réseau qui bloque l'UDP (Wi-Fi d'école,
   // d'entreprise, de salle) fait échouer WebRTC : on reprend alors une fois par WebSocket, qui
   // passe par HTTPS. `liaison` retient le mode en cours et si la connexion a déjà abouti.
@@ -44,6 +46,7 @@ function Controle({ api, dire, surParole }: Props) {
   const enLigne = conversation.status === "connected";
   const parle = enLigne && conversation.isSpeaking;
   useEffect(() => { surParole?.(parle); }, [parle, surParole]);
+  useEffect(() => { surLigne?.(enLigne); }, [enLigne, surLigne]);
   const ouvrir = (mode: "webrtc" | "websocket") => {
     liaison.current = { ...liaison.current, mode, etablie: false };
     conversation.startSession({ agentId: AGENT!, connectionType: mode });

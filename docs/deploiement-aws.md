@@ -25,6 +25,13 @@ python -m deploiement.deployer tout
 
 Les sorties de démonstration (`agents/sorties/`) sont intégrées au site et à l'API au moment du déploiement : après une régénération, redéployer les deux.
 
+Avant l'export, le script relance `python web/scripts/graphiques.py` : les tables du site (secteur, zone, cours de tous les actifs, éventails des démonstrations) suivent toujours `data/` et `agents/sorties/`. Il fournit aussi l'identifiant de l'agent vocal à l'export (`NEXT_PUBLIC_ELEVENLABS_AGENT_ID`, par défaut l'agent Eagle de `docs/agent-elevenlabs.md`) : la voix est active sur le site déployé.
+
+## Une seule adresse, une seule branche
+
+- **L'adresse à donner au jury est celle de CloudFront.** Le projet Vercel `alphaforge-polyfinances` date du début du dimanche (dernier envoi à 19 h 37 UTC le 15 novembre) : plus rien n'y est déployé, il montre une ancienne version et n'appelle pas l'API AWS. Ne pas le partager.
+- **On déploie depuis une branche qui contient `main`.** Le premier déploiement était parti de `agents-eagle`, qui n'avait pas encore la direction artistique fusionnée dans `main` : le site en ligne et le site local ne se ressemblaient pas. Avant de déployer : `git fetch origin && git merge origin/main`, puis les tests.
+
 ## Vérifié le 16 novembre 2026
 
 - `GET /sante`, `GET /actif`, `GET /demonstration/robert` : 200.
@@ -35,6 +42,6 @@ Les sorties de démonstration (`agents/sorties/`) sont intégrées au site et à
 ## Limites
 
 - L'API `/analyse` est publique et appelle Bedrock : la concurrence plafonnée borne le coût, pas l'accès.
-- La voix (ElevenLabs) reste désactivée tant que `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` n'est pas fourni au moment de l'export ; l'échange se fait par écrit.
-- À 390 px de large, les panneaux de l'écran de bureau se chevauchent : la mise en page mobile reste à faire côté interface.
+- La voix (ElevenLabs) demande un micro et un geste (« Démarrer l'appel »). La liaison part en WebRTC et reprend par WebSocket si le réseau bloque l'UDP. Sans micro, l'échange se fait par écrit.
+- Un appel vocal est limité à 30 minutes par l'agent ElevenLabs (réglage `max_duration_seconds`, relevé de 600 à 1800 s).
 - Le compte de l'atelier et tout ce qui y est déployé sont supprimés à l'expiration du compte. Le code reste sur GitHub et se redéploie par la commande ci-dessus.
