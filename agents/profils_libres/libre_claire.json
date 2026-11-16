@@ -1,0 +1,28 @@
+{
+  "id": "libre_claire",
+  "persona": {
+    "nom": "Claire",
+    "description": "Profil libre : revenu, Canada, sociétés familiales, santé et jeu vidéo."
+  },
+  "profil": {
+    "horizon_annees": 5,
+    "objectif": "revenu",
+    "tolerance_risque": "modéré",
+    "connaissance_niveau": 2,
+    "preferences": [
+      "dividendes",
+      "Canada",
+      "Sociétés familiales"
+    ],
+    "exclusions": [
+      "énergies fossiles"
+    ],
+    "centres_interet": [
+      "santé",
+      "jeu vidéo"
+    ],
+    "capital_fictif": 75000,
+    "devise": "CAD"
+  },
+  "demande": "Je voudrais un peu de Shopify."
+}

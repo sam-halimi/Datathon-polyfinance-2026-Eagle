@@ -18,13 +18,6 @@
      ]
     },
     {
-     "libelle": "AGG",
-     "id": "rep_a_actif_agg",
-     "symboles": [
-      "AGG"
-     ]
-    },
-    {
      "libelle": "XIU.TO",
      "id": "rep_a_actif_xiu_to",
      "symboles": [
@@ -32,10 +25,10 @@
      ]
     },
     {
-     "libelle": "FTS.TO",
-     "id": "rep_a_actif_fts_to",
+     "libelle": "ENB.TO",
+     "id": "rep_a_actif_enb_to",
      "symboles": [
-      "FTS.TO"
+      "ENB.TO"
      ]
     },
     {
@@ -43,6 +36,13 @@
      "id": "rep_a_actif_ry_to",
      "symboles": [
       "RY.TO"
+     ]
+    },
+    {
+     "libelle": "GLD",
+     "id": "rep_a_actif_gld",
+     "symboles": [
+      "GLD"
      ]
     },
     {
@@ -59,8 +59,7 @@
      "id": "rep_a_secteur_obligations_fnb",
      "symboles": [
       "ZST.TO",
-      "XBB.TO",
-      "AGG"
+      "XBB.TO"
      ]
     },
     {
@@ -71,10 +70,10 @@
      ]
     },
     {
-     "libelle": "Services publics",
-     "id": "rep_a_secteur_services_publics",
+     "libelle": "Énergie",
+     "id": "rep_a_secteur_energie",
      "symboles": [
-      "FTS.TO"
+      "ENB.TO"
      ]
     },
     {
@@ -82,6 +81,13 @@
      "id": "rep_a_secteur_finance",
      "symboles": [
       "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_a_secteur_or",
+     "symboles": [
+      "GLD"
      ]
     },
     {
@@ -100,15 +106,21 @@
       "ZST.TO",
       "XBB.TO",
       "XIU.TO",
-      "FTS.TO",
+      "ENB.TO",
       "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_a_zone_or_a_part",
+     "symboles": [
+      "GLD"
      ]
     },
     {
      "libelle": "États-Unis",
      "id": "rep_a_zone_etats_unis",
      "symboles": [
-      "AGG",
       "TSLA"
      ]
     }
@@ -131,13 +143,6 @@
      ]
     },
     {
-     "libelle": "AGG",
-     "id": "rep_b_actif_agg",
-     "symboles": [
-      "AGG"
-     ]
-    },
-    {
      "libelle": "XIU.TO",
      "id": "rep_b_actif_xiu_to",
      "symboles": [
@@ -149,6 +154,13 @@
      "id": "rep_b_actif_xef_to",
      "symboles": [
       "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "ENB.TO",
+     "id": "rep_b_actif_enb_to",
+     "symboles": [
+      "ENB.TO"
      ]
     },
     {
@@ -166,6 +178,13 @@
      ]
     },
     {
+     "libelle": "GLD",
+     "id": "rep_b_actif_gld",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
      "libelle": "TSLA",
      "id": "rep_b_actif_tsla",
      "symboles": [
@@ -179,8 +198,7 @@
      "id": "rep_b_secteur_obligations_fnb",
      "symboles": [
       "ZST.TO",
-      "XBB.TO",
-      "AGG"
+      "XBB.TO"
      ]
     },
     {
@@ -198,6 +216,13 @@
      ]
     },
     {
+     "libelle": "Énergie",
+     "id": "rep_b_secteur_energie",
+     "symboles": [
+      "ENB.TO"
+     ]
+    },
+    {
      "libelle": "Services publics",
      "id": "rep_b_secteur_services_publics",
      "symboles": [
@@ -209,6 +234,13 @@
      "id": "rep_b_secteur_finance",
      "symboles": [
       "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_b_secteur_or",
+     "symboles": [
+      "GLD"
      ]
     },
     {
@@ -227,16 +259,9 @@
       "ZST.TO",
       "XBB.TO",
       "XIU.TO",
+      "ENB.TO",
       "FTS.TO",
       "RY.TO"
-     ]
-    },
-    {
-     "libelle": "États-Unis",
-     "id": "rep_b_zone_etats_unis",
-     "symboles": [
-      "AGG",
-      "TSLA"
      ]
     },
     {
@@ -244,6 +269,20 @@
      "id": "rep_b_zone_international_developpe_a_part",
      "symboles": [
       "XEF.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_b_zone_or_a_part",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "États-Unis",
+     "id": "rep_b_zone_etats_unis",
+     "symboles": [
+      "TSLA"
      ]
     }
    ]
@@ -265,10 +304,10 @@
      ]
     },
     {
-     "libelle": "AGG",
-     "id": "rep_c_actif_agg",
+     "libelle": "GLD",
+     "id": "rep_c_actif_gld",
      "symboles": [
-      "AGG"
+      "GLD"
      ]
     },
     {
@@ -279,17 +318,10 @@
      ]
     },
     {
-     "libelle": "FTS.TO",
-     "id": "rep_c_actif_fts_to",
+     "libelle": "XEF.TO",
+     "id": "rep_c_actif_xef_to",
      "symboles": [
-      "FTS.TO"
-     ]
-    },
-    {
-     "libelle": "RY.TO",
-     "id": "rep_c_actif_ry_to",
-     "symboles": [
-      "RY.TO"
+      "XEF.TO"
      ]
     },
     {
@@ -297,6 +329,13 @@
      "id": "rep_c_actif_enb_to",
      "symboles": [
       "ENB.TO"
+     ]
+    },
+    {
+     "libelle": "RY.TO",
+     "id": "rep_c_actif_ry_to",
+     "symboles": [
+      "RY.TO"
      ]
     },
     {
@@ -313,8 +352,14 @@
      "id": "rep_c_secteur_obligations_fnb",
      "symboles": [
       "ZST.TO",
-      "XBB.TO",
-      "AGG"
+      "XBB.TO"
+     ]
+    },
+    {
+     "libelle": "Or",
+     "id": "rep_c_secteur_or",
+     "symboles": [
+      "GLD"
      ]
     },
     {
@@ -325,17 +370,10 @@
      ]
     },
     {
-     "libelle": "Services publics",
-     "id": "rep_c_secteur_services_publics",
+     "libelle": "Actions internationales (FNB)",
+     "id": "rep_c_secteur_actions_internationales_fnb",
      "symboles": [
-      "FTS.TO"
-     ]
-    },
-    {
-     "libelle": "Finance",
-     "id": "rep_c_secteur_finance",
-     "symboles": [
-      "RY.TO"
+      "XEF.TO"
      ]
     },
     {
@@ -343,6 +381,13 @@
      "id": "rep_c_secteur_energie",
      "symboles": [
       "ENB.TO"
+     ]
+    },
+    {
+     "libelle": "Finance",
+     "id": "rep_c_secteur_finance",
+     "symboles": [
+      "RY.TO"
      ]
     },
     {
@@ -361,16 +406,28 @@
       "ZST.TO",
       "XBB.TO",
       "XIU.TO",
-      "FTS.TO",
-      "RY.TO",
-      "ENB.TO"
+      "ENB.TO",
+      "RY.TO"
+     ]
+    },
+    {
+     "libelle": "Or, à part",
+     "id": "rep_c_zone_or_a_part",
+     "symboles": [
+      "GLD"
+     ]
+    },
+    {
+     "libelle": "International développé, à part",
+     "id": "rep_c_zone_international_developpe_a_part",
+     "symboles": [
+      "XEF.TO"
      ]
     },
     {
      "libelle": "États-Unis",
      "id": "rep_c_zone_etats_unis",
      "symboles": [
-      "AGG",
       "TSLA"
      ]
     }
@@ -1455,7 +1512,7 @@
     "regroupement": "actif",
     "groupe": "ZST.TO",
     "poids": {
-     "ZST.TO": 0.4
+     "ZST.TO": 0.5
     }
    },
    "periode": {
@@ -1463,7 +1520,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.4,
+   "valeur": 0.5,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -1484,7 +1541,7 @@
     "regroupement": "actif",
     "groupe": "XBB.TO",
     "poids": {
-     "XBB.TO": 0.25
+     "XBB.TO": 0.2
     }
    },
    "periode": {
@@ -1492,7 +1549,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.25,
+   "valeur": 0.2,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -1506,35 +1563,6 @@
     ]
    }
   },
-  "rep_a_actif_agg": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "A",
-    "regroupement": "actif",
-    "groupe": "AGG",
-    "poids": {
-     "AGG": 0.15
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.15,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille A, poids)",
-    "data/assets_universe.csv (ticker)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "AGG"
-    ]
-   }
-  },
   "rep_a_actif_xiu_to": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
@@ -1542,7 +1570,7 @@
     "regroupement": "actif",
     "groupe": "XIU.TO",
     "poids": {
-     "XIU.TO": 0.05
+     "XIU.TO": 0.1
     }
    },
    "periode": {
@@ -1550,7 +1578,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.05,
+   "valeur": 0.1,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -1564,14 +1592,14 @@
     ]
    }
   },
-  "rep_a_actif_fts_to": {
+  "rep_a_actif_enb_to": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
     "portefeuille": "A",
     "regroupement": "actif",
-    "groupe": "FTS.TO",
+    "groupe": "ENB.TO",
     "poids": {
-     "FTS.TO": 0.05
+     "ENB.TO": 0.05
     }
    },
    "periode": {
@@ -1589,7 +1617,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "FTS.TO"
+     "ENB.TO"
     ]
    }
   },
@@ -1619,6 +1647,35 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "RY.TO"
+    ]
+   }
+  },
+  "rep_a_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille A, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
     ]
    }
   },
@@ -1658,9 +1715,8 @@
     "regroupement": "secteur",
     "groupe": "Obligations (FNB)",
     "poids": {
-     "ZST.TO": 0.4,
-     "XBB.TO": 0.25,
-     "AGG": 0.15
+     "ZST.TO": 0.5,
+     "XBB.TO": 0.2
     }
    },
    "periode": {
@@ -1668,7 +1724,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.8,
+   "valeur": 0.7,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -1679,8 +1735,7 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "ZST.TO",
-     "XBB.TO",
-     "AGG"
+     "XBB.TO"
     ]
    }
   },
@@ -1691,7 +1746,7 @@
     "regroupement": "secteur",
     "groupe": "Actions, marché large (FNB)",
     "poids": {
-     "XIU.TO": 0.05
+     "XIU.TO": 0.1
     }
    },
    "periode": {
@@ -1699,7 +1754,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.05,
+   "valeur": 0.1,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -1713,14 +1768,14 @@
     ]
    }
   },
-  "rep_a_secteur_services_publics": {
+  "rep_a_secteur_energie": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
     "portefeuille": "A",
     "regroupement": "secteur",
-    "groupe": "Services publics",
+    "groupe": "Énergie",
     "poids": {
-     "FTS.TO": 0.05
+     "ENB.TO": 0.05
     }
    },
    "periode": {
@@ -1738,7 +1793,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "FTS.TO"
+     "ENB.TO"
     ]
    }
   },
@@ -1768,6 +1823,35 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "RY.TO"
+    ]
+   }
+  },
+  "rep_a_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille A, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
     ]
    }
   },
@@ -1807,10 +1891,10 @@
     "regroupement": "zone",
     "groupe": "Canada",
     "poids": {
-     "ZST.TO": 0.4,
-     "XBB.TO": 0.25,
-     "XIU.TO": 0.05,
-     "FTS.TO": 0.05,
+     "ZST.TO": 0.5,
+     "XBB.TO": 0.2,
+     "XIU.TO": 0.1,
+     "ENB.TO": 0.05,
      "RY.TO": 0.05
     }
    },
@@ -1819,7 +1903,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.8,
+   "valeur": 0.9,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
    "sources": [
@@ -1832,8 +1916,37 @@
      "ZST.TO",
      "XBB.TO",
      "XIU.TO",
-     "FTS.TO",
+     "ENB.TO",
      "RY.TO"
+    ]
+   }
+  },
+  "rep_a_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "A",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille A, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
     ]
    }
   },
@@ -1844,7 +1957,6 @@
     "regroupement": "zone",
     "groupe": "États-Unis",
     "poids": {
-     "AGG": 0.15,
      "TSLA": 0.05
     }
    },
@@ -1853,7 +1965,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.2,
+   "valeur": 0.05,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
    "sources": [
@@ -1863,7 +1975,6 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "AGG",
      "TSLA"
     ]
    }
@@ -1926,35 +2037,6 @@
     ]
    }
   },
-  "rep_b_actif_agg": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "B",
-    "regroupement": "actif",
-    "groupe": "AGG",
-    "poids": {
-     "AGG": 0.15
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.15,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille B, poids)",
-    "data/assets_universe.csv (ticker)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "AGG"
-    ]
-   }
-  },
   "rep_b_actif_xiu_to": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
@@ -1991,7 +2073,36 @@
     "regroupement": "actif",
     "groupe": "XEF.TO",
     "poids": {
-     "XEF.TO": 0.05
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XEF.TO"
+    ]
+   }
+  },
+  "rep_b_actif_enb_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "ENB.TO",
+    "poids": {
+     "ENB.TO": 0.05
     }
    },
    "periode": {
@@ -2009,7 +2120,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "XEF.TO"
+     "ENB.TO"
     ]
    }
   },
@@ -2071,6 +2182,35 @@
     ]
    }
   },
+  "rep_b_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
   "rep_b_actif_tsla": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
@@ -2108,8 +2248,7 @@
     "groupe": "Obligations (FNB)",
     "poids": {
      "ZST.TO": 0.35,
-     "XBB.TO": 0.2,
-     "AGG": 0.15
+     "XBB.TO": 0.2
     }
    },
    "periode": {
@@ -2117,7 +2256,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.7,
+   "valeur": 0.55,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -2128,8 +2267,7 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "ZST.TO",
-     "XBB.TO",
-     "AGG"
+     "XBB.TO"
     ]
    }
   },
@@ -2169,7 +2307,36 @@
     "regroupement": "secteur",
     "groupe": "Actions internationales (FNB)",
     "poids": {
-     "XEF.TO": 0.05
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XEF.TO"
+    ]
+   }
+  },
+  "rep_b_secteur_energie": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Énergie",
+    "poids": {
+     "ENB.TO": 0.05
     }
    },
    "periode": {
@@ -2187,7 +2354,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "XEF.TO"
+     "ENB.TO"
     ]
    }
   },
@@ -2249,6 +2416,35 @@
     ]
    }
   },
+  "rep_b_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
   "rep_b_secteur_consommation_discretionnaire": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
@@ -2288,6 +2484,7 @@
      "ZST.TO": 0.35,
      "XBB.TO": 0.2,
      "XIU.TO": 0.1,
+     "ENB.TO": 0.05,
      "FTS.TO": 0.05,
      "RY.TO": 0.05
     }
@@ -2297,7 +2494,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.75,
+   "valeur": 0.8,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
    "sources": [
@@ -2310,39 +2507,9 @@
      "ZST.TO",
      "XBB.TO",
      "XIU.TO",
+     "ENB.TO",
      "FTS.TO",
      "RY.TO"
-    ]
-   }
-  },
-  "rep_b_zone_etats_unis": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "B",
-    "regroupement": "zone",
-    "groupe": "États-Unis",
-    "poids": {
-     "AGG": 0.15,
-     "TSLA": 0.05
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.2,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille B, poids)",
-    "data/assets_universe.csv (market, asset_class)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "AGG",
-     "TSLA"
     ]
    }
   },
@@ -2353,7 +2520,36 @@
     "regroupement": "zone",
     "groupe": "International développé, à part",
     "poids": {
-     "XEF.TO": 0.05
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XEF.TO"
+    ]
+   }
+  },
+  "rep_b_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.05
     }
    },
    "periode": {
@@ -2371,7 +2567,36 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "XEF.TO"
+     "GLD"
+    ]
+   }
+  },
+  "rep_b_zone_etats_unis": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "B",
+    "regroupement": "zone",
+    "groupe": "États-Unis",
+    "poids": {
+     "TSLA": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille B, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "TSLA"
     ]
    }
   },
@@ -2382,7 +2607,7 @@
     "regroupement": "actif",
     "groupe": "ZST.TO",
     "poids": {
-     "ZST.TO": 0.35
+     "ZST.TO": 0.4
     }
    },
    "periode": {
@@ -2390,7 +2615,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.35,
+   "valeur": 0.4,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -2411,36 +2636,7 @@
     "regroupement": "actif",
     "groupe": "XBB.TO",
     "poids": {
-     "XBB.TO": 0.2
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.2,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille C, poids)",
-    "data/assets_universe.csv (ticker)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "XBB.TO"
-    ]
-   }
-  },
-  "rep_c_actif_agg": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "C",
-    "regroupement": "actif",
-    "groupe": "AGG",
-    "poids": {
-     "AGG": 0.15
+     "XBB.TO": 0.15
     }
    },
    "periode": {
@@ -2458,7 +2654,36 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "AGG"
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_c_actif_gld": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "GLD",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
     ]
    }
   },
@@ -2491,14 +2716,14 @@
     ]
    }
   },
-  "rep_c_actif_fts_to": {
+  "rep_c_actif_xef_to": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
     "portefeuille": "C",
     "regroupement": "actif",
-    "groupe": "FTS.TO",
+    "groupe": "XEF.TO",
     "poids": {
-     "FTS.TO": 0.05
+     "XEF.TO": 0.1
     }
    },
    "periode": {
@@ -2506,7 +2731,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.05,
+   "valeur": 0.1,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -2516,36 +2741,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "FTS.TO"
-    ]
-   }
-  },
-  "rep_c_actif_ry_to": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "C",
-    "regroupement": "actif",
-    "groupe": "RY.TO",
-    "poids": {
-     "RY.TO": 0.05
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.05,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille C, poids)",
-    "data/assets_universe.csv (ticker)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "RY.TO"
+     "XEF.TO"
     ]
    }
   },
@@ -2575,6 +2771,35 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "ENB.TO"
+    ]
+   }
+  },
+  "rep_c_actif_ry_to": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "actif",
+    "groupe": "RY.TO",
+    "poids": {
+     "RY.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (ticker)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "RY.TO"
     ]
    }
   },
@@ -2614,9 +2839,8 @@
     "regroupement": "secteur",
     "groupe": "Obligations (FNB)",
     "poids": {
-     "ZST.TO": 0.35,
-     "XBB.TO": 0.2,
-     "AGG": 0.15
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.15
     }
    },
    "periode": {
@@ -2624,7 +2848,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.7,
+   "valeur": 0.55,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -2635,8 +2859,36 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "ZST.TO",
-     "XBB.TO",
-     "AGG"
+     "XBB.TO"
+    ]
+   }
+  },
+  "rep_c_secteur_or": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Or",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
     ]
    }
   },
@@ -2669,14 +2921,14 @@
     ]
    }
   },
-  "rep_c_secteur_services_publics": {
+  "rep_c_secteur_actions_internationales_fnb": {
    "outil": "web/scripts/graphiques.py (repartition)",
    "parametres": {
     "portefeuille": "C",
     "regroupement": "secteur",
-    "groupe": "Services publics",
+    "groupe": "Actions internationales (FNB)",
     "poids": {
-     "FTS.TO": 0.05
+     "XEF.TO": 0.1
     }
    },
    "periode": {
@@ -2684,7 +2936,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.05,
+   "valeur": 0.1,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe",
    "sources": [
@@ -2694,36 +2946,7 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "FTS.TO"
-    ]
-   }
-  },
-  "rep_c_secteur_finance": {
-   "outil": "web/scripts/graphiques.py (repartition)",
-   "parametres": {
-    "portefeuille": "C",
-    "regroupement": "secteur",
-    "groupe": "Finance",
-    "poids": {
-     "RY.TO": 0.05
-    }
-   },
-   "periode": {
-    "debut": null,
-    "fin": null,
-    "observations": null
-   },
-   "valeur": 0.05,
-   "unite": "fraction du capital",
-   "formule": "somme des poids des lignes du groupe",
-   "sources": [
-    "agents/sorties/robert.json (portefeuille C, poids)",
-    "data/assets_universe.csv (sector)"
-   ],
-   "details": {
-    "nature": "répartition du capital fictif, pas une mesure de marché",
-    "symboles": [
-     "RY.TO"
+     "XEF.TO"
     ]
    }
   },
@@ -2753,6 +2976,35 @@
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
      "ENB.TO"
+    ]
+   }
+  },
+  "rep_c_secteur_finance": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "secteur",
+    "groupe": "Finance",
+    "poids": {
+     "RY.TO": 0.05
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.05,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (sector)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "RY.TO"
     ]
    }
   },
@@ -2792,12 +3044,11 @@
     "regroupement": "zone",
     "groupe": "Canada",
     "poids": {
-     "ZST.TO": 0.35,
-     "XBB.TO": 0.2,
+     "ZST.TO": 0.4,
+     "XBB.TO": 0.15,
      "XIU.TO": 0.1,
-     "FTS.TO": 0.05,
-     "RY.TO": 0.05,
-     "ENB.TO": 0.05
+     "ENB.TO": 0.05,
+     "RY.TO": 0.05
     }
    },
    "periode": {
@@ -2805,7 +3056,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.8,
+   "valeur": 0.75,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
    "sources": [
@@ -2818,9 +3069,66 @@
      "ZST.TO",
      "XBB.TO",
      "XIU.TO",
-     "FTS.TO",
-     "RY.TO",
-     "ENB.TO"
+     "ENB.TO",
+     "RY.TO"
+    ]
+   }
+  },
+  "rep_c_zone_or_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "Or, à part",
+    "poids": {
+     "GLD": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "GLD"
+    ]
+   }
+  },
+  "rep_c_zone_international_developpe_a_part": {
+   "outil": "web/scripts/graphiques.py (repartition)",
+   "parametres": {
+    "portefeuille": "C",
+    "regroupement": "zone",
+    "groupe": "International développé, à part",
+    "poids": {
+     "XEF.TO": 0.1
+    }
+   },
+   "periode": {
+    "debut": null,
+    "fin": null,
+    "observations": null
+   },
+   "valeur": 0.1,
+   "unite": "fraction du capital",
+   "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
+   "sources": [
+    "agents/sorties/robert.json (portefeuille C, poids)",
+    "data/assets_universe.csv (market, asset_class)"
+   ],
+   "details": {
+    "nature": "répartition du capital fictif, pas une mesure de marché",
+    "symboles": [
+     "XEF.TO"
     ]
    }
   },
@@ -2831,7 +3139,6 @@
     "regroupement": "zone",
     "groupe": "États-Unis",
     "poids": {
-     "AGG": 0.15,
      "TSLA": 0.05
     }
    },
@@ -2840,7 +3147,7 @@
     "fin": null,
     "observations": null
    },
-   "valeur": 0.2,
+   "valeur": 0.05,
    "unite": "fraction du capital",
    "formule": "somme des poids des lignes du groupe (market TSX = Canada, autres marchés = États-Unis ; un FNB dont l'indice (colonne sector) est européen, international, émergent ou mondial prend la zone de cet indice ; crypto et or à part)",
    "sources": [
@@ -2850,7 +3157,6 @@
    "details": {
     "nature": "répartition du capital fictif, pas une mesure de marché",
     "symboles": [
-     "AGG",
      "TSLA"
     ]
    }
@@ -2860,12 +3166,12 @@
   "outil": "eventail_scenarios",
   "parametres": {
    "poids": {
-    "ZST.TO": 0.4,
-    "XBB.TO": 0.25,
-    "AGG": 0.15,
-    "XIU.TO": 0.05,
-    "FTS.TO": 0.05,
+    "ZST.TO": 0.5,
+    "XBB.TO": 0.2,
+    "XIU.TO": 0.1,
+    "ENB.TO": 0.05,
     "RY.TO": 0.05,
+    "GLD": 0.05,
     "TSLA": 0.05
    },
    "horizon_annees": 3,
@@ -2888,33 +3194,33 @@
    ],
    "p10": [
     200000.0,
-    197466.695053817,
-    202977.4698947847,
-    208209.7514484655
+    200493.83937131593,
+    208838.81523135133,
+    217619.2345822353
    ],
    "p25": [
     200000.0,
-    203593.74126676458,
-    211986.39021528262,
-    220299.70955348472
+    206390.39354419592,
+    218064.92069982976,
+    229646.52704039915
    ],
    "p50": [
     200000.0,
-    210766.03206353943,
-    222289.2665238652,
-    234128.38791846953
+    213807.2293143246,
+    228763.96308211272,
+    244274.44214554777
    ],
    "p75": [
     200000.0,
-    218730.39366155048,
-    233239.34532540772,
-    247866.33730436707
+    222415.96283830033,
+    240271.8479878091,
+    260062.82343025788
    ],
    "p90": [
     200000.0,
-    225805.32542911175,
-    243618.85880312277,
-    262212.80366471305
+    229771.27007219027,
+    252109.9100878065,
+    274625.51812377624
    ]
   },
   "unite": "valeur du portefeuille simulé (en CAD), capital de départ 200000",
@@ -2927,9 +3233,9 @@
    "mois_observes": 61,
    "tirages": 2000,
    "graine": 2026,
-   "part_des_scenarios_sous_le_capital": 0.0375,
-   "pire_mois_observe": -0.02950804311023958,
-   "meilleur_mois_observe": 0.038263966494415325,
+   "part_des_scenarios_sous_le_capital": 0.0135,
+   "pire_mois_observe": -0.031019484718761592,
+   "meilleur_mois_observe": 0.04122100747139057,
    "hypotheses": [
     "Poids constants, sans frais, sans impôts, sans inflation.",
     "Les mois futurs ressemblent aux mois observés et sont indépendants entre eux.",

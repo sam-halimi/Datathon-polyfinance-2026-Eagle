@@ -1,0 +1,28 @@
+{
+  "id": "libre_nadia",
+  "persona": {
+    "nom": "Nadia",
+    "description": "Profil libre : responsable, faible volatilité, énergie propre et santé."
+  },
+  "profil": {
+    "horizon_annees": 12,
+    "objectif": "équilibre",
+    "tolerance_risque": "modéré",
+    "connaissance_niveau": 3,
+    "preferences": [
+      "ESG",
+      "faible volatilité"
+    ],
+    "exclusions": [
+      "énergies fossiles",
+      "controverses"
+    ],
+    "centres_interet": [
+      "énergie propre",
+      "santé"
+    ],
+    "capital_fictif": 100000,
+    "devise": "CAD"
+  },
+  "demande": "Un portefeuille responsable, avec un peu d'énergie propre."
+}
