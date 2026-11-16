@@ -1,0 +1,234 @@
+<!doctype html>
+<!--
+  One pager d'Eagle (défi AlphaForge AI, Datathon PolyFinances 2026). Une page, format Lettre.
+  PDF : node livrables/generer-one-pager.js  ->  livrables/one-pager.pdf
+  Chaque chiffre de cette page vient du dépôt : agents/sorties/<persona>.json (résultats des trois cas),
+  data/ et data/sources_metadata.csv (données), suite pytest (tests). Le texte seul : livrables/one-pager.md.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Eagle — one pager — Datathon PolyFinances 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500&display=swap" rel="stylesheet">
+<style>
+  @page { size: 8.5in 11in; margin: 0; }
+  :root {
+    --encre: #111417; --texte: #232930; --doux: #56616D; --trait: #DCE5EE; --papier: #FFFFFF; --fond: #F4F7FA;
+    --acier: #33506F; --acier-clair: #4C6F9A; --ciel: #8DB4D9; --or: #B98238; --or-clair: #D9A15B;
+    --ok: #1F8A63; --alerte: #B4601C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 8.5in; height: 11in; }
+  body { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 7.5pt; line-height: 1.34; color: var(--texte); background: var(--papier);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; display: flex; flex-direction: column; overflow: hidden; }
+  strong { font-weight: 600; color: var(--encre); }
+  h2 { font-family: "IBM Plex Serif", Georgia, serif; font-weight: 500; font-size: 10.8pt; line-height: 1.15; color: var(--acier); margin-bottom: 3.5pt;
+    display: flex; align-items: baseline; gap: 6pt; }
+  h2 span { font-family: "IBM Plex Sans", sans-serif; font-size: 6.4pt; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--or); }
+  ul { list-style: none; display: grid; gap: 2pt; }
+  li { position: relative; padding-left: 9pt; }
+  li::before { content: ""; position: absolute; left: 0; top: 4.4pt; width: 4pt; height: 4pt; background: var(--ciel); transform: rotate(45deg); }
+
+  /* En-tête */
+  .tete { background: var(--encre); color: #E8ECF0; padding: 0.17in 0.44in 0.15in; }
+  .tete__haut { display: flex; justify-content: space-between; align-items: center; gap: 0.3in; margin-bottom: 5pt; }
+  .tete__marque { display: flex; align-items: center; gap: 12pt; }
+  .tete__marque img { height: 28pt; }
+  .tete__defi { font-size: 6.8pt; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ciel); border-left: 1px solid #3A434D; padding-left: 12pt; line-height: 1.5; }
+  .tete h1 { font-family: "IBM Plex Serif", Georgia, serif; font-weight: 500; font-size: 19.4pt; line-height: 1.12; color: #FFFFFF; letter-spacing: -0.005em; white-space: nowrap; }
+  .tete h1 em { font-style: normal; color: var(--or-clair); }
+  .tete p { margin-top: 5pt; font-size: 8.4pt; line-height: 1.38; color: #B9C3CE; max-width: 6.6in; }
+  .tete__essai { display: flex; align-items: center; gap: 8pt; text-align: right; }
+  .tete__qr { background: #FFFFFF; border-radius: 5pt; padding: 4pt; width: 0.62in; height: 0.62in; flex: none; }
+  .tete__qr img { width: 100%; height: 100%; display: block; }
+  .tete__essai b { display: block; font-size: 7.6pt; font-weight: 600; color: #FFFFFF; }
+  .tete__essai span { display: block; font-size: 6.2pt; color: #9AA4AF; line-height: 1.4; }
+
+  /* Chiffres clés */
+  .cles { display: grid; grid-template-columns: repeat(6, 1fr); background: var(--fond); border-bottom: 1px solid var(--trait); padding: 5pt 0.44in; }
+  .cle { padding: 0 8pt; border-left: 1px solid var(--trait); }
+  .cle:first-child { border-left: 0; padding-left: 0; }
+  .cle b { display: block; font-family: "IBM Plex Serif", Georgia, serif; font-weight: 500; font-size: 13.5pt; line-height: 1.1; color: var(--acier); }
+  .cle span { font-size: 6.7pt; line-height: 1.25; color: var(--doux); display: block; margin-top: 1pt; }
+
+  /* Corps */
+  .corps { flex: 1; padding: 10pt 0.44in 2pt; display: grid; gap: 7.5pt; align-content: space-between; }
+  .deux { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 0.26in; }
+  .deux--egal { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .colonne { display: grid; gap: 8pt; align-content: start; min-width: 0; }
+  .colonne > * { min-width: 0; }
+
+  /* Chaîne d'agents */
+  .chaine { display: grid; grid-template-columns: auto 6pt auto 6pt auto 6pt auto 6pt auto; justify-content: space-between; align-items: stretch; margin: 4pt 0 6pt; }
+  .agent { border: 1px solid var(--trait); border-radius: 5pt; padding: 4pt 4pt; background: var(--papier); display: grid; align-content: center; gap: 1pt; }
+  .agent b { font-size: 6.6pt; font-weight: 600; color: var(--encre); white-space: nowrap; line-height: 1.25; }
+  .agent i { font-style: normal; font-size: 5.7pt; line-height: 1.25; color: var(--doux); white-space: nowrap; }
+  .agent--trio { background: var(--fond); padding: 3pt 5pt; gap: 2.5pt; }
+  .agent--trio b { background: var(--papier); border: 1px solid var(--trait); border-radius: 3.5pt; padding: 1.5pt 5pt; }
+  .agent--controle { border-color: var(--or-clair); background: #FCF6EC; }
+  .fleche { align-self: center; justify-self: center; width: 0; height: 0; border: 2.6pt solid transparent; border-left: 4pt solid var(--acier-clair); border-right: 0; }
+
+  /* Visuels */
+  .visuels { display: grid; grid-template-columns: 1fr; gap: 5pt; }
+  .visuel { position: relative; border-radius: 6pt; overflow: hidden; background: var(--encre); border: 1px solid #2C333B; }
+  .visuel > img { display: block; width: 100%; height: 2.02in; object-fit: cover; object-position: 30% 0; }
+  .medaillon img { display: block; width: 100%; }
+  .medaillon { position: absolute; right: 6pt; bottom: 6pt; width: 1.38in; border-radius: 5pt; overflow: hidden; box-shadow: 0 5pt 16pt rgba(0, 0, 0, 0.6); border: 1px solid #4A5561; }
+  .legende { font-size: 6.5pt; line-height: 1.35; color: var(--doux); }
+  .legende b { color: var(--acier); font-weight: 600; }
+
+  /* Tableau des personas */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 6.3pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--doux); padding: 0 6pt 3pt 0; border-bottom: 1.2px solid var(--acier); }
+  td { vertical-align: top; padding: 3.4pt 8pt 3.4pt 0; border-bottom: 1px solid var(--trait); }
+  td:last-child, th:last-child { padding-right: 0; }
+  td.qui { width: 1.5in; }
+  td.qui b { display: block; }
+  td.qui span { font-size: 6.7pt; color: var(--doux); display: block; }
+  td.qui i { display: block; font-style: normal; font-size: 6.7pt; line-height: 1.3; color: var(--acier-clair); margin-top: 1.5pt; }
+  td.demande { width: 1.75in; font-style: italic; color: var(--acier); }
+  td.teste { width: 1.42in; font-size: 7.1pt; color: var(--doux); }
+  .non { display: inline-block; font-size: 6.2pt; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--alerte); border: 1px solid #E5C7A6; background: #FCF3E8; border-radius: 3pt; padding: 0 4pt; margin-right: 3pt; }
+
+  /* Pied */
+  .pied { background: var(--encre); color: #B9C3CE; padding: 6.5pt 0.44in 7.5pt; display: grid; grid-template-columns: 1fr auto; gap: 0.3in; align-items: center; font-size: 6.7pt; line-height: 1.42; margin-top: 7pt; }
+  .pied b { color: #FFFFFF; font-weight: 600; }
+  .pied .aws b { color: var(--or-clair); }
+  .pied .liens { text-align: right; white-space: nowrap; }
+  .pied .regle { color: #FFFFFF; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header class="tete">
+  <div class="tete__haut">
+    <div class="tete__marque">
+      <img src="images/eagle-logo.svg" alt="Eagle">
+      <div class="tete__defi">Défi AlphaForge AI · Datathon PolyFinances 2026<br>Équipe 37 · One pager</div>
+    </div>
+    <div class="tete__essai">
+      <div><b>Essayer Eagle</b><span>d1ah12vrfzso9b.cloudfront.net<br>sans inscription · français et anglais</span></div>
+      <div class="tete__qr"><img src="images/qr-eagle.svg" alt="Code QR vers le site d'Eagle"></div>
+    </div>
+  </div>
+  <h1>L'assistant d'investissement qui sait dire <em>non</em>, et le prouver.</h1>
+  <p>Eagle est une solution agentique auto-explicative : sept agents construisent un portefeuille <strong style="color:#fff">simulé</strong> adapté au profil de la personne, et chaque chiffre affiché renvoie au calcul, à la période et à la source qui le soutiennent.</p>
+</header>
+
+<section class="cles" aria-label="Chiffres clés">
+  <div class="cle"><b>7</b><span>agents, un rôle chacun</span></div>
+  <div class="cle"><b>62</b><span>actifs, 5 ans de cours quotidiens</span></div>
+  <div class="cle"><b>22</b><span>sources de données documentées</span></div>
+  <div class="cle"><b>250+</b><span>chiffres tracés par analyse</span></div>
+  <div class="cle"><b>431</b><span>tests automatiques</span></div>
+  <div class="cle"><b>2</b><span>langues, à l'écran ou à la voix</span></div>
+</section>
+
+<main class="corps">
+  <div class="deux">
+    <div class="colonne">
+      <section>
+        <h2>La problématique</h2>
+        <p>Un investisseur ne manque pas de données : il lui manque un moyen de les relier à sa situation et de vérifier ce qu'on lui répond. Un assistant qui dit oui à tout est dangereux ; un refus sans explication est inutile. <strong>Robert, 59 ans, proche de la retraite, veut placer 40 % de son capital sur Tesla</strong> : la bonne réponse lui montre, chiffres et sources à l'appui, pourquoi cette demande contredit son propre profil, et ce qui lui convient à la place.</p>
+      </section>
+
+      <section>
+        <h2>L'approche agentique <span>simple, focalisée, vérifiable</span></h2>
+        <div class="chaine" role="img" aria-label="Chaîne des agents : accueil, orchestrateur, trois spécialistes, constructeur, gouvernance, explication">
+          <div class="agent"><b>Accueil</b><i>8 questions,<br>écran ou voix</i></div><span class="fleche"></span>
+          <div class="agent"><b>Orchestrateur</b><i>lit le profil,<br>fixe les plafonds</i></div><span class="fleche"></span>
+          <div class="agent agent--trio"><b>ESG et qualité</b><b>Marché et risque</b><b>Macro et taux</b></div><span class="fleche"></span>
+          <div class="agent agent--controle"><b>Constructeur<br>⇄ Gouvernance</b><i>rejet = retour,<br>2 essais au plus</i></div><span class="fleche"></span>
+          <div class="agent"><b>Explication</b><i>3 niveaux,<br>limites</i></div>
+        </div>
+        <ul>
+          <li><strong>Le code calcule, le modèle explique.</strong> Tout chiffre vient d'un outil Python testé et garde la référence de son appel ; un texte de modèle avec un chiffre non tracé est retiré.</li>
+          <li><strong>La gouvernance est écrite en code.</strong> Un portefeuille hors des limites du profil retourne au constructeur ; chaque contrôle est affiché.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="visuels">
+      <div class="visuel">
+        <img src="images/eagle-demande-robert.jpg" alt="Écran d'Eagle : la demande de Robert au regard de son profil">
+        <div class="medaillon"><img src="images/eagle-fiche-chiffre.jpg" alt="Fiche d'un chiffre : outil, paramètres, période, formule, source"></div>
+      </div>
+      <p class="legende"><b>Le cas de Robert, dans Eagle.</b> La tension entre sa demande et son profil est relevée, chiffres à l'appui. En médaillon, la fiche d'un chiffre touché : outil, paramètres, période, formule, source.</p>
+    </div>
+  </div>
+
+  <div class="deux deux--egal">
+    <section>
+      <h2>Ce qui est original</h2>
+      <ul>
+        <li><strong>Chaque chiffre se touche</strong> : sa fiche montre l'outil, les paramètres, la période, la formule et la source.</li>
+        <li><strong>Il n'acquiesce pas</strong> : une demande qui dépasse le profil est plafonnée, et la tension est expliquée avec ses mesures.</li>
+        <li><strong>On voit les agents travailler</strong> : l'écran suit l'avancement réel du pipeline, puis montre le constat de chaque agent.</li>
+        <li><strong>À l'écran ou à la voix, en français ou en anglais.</strong> Eagle mène la présentation à voix haute ; la traduction masque chaque nombre, aucun chiffre ne passe par le modèle.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>La capacité d'explication</h2>
+      <ul>
+        <li><strong>Trois niveaux</strong> : une phrase, le pourquoi chiffré, le calcul avec sa formule, dans un vocabulaire adapté au niveau déclaré.</li>
+        <li><strong>Faits, hypothèses et limites séparés</strong> ; une information manquante est signalée, jamais comblée.</li>
+        <li><strong>Chaque ligne se justifie</strong> : pourquoi elle est là pour ce profil, plutôt que quoi, avec ses sources datées.</li>
+        <li><strong>« Scénarios, pas une prévision »</strong> : un éventail tiré des mois observés, et un dossier exportable avec toutes les sources.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section>
+    <h2>Mis à l'épreuve sur les trois personas du défi <span>résultats du pipeline, vérifiés par les tests d'acceptation</span></h2>
+    <table>
+      <thead><tr><th>Persona</th><th>Sa demande</th><th>La réponse d'Eagle</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="qui"><b>Robert, 59 ans</b><span>risque faible à modéré · 3 à 5 ans</span></td>
+          <td class="demande">« Je veux mettre 40 % de mon capital sur Tesla. »</td>
+          <td><span class="non">plafonné</span>Tesla est limité à <strong>5 %</strong>, le plafond du profil pour une action. À ce poids, il porte déjà <strong>44,5 % du risque</strong> du portefeuille simulé. Sa pire baisse passée, −73,0 %, demande un gain de 270 % pour être effacée.</td>
+        </tr>
+        <tr>
+          <td class="qui"><b>Amira, 26 ans</b><span>risque élevé · 15 ans et plus</span></td>
+          <td class="demande">« Mets 100 % de mon capital dans la crypto et la techno. »</td>
+          <td><span class="non">plafonné</span>Crypto limitée à <strong>10 %</strong>, thème technologie plafonné, <strong>8 lignes</strong> diversifiées avec un socle obligataire. Volatilité du portefeuille simulé 15,6 %, pire baisse passée −24,6 %.</td>
+        </tr>
+        <tr>
+          <td class="qui"><b>Mateo, 41 ans</b><span>risque modéré · 8 à 12 ans · ESG</span></td>
+          <td class="demande">« Sans pétrolières ni controverses. Tesla, c'est vert : mets-en une bonne part. »</td>
+          <td><span class="non">écarté</span><strong>16 actions écartées</strong>, chacune avec sa source ; Tesla l'est pour une controverse documentée. La gouvernance a renvoyé une proposition au constructeur, et Eagle signale ce que la composition des FNB ne permet pas de vérifier.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="deux deux--egal">
+    <section>
+      <h2>Les sources de données</h2>
+      <p>Le jeu de départ des organisateurs (31 actifs, cours quotidiens du 12 novembre 2021 au 12 novembre 2026, taux USD/CAD, 9 séries macro de la Banque du Canada et de FRED), complété par <strong>31 actifs</strong> d'un univers étendu, une <strong>table ESG de 20 actions</strong> sourcée sur SEC EDGAR et des décisions officielles, et la <strong>composition de 4 FNB</strong> publiée par leurs émetteurs. Chaque source est documentée : origine, date, traitement, limites, conditions d'utilisation. Aucune donnée macro n'est utilisée avant sa date de publication.</p>
+    </section>
+    <section>
+      <h2>Les bénéfices concrets</h2>
+      <ul>
+        <li>La personne comprend <strong>pourquoi</strong>, dans son vocabulaire, et peut <strong>vérifier</strong> chaque chiffre elle-même.</li>
+        <li>Elle voit les <strong>limites</strong> de l'exercice et n'est jamais poussée vers un risque qui contredit ses propres objectifs.</li>
+        <li>Pour une institution : un assistant <strong>auditable</strong>, dont chaque réponse garde sa trace (outils appelés, données, contrôles).</li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer class="pied">
+  <div class="aws">
+    <b>Construit sur AWS</b> · Amazon Bedrock (Claude Sonnet 4.6) et Strands Agents · AWS Lambda (pipeline, API) · Amazon S3 et CloudFront (site, suivi des analyses) · Amazon Cognito (comptes facultatifs) · voix : ElevenLabs Agents.<br>
+    <span class="regle">Simulation uniquement : aucune transaction réelle, aucune prédiction de rendement. Les données passées décrivent, elles ne promettent rien.</span>
+  </div>
+  <div class="liens">
+    <b>Site</b> d1ah12vrfzso9b.cloudfront.net<br>
+    <b>Code</b> github.com/sam-halimi/Datathon-polyfinance-2026
+  </div>
+</footer>
+
+</body>
+</html>
