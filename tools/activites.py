@@ -23,6 +23,8 @@ from tools.trace import resultat
 FICHIER = "data/activites_sensibles.csv"
 ACTIVITES = ("tabac", "armement", "jeux_argent", "alcool")
 LIBELLES = {"tabac": "tabac", "armement": "armement", "jeux_argent": "jeux d'argent", "alcool": "alcool"}
+# Le libellé précédé de « à » dans une phrase : « liée au tabac », « liée à l'armement ».
+AVEC_A = {"tabac": "au tabac", "armement": "à l'armement", "jeux_argent": "aux jeux d'argent", "alcool": "à l'alcool"}
 
 
 @lru_cache(maxsize=1)

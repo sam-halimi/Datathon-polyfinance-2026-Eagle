@@ -547,7 +547,7 @@ def _activite(j: Journal, ident: str, poids: dict[str, float], terme: str, a: st
         f"{s} (via {', '.join(x['titres_oui'])})" for s, x in d["lignes"].items() if x.get("titres_oui")]
     return _entree(
         "exclusions", terme, f"Écarter « {terme} » ({act.LIBELLES[a]}).",
-        f"Exposition au {act.LIBELLES[a]}, en direct et à travers les FNB : {{{v}}} du capital"
+        f"Exposition {act.AVEC_A[a]}, en direct et à travers les FNB : {{{v}}} du capital"
         + (f" ({', '.join(oui)})" if oui else "") + f" ; statut inconnu : {{{inc}}}.",
         _verdict_transparence(d, res["valeur"]), [v, inc],
         f"respecté si aucune exposition, directe ou via un FNB, et aucune part inconnue ({act.FICHIER}, "

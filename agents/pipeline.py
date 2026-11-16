@@ -328,9 +328,11 @@ class Session:
             directs = [s for s, x in d["lignes"].items() if x.get("valeur") == "oui"]
             via = {s: x["titres_oui"] for s, x in d["lignes"].items() if x.get("titres_oui")}
             statut = "non conforme" if directs else ("à signaler" if via or d["part_inconnue"] > 1e-9 else "conforme")
-            msg = (f"Actions détenues en direct liées au {act_outils.LIBELLES[a]} : {directs}." if directs else
-                   f"Aucune action détenue en direct liée au {act_outils.LIBELLES[a]} selon {act_outils.FICHIER}."
-                   + (f" À travers les FNB : {via}." if via else "")
+            # Symboles écrits en clair : « XIU.TO (par ATD.TO) », jamais la forme Python d'une liste ou d'un dictionnaire.
+            via_texte = " ; ".join(f"{fnb} (par {', '.join(titres)})" for fnb, titres in via.items())
+            msg = (f"Actions détenues en direct liées {act_outils.AVEC_A[a]} : {', '.join(directs)}." if directs else
+                   f"Aucune action détenue en direct liée {act_outils.AVEC_A[a]} selon {act_outils.FICHIER}."
+                   + (f" À travers les FNB : {via_texte}." if via else "")
                    + (f" Part du capital au statut inconnu : {d['part_inconnue'] * 100:.1f} %.".replace(".", ",", 1)
                       if d["part_inconnue"] > 1e-9 else ""))
             controles.append({"controle": "exclusion_activite", "statut": statut, "bloquant": statut == "non conforme",

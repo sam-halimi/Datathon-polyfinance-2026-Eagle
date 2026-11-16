@@ -35,3 +35,22 @@ def test_ligne_de_theme_hors_des_themes_refusee():
     themes, _ = construire_themes(_profil(["jeu vidéo"]), 0.10, TABLE)
     ptf = {"poids": {"TSLA": 0.05, "XBB.TO": 0.95}, "roles": {"TSLA": "theme", "XBB.TO": "amortisseur"}}
     assert any(x["statut"] == "non conforme" and x["actifs"] == ["TSLA"] for x in plafonds_par_theme(ptf, themes))
+
+
+def test_controle_d_activite_ecrit_les_symboles_en_clair():
+    """Le détail d'un contrôle est lu par la personne : ni liste ni dictionnaire Python dans le texte."""
+    from agents.pipeline import Session
+    from agents.profil import Profil
+
+    s = Session.__new__(Session)
+    s.profil = Profil(horizon_annees=8, objectif="revenu", tolerance_risque="modéré", connaissance_niveau=3,
+                      preferences=[], exclusions=["tabac"], centres_interet=[], capital_fictif=50_000, devise="CAD")
+    s.liens_libres = {}
+    # XIU.TO contient Couche-Tard (ATD.TO), détaillant de tabac d'après data/activites_sensibles.csv.
+    indirect = s.controles_activites({"poids": {"XIU.TO": 0.6, "XBB.TO": 0.4}})[0]
+    assert indirect["statut"] == "à signaler"
+    assert "XIU.TO (par ATD.TO)" in indirect["message"]
+    direct = s.controles_activites({"poids": {"ATD.TO": 0.1, "XBB.TO": 0.9}})[0]
+    assert direct["statut"] == "non conforme" and "liées au tabac : ATD.TO." in direct["message"]
+    for c in (indirect, direct):
+        assert not any(x in c["message"] for x in "{}[]'"), c["message"]
