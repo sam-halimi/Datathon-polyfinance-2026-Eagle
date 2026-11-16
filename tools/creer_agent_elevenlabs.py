@@ -94,8 +94,11 @@ OUTILS: list[dict[str, Any]] = [
             },
         },
         "expects_response": True,
-        "interruption_mode": "disable_during_tool",
-        "response_timeout_secs": 20,
+        # La diapositive suivante ne s'affiche qu'une fois la phrase en cours terminée (l'écran ne prend pas
+        # d'avance sur la voix), et la personne peut couper la parole pendant la présentation.
+        "execution_mode": "post_tool_speech",
+        "interruption_mode": "allow",
+        "response_timeout_secs": 60,
     },
 ]
 

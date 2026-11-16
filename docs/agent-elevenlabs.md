@@ -106,7 +106,7 @@ Présentation (quand lancer_analyse a répondu « Analyse terminée ») :
 C'est vous qui menez la présentation : la personne n'a rien à cliquer, l'écran vous suit. Enchaînez les diapositives dans cet ordre, sans attendre qu'on vous dise « suivante » : « demarche », « demande », « adequation », « repartition », « lignes », « cours », « scenarios », « verifications », « limites ».
 Pour chacune : appelez afficher_diapositive(id), puis dites en deux ou trois phrases l'essentiel du texte renvoyé, sans rien ajouter.
 Montrez à l'écran ce dont vous parlez, avec le second paramètre de l'outil : sur « repartition », rappelez afficher_diapositive("repartition", element) avec le nom de la part la plus importante, puis d'une seconde part ; sur « lignes » puis « cours », avec le symbole de la ligne dont vous parlez (deux ou trois lignes, pas toutes). Les éléments possibles figurent à la fin du texte renvoyé : n'en inventez pas.
-Entre deux diapositives, marquez une courte pause. Si la personne pose une question ou dit « attendez », arrêtez-vous et répondez, puis reprenez où vous en étiez. Sinon, continuez.
+Entre deux diapositives, marquez une courte pause. Si la personne pose une question ou dit « attendez », arrêtez-vous et répondez, puis reprenez où vous en étiez. Sinon, continuez. Quand vous recevez le message « Continuez la présentation. », c'est l'écran qui vous donne la main : passez directement à la diapositive suivante, sans commenter ce message et sans demander si la personne est toujours là.
 Si l'outil renvoie « Information manquante », dites-le tel quel.
 Après « limites », demandez si cette proposition lui convient.
 
@@ -120,9 +120,13 @@ Pause : si vous êtes informé que la personne a mis l'appel en pause, ne dites 
 Questions sur un actif : invitez la personne à l'écrire dans le champ en bas de l'écran (« et Tesla ? »). L'écran indiquera si l'actif est compatible avec son profil. Ne jugez jamais un actif vous-même.
 ```
 
+## Enchaînement des diapositives
+
+Un agent vocal rend la parole après chaque réponse et attend qu'on lui parle. Pendant la présentation, cela donnait une trentaine de secondes de silence entre deux diapositives. Le site donne donc la main à l'agent : deux secondes et demie après la fin de ce qu'il dit d'une diapositive, `web/components/Voix.tsx` lui envoie le message « Continuez la présentation. » (en anglais : « Please continue the presentation. »), jusqu'à la dernière diapositive. Ce message n'apparaît pas dans la transcription. Rien n'est envoyé pendant une pause, pendant une analyse, ni après « limites », où l'agent pose sa question et attend. Si la personne coupe la parole, l'agent lui répond ; la relance suivante reprend la présentation.
+
 ## Outils côté client
 
-Trois outils de type « Client », qui attendent la réponse (`expects_response`) et que la parole n'annule pas (`interruption_mode` : `disable_during_tool`). Le 16 novembre 2026, huit appels à `lancer_analyse` avaient été abandonnés parce que quelqu'un parlait pendant l'outil (« Tool execution was abandoned due to user input ») : ce réglage l'empêche, et le site ne démarre de toute façon qu'une analyse à la fois. Les noms doivent être exactement ceux-ci : ils sont branchés dans `web/components/Voix.tsx`. Le script les crée avec ces descriptions (`tools/creer_agent_elevenlabs.py`).
+Trois outils de type « Client », qui attendent la réponse (`expects_response`). Pour `noter_profil` et `lancer_analyse`, la parole n'annule pas l'outil (`interruption_mode` : `disable_during_tool`). Le 16 novembre 2026, huit appels à `lancer_analyse` avaient été abandonnés parce que quelqu'un parlait pendant l'outil (« Tool execution was abandoned due to user input ») : ce réglage l'empêche, et le site ne démarre de toute façon qu'une analyse à la fois. Les noms doivent être exactement ceux-ci : ils sont branchés dans `web/components/Voix.tsx`. Le script les crée avec ces descriptions (`tools/creer_agent_elevenlabs.py`).
 
 ### noter_profil
 
@@ -142,6 +146,7 @@ Trois outils de type « Client », qui attendent la réponse (`expects_response`
 - Paramètres :
   - `id` (string, obligatoire) : `demarche`, `demande`, `adequation`, `repartition`, `lignes`, `cours`, `scenarios`, `verifications`, `limites`, ou `alternative` (autre proposition déjà vérifiée ; l'outil renvoie ce qui change et ce que le profil impose).
   - `element` (string, facultatif) : ce que l'écran met en avant pendant que la voix en parle : une part sur `repartition`, le symbole d'une ligne sur `lignes` ou `cours`.
+- Réglages propres à cet outil : `execution_mode` : `post_tool_speech` (l'outil ne s'exécute qu'une fois la phrase en cours terminée : sans cela, l'agent demandait plusieurs diapositives d'un coup et l'écran prenait de l'avance sur la voix), `interruption_mode` : `allow` (la personne peut couper la parole pendant la présentation), délai de réponse 60 secondes.
 
 ## Vérifier
 

@@ -564,7 +564,9 @@ export const EXACT: Record<string, string> = {
  "Sans compte": "No account",
  "Vous utilisez Eagle sans compte": "You are using Eagle without an account",
  "Le compte est facultatif : Eagle s'essaie sans inscription. Aucune adresse courriel n'est demandée. Le mot de passe est conservé par Amazon Cognito, sous forme hachée ; Eagle ne le stocke pas. Simulation seulement : aucune transaction réelle.": "The account is optional: you can try Eagle without signing up. No email address is requested. The password is kept by Amazon Cognito, in hashed form; Eagle does not store it. Simulation only: no real transaction.",
- "Votre session a expiré. Reconnectez-vous ou continuez sans compte : votre profil est conservé à l'écran.": "Your session has expired. Sign in again or continue without an account: your profile is kept on screen."
+ "Votre session a expiré. Reconnectez-vous ou continuez sans compte : votre profil est conservé à l'écran.": "Your session has expired. Sign in again or continue without an account: your profile is kept on screen.",
+ "L'appel s'est interrompu. Vous pouvez le reprendre avec « Démarrer l'appel », ou poursuivre à l'écran.": "The call was interrupted. You can resume it with “Start the call”, or continue on screen.",
+ "La voix n'est pas disponible pour le moment : le service vocal ne répond pas (quota atteint ou service interrompu). Tout le parcours reste possible à l'écran.": "Voice is not available at the moment: the voice service is not responding (quota reached or service interrupted). The whole journey remains available on screen."
 };
 
 const MOIS: Record<string, string> = {"janvier": "January", "février": "February", "mars": "March", "avril": "April", "mai": "May", "juin": "June", "juillet": "July", "août": "August", "septembre": "September", "octobre": "October", "novembre": "November", "décembre": "December"};

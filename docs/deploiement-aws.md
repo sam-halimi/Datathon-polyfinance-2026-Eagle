@@ -87,12 +87,26 @@ Le pipeline écrit en français. Quand le site est en anglais, il ajoute `langue
 - Sur le site CloudFront, après le dernier déploiement : même relevé, 1 015 textes en anglais sans reste de français (deux passages), aucun texte anglais en mode français ; le dossier exporté d'une démonstration suit la langue (un croisement de deux chargements l'affichait en français, corrigé). Appel vocal réel en anglais puis en français : chaque langue a son agent, les deux remplissent le profil.
 - Téléphone (390 × 844 et 360 × 740) en anglais : en-tête sur une ligne (sigles FR / EN), aucun texte coupé, aucun défilement horizontal.
 
+### Vérification finale du 16 novembre (écran d'attente, compte facultatif, présentation guidée par la voix)
+
+Sur le site CloudFront, dans un navigateur piloté :
+
+- Routes de l'API : `/sante`, les trois démonstrations en français et en anglais, `/actif` (Tesla à plafonner, SPY compatible, bitcoin hors profil, symbole inconnu), `/scenarios`, `/progression`, refus d'un jeton faux (401), requête mal formée (400).
+- Entrée : cinq diapositives, choix, création d'un compte (refus d'un mot de passe faible, d'une confirmation différente, d'un identifiant pris), connexion, mauvais mot de passe, déconnexion, puis « Continuer sans compte » : question sur un actif sans jeton, choix retenu après rechargement, « Se connecter » depuis le mode sans compte. Aucune erreur.
+- Analyse sans compte : 200 en 140 s en français, 161 s en anglais sur téléphone (huitième étape « Translation »). L'écran d'attente a suivi les agents un par un, lus dans S3 par `/progression`.
+- Questions (curseur aligné à 0 px, 12 thèmes et les questions 5 et 6 illustrés, montant au dollar près), neuf diapositives des trois cas à 1440 × 900, 1280 × 720 et 390 × 844 sans contenu coupé, dossier exporté des trois cas (trois camemberts alignés, de même taille), questions sur un actif, autre proposition, « Modifier mon profil ».
+- Voix, appel réel avec micro simulé : profil rempli à l'écran reconnu par l'agent, « lancez l'analyse » dit au micro, une seule analyse, écran d'attente réel, puis présentation menée par la voix. Avec la relance automatique, les neuf diapositives s'enchaînent sans intervention (160 s) et l'agent termine par sa question. Pause : aucune parole pendant 20 s, reprise correcte.
+- Écran en avance sur la voix : corrigé par `execution_mode: post_tool_speech` sur `afficher_diapositive`. Vérifié sur trois diapositives seulement : l'appel suivant a été coupé par ElevenLabs, **crédits du compte épuisés**.
+
+Limite constatée : le compte ElevenLabs (forfait Starter, 40 000 crédits par mois) est à zéro depuis le 16 novembre vers 4 h 45 UTC ; remise à zéro le 17 novembre à 0 h 27 UTC. Un appel complet (questions, analyse, neuf diapositives) coûte de 3 000 à 4 000 crédits, soit une dizaine d'appels par mois avec ce forfait. Sans crédits, « Démarrer l'appel » affiche « La voix n'est pas disponible pour le moment » et tout le parcours reste possible à l'écran.
+
 Non vérifié : un appel vocal complet par une personne (huit questions, analyse, neuf diapositives lues) et un vrai téléphone ; les essais sont faits dans un navigateur piloté.
 
 ## Limites
 
 - Le compte est facultatif et sa création est ouverte à tous (aucune validation par courriel) : il ne protège pas l'analyse et ne prouve pas l'identité de la personne. Seule la concurrence plafonnée (cinq analyses à la fois) borne le coût.
 - La voix (ElevenLabs) demande un micro et un geste (« Démarrer l'appel »). La liaison part en WebRTC et reprend par WebSocket si le réseau bloque l'UDP. Sans micro, l'échange se fait par écrit.
+- La voix dépend des crédits du compte ElevenLabs : environ 390 crédits par minute d'appel. Un appel laissé ouvert 30 minutes en consomme 16 000. Raccrocher après chaque essai.
 - Un appel vocal est limité à 30 minutes par l'agent ElevenLabs (réglage `max_duration_seconds`, relevé de 600 à 1800 s).
 - Sur Lambda, il n'y a ni clé ni cache Finnhub : le critère « sociétés établies » (ancienneté de cotation) répond « information manquante » pour les actions, avec sa raison. Les autres critères ne dépendent que de `data/`.
 - Le compte de l'atelier et tout ce qui y est déployé sont supprimés à l'expiration du compte. Le code reste sur GitHub et se redéploie par la commande ci-dessus.

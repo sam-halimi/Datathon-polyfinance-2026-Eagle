@@ -48,6 +48,8 @@ export type EagleApi = {
   lancerAnalyse: () => Promise<string>;
   /** `element` : ce que la présentation met en avant sur la diapositive (part d'un camembert, ligne, actif). */
   afficherDiapositive: (id: string, element?: string) => string;
+  /** Ce que l'écran montre au début d'un appel (réponses déjà données, résultat affiché), dit à l'agent vocal. */
+  etat: () => string;
 };
 
 type Props = {
@@ -429,12 +431,32 @@ export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEm
     },
     lancerAnalyse: lancer,
     afficherDiapositive: afficher,
+    etat: () => {
+      // La personne peut répondre à l'écran avant de démarrer l'appel : sans ce résumé, l'agent reposerait tout.
+      const L = (fr: string, en: string) => (langue === "en" ? en : fr);
+      const donnees = QUESTIONS.filter((q) => repondues.current.has(q.champ) || (profil[q.champ] !== undefined && profil[q.champ] !== ""))
+        .map((q) => `${q.champ} = ${Array.isArray(profil[q.champ]) ? ((profil[q.champ] as string[]).join(", ") || L("aucune", "none")) : String(profil[q.champ] ?? L("aucune", "none"))}`);
+      const manquent = QUESTIONS.filter((q) => !(repondues.current.has(q.champ) || (profil[q.champ] !== undefined && profil[q.champ] !== ""))).map((q) => q.champ);
+      if (phase === "presentation" && brute) {
+        return L("État de l'écran au début de l'appel : une analyse est déjà affichée. Ne reposez pas les questions : proposez de présenter le résultat, en commençant par afficher_diapositive(\"demarche\").",
+          "Screen state at the start of the call: an analysis is already displayed. Do not ask the questions again: offer to present the result, starting with afficher_diapositive(\"demarche\").");
+      }
+      if (!donnees.length) return L("État de l'écran au début de l'appel : aucune réponse n'a encore été donnée.", "Screen state at the start of the call: no answer has been given yet.");
+      return L(
+        `État de l'écran au début de l'appel. Réponses déjà données à l'écran : ${donnees.join(" ; ")}. ${manquent.length
+          ? `Questions encore sans réponse : ${manquent.join(", ")}. Ne reposez que celles-là.`
+          : "Les huit questions ont une réponse : ne les reposez pas. Dites que le profil est déjà rempli, demandez le prénom et la demande si la personne le souhaite, puis lancez l'analyse dès qu'elle le demande."}`,
+        `Screen state at the start of the call. Answers already given on screen: ${donnees.join(" ; ")}. ${manquent.length
+          ? `Questions still unanswered: ${manquent.join(", ")}. Ask only those.`
+          : "All eight questions are answered: do not ask them again. Say that the profile is already filled in, ask for the first name and the request if the person wishes, then start the analysis as soon as they ask for it."}`);
+    },
   };
   useEffect(() => {
     onApi?.({
       noterProfil: (c, v) => api.current!.noterProfil(c, v),
       lancerAnalyse: () => api.current!.lancerAnalyse(),
       afficherDiapositive: (id, element) => api.current!.afficherDiapositive(id, element),
+      etat: () => api.current!.etat(),
     });
   }, [onApi]);
 

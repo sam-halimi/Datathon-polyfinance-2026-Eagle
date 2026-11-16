@@ -15,6 +15,14 @@ const AGENT = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
 // Option anglaise : un second agent, même outils, consigne et voix en anglais. Sans lui, l'agent français répond.
 const AGENT_EN = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID_EN;
 
+// Présentation menée par la voix. Un agent vocal rend la parole après chaque diapositive et attend
+// qu'on lui réponde : sans rien dire, il fallait une trentaine de secondes de silence avant la suivante.
+// Le site dit donc « continuez » à sa place, deux secondes et demie après la fin de chaque diapositive,
+// jusqu'à la dernière. La personne peut couper la parole à tout moment : Eagle répond, puis reprend.
+const DERNIERE_DIAPOSITIVE = "limites";
+const SILENCE_AVANT_SUITE = 2500;
+const SUITE = { fr: "Continuez la présentation.", en: "Please continue the presentation." };
+
 type Props = {
   api: MutableRefObject<EagleApi | null>;
   dire: (texte: string, qui?: "eagle" | "vous") => void;
@@ -32,18 +40,34 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
   // passe par HTTPS. `liaison` retient le mode en cours et si la connexion a déjà abouti.
   const liaison = useRef<{ mode: "webrtc" | "websocket"; etablie: boolean; repli: boolean }>({ mode: "webrtc", etablie: false, repli: false });
   const reprendre = useRef<() => void>(() => {});
+  const raccroche = useRef(false);
+  const guidage = useRef<{ id: string; aParle: boolean; silence: number } | null>(null);
   const langue = useLangue();
   // Ce que les outils renvoient à la voix passe par tr() : en anglais, les nombres sont écrits à l'anglaise
   // (« 12.5% ») pour être bien prononcés. Les textes du pipeline arrivent déjà traduits.
   const conversation = useConversation({
     clientTools: {
       noter_profil: ({ champ, valeur }: Record<string, unknown>) => tr(api.current?.noterProfil(String(champ), valeur) ?? "Indisponible."),
-      lancer_analyse: async () => tr((await api.current?.lancerAnalyse()) ?? "Indisponible."),
-      afficher_diapositive: ({ id, element }: Record<string, unknown>) =>
-        tr(api.current?.afficherDiapositive(String(id), element ? String(element) : undefined) ?? "Indisponible."),
+      lancer_analyse: async () => { guidage.current = null; return tr((await api.current?.lancerAnalyse()) ?? "Indisponible."); },
+      afficher_diapositive: ({ id, element }: Record<string, unknown>) => {
+        // La voix vient de montrer une diapositive : on suivra la fin de ce qu'elle en dit.
+        guidage.current = String(id) === "alternative" ? null : { id: String(id), aParle: false, silence: 0 };
+        return tr(api.current?.afficherDiapositive(String(id), element ? String(element) : undefined) ?? "Indisponible.");
+      },
     },
-    onConnect: () => { liaison.current.etablie = true; },
-    onMessage: (m) => dire(m.message, m.role === "user" ? "vous" : "eagle"),
+    onConnect: () => {
+      liaison.current.etablie = true;
+      // L'agent apprend ce qui est déjà à l'écran (réponses données avant l'appel, résultat affiché).
+      window.setTimeout(() => { try { const e = api.current?.etat(); if (e) conversation.sendContextualUpdate(e); } catch { /* appel fermé entre-temps */ } }, 400);
+    },
+    onDisconnect: () => {
+      guidage.current = null;
+      // Appel coupé sans que la personne ait raccroché (réseau, micro retiré) : on le dit, l'écran reste utilisable.
+      if (liaison.current.etablie && !raccroche.current) dire("L'appel s'est interrompu. Vous pouvez le reprendre avec « Démarrer l'appel », ou poursuivre à l'écran.");
+      liaison.current.etablie = false;
+    },
+    // La relance automatique « continuez » n'est pas une parole de la personne : elle n'entre pas dans la transcription.
+    onMessage: (m) => { if (!(m.role === "user" && Object.values(SUITE).includes(m.message.trim()))) dire(m.message, m.role === "user" ? "vous" : "eagle"); },
     onError: (message) => {
       const l = liaison.current;
       if (!l.etablie && l.mode === "webrtc" && !l.repli) {
@@ -51,7 +75,10 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
         reprendre.current();
         return;
       }
-      dire(`Voix interrompue : ${message}. Vous pouvez poursuivre par écrit.`);
+      // Agent injoignable (quota de crédits ElevenLabs épuisé, agent désactivé) : on le dit en clair, sans jargon.
+      dire(/not available|quota|credit|limit/i.test(message)
+        ? "La voix n'est pas disponible pour le moment : le service vocal ne répond pas (quota atteint ou service interrompu). Tout le parcours reste possible à l'écran."
+        : `Voix interrompue : ${message.replace(/[.\s]+$/, "")}. Vous pouvez poursuivre par écrit.`);
     },
   });
   const enLigne = conversation.status === "connected";
@@ -80,11 +107,30 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
     } catch { /* appel fermé entre-temps */ }
     dire(p ? "Appel en pause : votre micro est coupé et je me tais. Reprenez quand vous voulez." : "Reprise de l'appel.");
   };
+  // Enchaînement des diapositives par la voix (voir SUITE plus haut).
+  const parleRef = useRef(false);
+  parleRef.current = conversation.isSpeaking;
+  useEffect(() => {
+    if (!enLigne) { guidage.current = null; return; }
+    const t = window.setInterval(() => {
+      const g = guidage.current;
+      if (!g || pause || reflechit) return;
+      if (parleRef.current) { g.aParle = true; g.silence = 0; return; }
+      if (!g.aParle) return; // Eagle n'a pas encore commencé à parler de cette diapositive
+      g.silence += 500;
+      if (g.silence < SILENCE_AVANT_SUITE) return;
+      if (g.id === DERNIERE_DIAPOSITIVE) { guidage.current = null; return; } // après la dernière, Eagle pose sa question et attend
+      g.aParle = false; g.silence = 0;
+      try { conversation.sendUserMessage(SUITE[langue]); } catch { /* appel fermé entre-temps */ }
+    }, 500);
+    return () => window.clearInterval(t);
+  }, [enLigne, pause, reflechit, langue, conversation]);
   const parle = enLigne && !pause && conversation.isSpeaking;
   useEffect(() => { surParole?.(parle); }, [parle, surParole]);
   useEffect(() => { surLigne?.(enLigne); }, [enLigne, surLigne]);
   const ouvrir = (mode: "webrtc" | "websocket") => {
     liaison.current = { ...liaison.current, mode, etablie: false };
+    raccroche.current = false;
     conversation.startSession({ agentId: (langue === "en" && AGENT_EN) || AGENT!, connectionType: mode });
   };
   reprendre.current = () => {
@@ -109,7 +155,7 @@ function Controle({ api, dire, surParole, surLigne, reflechit = false }: Props) 
   return (
     <div className="voix">
       <button type="button" className={enLigne ? "bouton bouton--secondaire" : "bouton bouton--principal"}
-        onClick={enLigne ? () => conversation.endSession() : () => void demarrer()} disabled={conversation.status === "connecting"}>
+        onClick={enLigne ? () => { raccroche.current = true; conversation.endSession(); } : () => void demarrer()} disabled={conversation.status === "connecting"}>
         {enLigne ? "Raccrocher" : conversation.status === "connecting" ? "Connexion…" : "Démarrer l'appel"}
       </button>
       {enLigne ? (
