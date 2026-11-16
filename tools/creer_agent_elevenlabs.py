@@ -85,7 +85,13 @@ OUTILS: list[dict[str, Any]] = [
         "parameters": {
             "type": "object",
             "required": ["id"],
-            "properties": {"id": {"type": "string", "description": "Diapositive à afficher.", "enum": DIAPOSITIVES}},
+            "properties": {
+                "id": {"type": "string", "description": "Diapositive à afficher, ou « alternative » pour une autre proposition.",
+                       "enum": DIAPOSITIVES + ["alternative"]},
+                "element": {"type": "string", "description": (
+                    "Facultatif. Ce qu'il faut mettre en avant : le nom d'une part sur « repartition », le symbole "
+                    "d'une ligne sur « lignes » ou « cours ». Seulement un élément cité à la fin du texte renvoyé.")},
+            },
         },
         "expects_response": True,
         "interruption_mode": "disable_during_tool",
