@@ -13,3 +13,6 @@ data/cache/
 # Déploiement : paquet Lambda et adresses générées
 deploiement/construction/
 web/out/
+
+# Lien local vers le projet Vercel (démonstration publique)
+.vercel/

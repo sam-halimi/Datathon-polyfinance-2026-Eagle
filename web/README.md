@@ -46,6 +46,10 @@ Le bouton « Français / English » (`components/Langue.tsx`) est sur chaque éc
 
 Une démonstration suit le changement de langue tout de suite. Une analyse en direct garde la langue dans laquelle elle a été demandée : il faut la relancer pour l'avoir dans l'autre.
 
+## Démonstration publique
+
+`NEXT_PUBLIC_DEMO=1` à la compilation : le site est servi seul, sans le service d'analyse (par exemple sur Vercel, quand l'API sur AWS n'est pas en ligne). Les trois cas du datathon s'affichent en entier, avec leurs chiffres, leurs sources et le dossier exporté. L'analyse d'un nouveau profil et les questions sur un actif, qui demandent les agents sur Amazon Bedrock, disent en une phrase pourquoi elles ne sont pas là ; rien n'est inventé à leur place. Sans identifiant d'agent ElevenLabs à la compilation, la voix est désactivée. `.vercelignore`, à la racine, limite l'envoi au site et aux sorties enregistrées.
+
 ## Données et chiffres
 
 - Chaque chiffre affiché est un repère `{id}` de la table `chiffres` : le toucher ouvre sa référence (outil, paramètres, période, formule, source).

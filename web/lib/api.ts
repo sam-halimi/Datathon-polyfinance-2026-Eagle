@@ -8,8 +8,14 @@ const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 export const ADRESSE_API = API;
 export const COMMANDE_SERVEUR = "python -m agents.serveur";
 
+/** Démonstration publique (NEXT_PUBLIC_DEMO=1) : le site est servi seul, sans le service d'analyse.
+ *  Les trois cas du datathon, enregistrés, s'affichent en entier ; l'analyse d'un nouveau profil et les
+ *  questions sur un actif, qui demandent les agents sur Amazon Bedrock, disent pourquoi elles n'y sont pas. */
+export const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
+export const MESSAGE_DEMO = "L'analyse en direct n'est pas branchée sur cette démonstration publique : pendant le datathon, les sept agents tournaient sur Amazon Bedrock. Les trois cas du datathon montrent une analyse complète, avec ses chiffres et ses sources.";
+
 /** Le service tourne-t-il sur la machine de la personne (développement) ou en ligne ? */
-export const SERVICE_LOCAL = /\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(API);
+export const SERVICE_LOCAL = !DEMO && /\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(API);
 
 /** Échec d'un appel au service, dit en une phrase. `injoignable` : aucune réponse
  *  (serveur arrêté, mauvaise adresse) ; sinon le serveur a répondu par une erreur.
@@ -25,6 +31,7 @@ let surDeconnexion: () => void = () => {};
 export function ecouterDeconnexion(f: () => void): void { surDeconnexion = f; }
 
 async function appeler(chemin: string, init?: RequestInit): Promise<Response> {
+  if (DEMO) throw new ErreurService(MESSAGE_DEMO, true);
   let r: Response;
   try {
     r = await fetch(`${API}${chemin}`, { ...init, headers: { ...(init?.headers ?? {}), ...enteteCompte() } });
@@ -67,6 +74,7 @@ export function nouveauSuivi(): string {
 
 /** Avancement d'une analyse. Jamais d'erreur : sans réponse, l'écran d'attente se passe du détail. */
 export async function lireProgression(suivi: string): Promise<Progression | null> {
+  if (DEMO) return null;
   try {
     const r = await fetch(`${API}/progression?id=${encodeURIComponent(suivi)}`);
     return r.ok ? ((await r.json()) as Progression) : null;

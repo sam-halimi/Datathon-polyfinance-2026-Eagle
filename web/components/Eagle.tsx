@@ -12,7 +12,7 @@ import { propositions, vueSur } from "@/lib/portefeuilles";
 import { FicheReference, FournisseurChiffres, typo } from "./Chiffres";
 import { EcranAttente } from "./Attente";
 import { construireDiapositives, DiapositiveActif, type Diapositive } from "./Diapositives";
-import { analyser, nouveauSuivi, ADRESSE_API, COMMANDE_SERVEUR, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
+import { analyser, nouveauSuivi, ADRESSE_API, COMMANDE_SERVEUR, DEMO, ErreurService, SERVICE_LOCAL, verifierActif, type VerdictActif } from "@/lib/api";
 import { formaterHorizon, formaterMontant, majuscule } from "@/lib/format";
 import { chargerSortie, CLE_DOSSIER, PERSONAS, type Persona } from "@/lib/personas";
 import { complet, estRepondue, listeDite, noter, PROFIL_VIDE, QUESTIONS } from "@/lib/questions";
@@ -297,7 +297,8 @@ export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEm
         : `Voici pourquoi ${symbole} ne correspond pas à votre profil.`);
     } catch (e) {
       setActif({ symbole, erreur: e instanceof ErreurService ? e.message : (e as Error).message });
-      dire(`Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);
+      dire(DEMO ? "Les questions sur un actif passent par le service d'analyse, qui n'est pas branché sur cette démonstration publique."
+        : `Le service ne répond pas : je ne peux pas examiner ${symbole} pour le moment.`);
     }
   };
 
@@ -504,7 +505,7 @@ export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEm
           <textarea value={demande} onChange={(e) => setDemande(e.target.value)} rows={4}
             placeholder={`Facultatif. Par exemple : « Je souhaite placer une part importante sur Tesla. » Sans demande, le service reçoit : « ${DEMANDE_PAR_DEFAUT} »`} />
         </label>
-        <p className="recap__note">{SERVICE_LOCAL ? <>Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. </> : "Le profil sera transmis au service d'analyse d'Eagle. "}Simulation seulement : aucune transaction réelle.</p>
+        <p className="recap__note">{DEMO ? "Sur cette démonstration publique, l'analyse en direct par les agents n'est pas branchée : les trois cas du datathon montrent une analyse complète. " : SERVICE_LOCAL ? <>Le profil sera envoyé à <code>{ADRESSE_API}/analyse</code>. </> : "Le profil sera transmis au service d'analyse d'Eagle. "}Simulation seulement : aucune transaction réelle.</p>
       </div>
     );
     navigation = (
@@ -518,12 +519,14 @@ export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEm
     justification = "Sept agents se relaient sur votre profil, chacun dans son domaine. La gouvernance vérifie chaque proposition avant de vous la présenter.";
     contenu = <EcranAttente debut={debutAnalyse} suivi={suivi} />;
   } else if (phase === "erreur") {
-    titre = "Analyse indisponible";
+    titre = DEMO ? "Analyse en direct : pas sur cette démonstration" : "Analyse indisponible";
     justification = "Aucun portefeuille n'est affiché à la place du vôtre.";
     contenu = (
       <div className="panne">
         <p className="diapo__manque">{erreur ? typo(erreur) : null}</p>
-        {!SERVICE_LOCAL ? (
+        {DEMO ? (
+          <p className="panne__aide">Votre profil est conservé à droite. Ouvrez un des trois cas du datathon pour voir une analyse complète.</p>
+        ) : !SERVICE_LOCAL ? (
           // Site en ligne : la personne n'a rien à installer ni à vérifier. Son profil est conservé.
           <p className="panne__aide">Votre profil est conservé à droite. Le bouton « Relancer » reprend l&apos;analyse avec les mêmes réponses.</p>
         ) : injoignable ? (
@@ -540,7 +543,9 @@ export function Eagle({ onApi, da = null, compte = null, connecter, ouvrirModeEm
         {SERVICE_LOCAL ? <p className="panne__aide">Adresse appelée : <code>{ADRESSE_API}/analyse</code> (réglable par NEXT_PUBLIC_API_URL).</p> : null}
       </div>
     );
-    navigation = <button type="button" className="bouton bouton--principal" onClick={() => void lancer()}>Relancer</button>;
+    navigation = DEMO
+      ? <button type="button" className="bouton bouton--principal" onClick={() => void demonstration(PERSONAS[0])}>Voir le cas de Robert</button>
+      : <button type="button" className="bouton bouton--principal" onClick={() => void lancer()}>Relancer</button>;
   } else if (phase === "presentation" && diapos[diapo]) {
     const d = diapos[diapo];
     titre = d.titre;

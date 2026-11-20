@@ -6,6 +6,7 @@ import { Mic, MicOff } from "lucide-react";
 import type { EagleApi } from "./Eagle";
 import { useLangue } from "./Langue";
 import { tr } from "@/lib/langue";
+import { DEMO } from "@/lib/api";
 
 // La voix d'Eagle : un agent ElevenLabs (configuration dans
 // docs/agent-elevenlabs.md). La voix ne fait qu'appeler trois outils ; le
@@ -195,7 +196,7 @@ export function Voix(props: Props) {
     return (
       <div className="voix">
         <button type="button" className="bouton bouton--secondaire" disabled title="NEXT_PUBLIC_ELEVENLABS_AGENT_ID n'est pas défini">Démarrer l&apos;appel</button>
-        <p className="voix__etat">{props.reflechit ? "Eagle réfléchit" : "Voix non configurée : l'échange se poursuit par écrit."}</p>
+        <p className="voix__etat">{props.reflechit ? "Eagle réfléchit" : DEMO ? "Voix désactivée sur cette démonstration publique." : "Voix non configurée : l'échange se poursuit par écrit."}</p>
       </div>
     );
   }

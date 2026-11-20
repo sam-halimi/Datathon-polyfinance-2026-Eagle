@@ -1,0 +1,18 @@
+# Démonstration publique sur Vercel : seul le site est compilé (web/), avec les sorties enregistrées
+# des trois cas (agents/sorties/) et leurs fiches (tests/scenarios/). Le reste n'est pas envoyé.
+.git
+data
+analyses
+livrables
+docs
+tools
+deploiement
+agents/*.py
+agents/traductions
+tests/agents
+tests/outils
+tests/donnees
+tests/interface
+web/out
+web/.next
+web/node_modules

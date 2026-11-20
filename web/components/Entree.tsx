@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Eagle } from "./Eagle";
 import { ChoixLangue, useLangue } from "./Langue";
 import { PERSONAS, type Persona } from "@/lib/personas";
-import { ecouterDeconnexion } from "@/lib/api";
+import { DEMO, ecouterDeconnexion } from "@/lib/api";
 import {
   COMPTES_ACTIFS, fermerSession, lireSession, ouvrirSession, REGLE_IDENTIFIANT, REGLE_MOT_DE_PASSE, type Session, choisirInvite, estInvite,
 } from "@/lib/compte";
@@ -122,11 +122,13 @@ function Choix({ da, choisir, retour }: { da: DirectionArtistique | null; choisi
           </div>
         ) : (
           <div className="entree__deux">
-            <button type="button" className="chemin chemin--principal" onClick={() => choisir({ type: "profil" })}>
-              <strong>Tester la simulation</strong>
-              <span>Vous répondez aux huit questions, à l&apos;écran ou à voix haute, et les agents construisent un portefeuille simulé pour votre profil. Comptez de une à trois minutes d&apos;analyse.</span>
+            <button type="button" className={DEMO ? "chemin chemin--second" : "chemin chemin--principal"} onClick={() => choisir({ type: "profil" })}>
+              <strong>{DEMO ? "Répondre aux questions" : "Tester la simulation"}</strong>
+              {DEMO
+                ? <span>Vous répondez aux huit questions et voyez votre profil se construire. Sur cette démonstration publique, l&apos;analyse en direct par les agents n&apos;est pas branchée.</span>
+                : <span>Vous répondez aux huit questions, à l&apos;écran ou à voix haute, et les agents construisent un portefeuille simulé pour votre profil. Comptez de une à trois minutes d&apos;analyse.</span>}
             </button>
-            <button type="button" className="chemin" onClick={() => setCas(true)}>
+            <button type="button" className={DEMO ? "chemin chemin--principal" : "chemin"} onClick={() => setCas(true)}>
               <strong>Voir les cas du datathon</strong>
               <span>Robert, Amira et Mateo : les trois investisseurs proposés par le défi, avec la réponse complète d&apos;Eagle, sans attendre.</span>
               <span className="chemin__avatars" aria-hidden="true">
